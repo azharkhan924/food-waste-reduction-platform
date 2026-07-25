@@ -8,31 +8,34 @@
 </head>
 <body>
 
-<div class="container">
-
 <div class="card">
 
 <h1>Food Waste Platform</h1>
 <h2>Login</h2>
 
 <form th:action="@{/login}" method="post">
-
-<label>Email</label>
-<input type="email" name="email" placeholder="Enter Email" required>
-
-<label>Password</label>
-<input type="password" name="password" placeholder="Enter Password" required>
-
+<table>
+<tr>
+<th>Email</th>
+<td><input type="email" name="email" placeholder="Enter Email" required></td>
+</tr>
+<tr>
+<th>Password</th>
+<td><input type="password" name="password" placeholder="Enter Password" required></td>
+</tr>
+<tr>
+<th>
 <button type="submit">Login</button>
+</th>
+</tr>
 
+</table>
 </form>
 
 <p>
 Don't have an account?
 <a th:href="@{/register}">Register</a>
 </p>
-
-</div>
 
 </div>
 

@@ -10,10 +10,29 @@ import com.foodwaste.repository.UserRepository;
 public class UserService {
 
 @Autowired
-UserRepository repo;
+private UserRepository userRepository;
 
-public void saveUser(User user) {
-repo.save(user);
+public String registerUser(User user) {
+
+if(userRepository.existsByEmail(user.getEmail())) {
+return "Email already exists";
+}
+
+userRepository.save(user);
+
+return "Registration Successful";
+}
+
+public User loginUser(String email,String password) {
+
+User user=userRepository.findByEmail(email);
+
+if(user!=null && user.getPassword().equals(password)) {
+return user;
+}
+
+return null;
+
 }
 
 }

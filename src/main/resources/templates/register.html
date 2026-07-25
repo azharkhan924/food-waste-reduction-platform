@@ -14,7 +14,9 @@
 
 <h1>Food Waste Platform</h1>
 <h2>Create Account</h2>
-
+<p th:if="${error}" style="color:red;">
+    <span th:text="${error}"></span>
+</p>
 <form th:action="@{/register}" th:object="${user}" method="post">
 
 <label>Full Name</label>
@@ -35,6 +37,7 @@
 </select>
 
 <button type="submit">Register</button>
+
 
 </form>
 
