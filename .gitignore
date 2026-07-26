@@ -1,0 +1,27 @@
+# Maven
+target/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+.apt_generated/
+.springBeans
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Application configuration (contains secrets)
+src/main/resources/application.properties
+
+# Environment files
+.env
+.env.*
+
+# Compiled files
+*.class
