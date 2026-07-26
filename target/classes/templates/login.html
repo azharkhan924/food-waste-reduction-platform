@@ -7,14 +7,25 @@
 <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div id="mymenu">
+		<ul>
+			<li>Home</li>
+			<li>Login</li>
+			<li>Register</li>
+			<li>About us</li>
+			<li>Contact us</li>
+		</ul>
+	</div>
 
 <div class="card">
 
 <h1>Food Waste Platform</h1>
 <h2>Login</h2>
 
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
 <form th:action="@{/login}" method="post">
-<table>
+<table class="t1">
 <tr>
 <th>Email</th>
 <td><input type="email" name="email" placeholder="Enter Email" required></td>
@@ -25,7 +36,14 @@
 </tr>
 <tr>
 <th>
-<button type="submit">Login</button>
+<p>
+<a th:href="@{/forgot-password}">Forgot Password?</a>
+</p>
+</th>
+</tr>
+<tr  >
+<th colspan="2" >
+<button type="submit" class="b1">Login</button>
 </th>
 </tr>
 

@@ -23,6 +23,12 @@ userRepository.save(user);
 return "Registration Successful";
 }
 
+public User findByEmail(String email){
+
+return userRepository.findByEmail(email);
+
+}
+
 public User loginUser(String email,String password) {
 
 User user=userRepository.findByEmail(email);

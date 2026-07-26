@@ -7,9 +7,15 @@
 <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-
-<div class="container">
-
+<div id="mymenu">
+		<ul>
+			<li>Home</li>
+			<li>Login</li>
+			<li>Register</li>
+			<li>About us</li>
+			<li>Contact us</li>
+		</ul>
+	</div>
 <div class="card">
 
 <h1>Food Waste Platform</h1>
@@ -18,26 +24,41 @@
     <span th:text="${error}"></span>
 </p>
 <form th:action="@{/register}" th:object="${user}" method="post">
-
-<label>Full Name</label>
-<input type="text" th:field="*{name}" placeholder="Enter Full Name" required>
-
-<label>Email</label>
+<table  class="t1">
+<tr>
+<th>Full Name</th>
+<td>
+<input type="text" th:field="*{name}" placeholder="Enter Full Name" required></td>
+</tr>
+<tr>
+<th>Email</th>
+<td>
 <input type="email" th:field="*{email}" placeholder="Enter Email" required>
-
-<label>Password</label>
+</td>
+</tr>
+<tr>
+<th>Password</th>
+<td>
 <input type="password" th:field="*{password}" placeholder="Enter Password" required>
-
-<label>Role</label>
-
+</td>
+</tr>
+<tr>
+<th>Role</th>
+<td>
 <select th:field="*{role}" required>
 <option value="">Select Role</option>
 <option value="Restaurant">Restaurant</option>
 <option value="NGO">NGO</option>
 </select>
+</td>
+</tr>
+<tr>
 
-<button type="submit">Register</button>
-
+<th>
+<button type="submit" class="b1">Register</button>
+</th>
+</tr>
+</table>
 
 </form>
 
@@ -48,7 +69,6 @@ Already have an account?
 
 </div>
 
-</div>
 
 </body>
 </html>
