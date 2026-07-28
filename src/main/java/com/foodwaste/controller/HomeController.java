@@ -16,7 +16,72 @@ public class HomeController {
 UserService service;
 
 @Autowired
-private EmailService emailService;
+EmailService emailService;
+
+
+
+
+@GetMapping("/")
+public String home() {
+return "login";
+}
+
+
+
+@GetMapping("/login")
+public String login() {
+return "login";
+}
+
+
+
+
+
+@PostMapping("/login")
+public String loginUser(@RequestParam String email,@RequestParam String password,Model model){
+	
+User user=service.loginUser(email,password);
+
+if(user==null){
+model.addAttribute("error","Invalid Email or Password");
+return "login";
+}
+
+else if(user.getRole().equals("Restaurant")){
+return "redirect:/restaurant/dashboard";
+}
+
+
+else
+return "redirect:/ngo/dashboard";
+
+}
+
+
+
+@GetMapping("/register")
+public String register(Model model) {
+model.addAttribute("user", new User());
+return "register";
+}
+
+
+@PostMapping("/register")
+public String saveUser(@ModelAttribute User user, Model model){
+
+String msg = service.registerUser(user);
+
+if(msg.equals("Email already exists")){
+    model.addAttribute("error", msg);
+    model.addAttribute("user", user);
+    return "register";
+}
+return "redirect:/login";
+}
+
+
+
+
 @GetMapping("/test-mail")
 @ResponseBody
 public String testMail(){
@@ -27,43 +92,17 @@ return "Mail Sent Successfully";
 
 }
 
-@GetMapping("/")
-public String home() {
-return "login";
-}
 
-@GetMapping("/login")
-public String login() {
-return "login";
-}
-@PostMapping("/login")
-public String loginUser(@RequestParam String email,
-                        @RequestParam String password,
-                        Model model){
 
-User user = service.loginUser(email,password);
 
-if(user==null){
-
-model.addAttribute("error","Invalid Email or Password");
-
-return "login";
-
-}
-
-else if(user.getRole().equals("Restaurant")){
-return "redirect:/restaurant/dashboard";
-}
-else
-return "redirect:/ngo/dashboard";
-
-}
 @GetMapping("/logout")
 public String logout() {
 
 return "redirect:/login";
 
 }
+
+
 @GetMapping("/forgot-password")
 public String forgotPassword() {
 
@@ -86,25 +125,9 @@ model.addAttribute("email", email);
 return "reset-password";
 
 } 
-@GetMapping("/register")
-public String register(Model model) {
-model.addAttribute("user", new User());
-return "register";
-}
 
-@PostMapping("/register")
-public String saveUser(@ModelAttribute User user, Model model){
 
-String msg = service.registerUser(user);
 
-if(msg.equals("Email already exists")){
-    model.addAttribute("error", msg);
-    model.addAttribute("user", user);
-    return "register";
-}
-
-return "redirect:/login";
-}
 @GetMapping("/restaurant/dashboard")
 public String restaurantDashboard(){
 return "restaurant/dashboard";

@@ -29,6 +29,8 @@ return userRepository.findByEmail(email);
 
 }
 
+
+
 public User loginUser(String email,String password) {
 
 User user=userRepository.findByEmail(email);
@@ -40,5 +42,6 @@ return user;
 return null;
 
 }
+
 
 }
