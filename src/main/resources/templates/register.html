@@ -16,59 +16,42 @@
 			<li>Contact us</li>
 		</ul>
 	</div>
+
 <div class="card">
 
 <h1>Food Waste Platform</h1>
 <h2>Create Account</h2>
-<p th:if="${error}" style="color:red;">
-    <span th:text="${error}"></span>
-</p>
+
+<p th:if="${error}" th:text="${error}" style="color:#ef5350;"></p>
+
 <form th:action="@{/register}" th:object="${user}" method="post">
-<table  class="t1">
-<tr>
-<th>Full Name</th>
-<td>
-<input type="text" th:field="*{name}" placeholder="Enter Full Name" required></td>
-</tr>
-<tr>
-<th>Email</th>
-<td>
+
+<label>Full Name</label>
+<input type="text" th:field="*{name}" placeholder="Enter Full Name" required>
+
+<label>Email</label>
 <input type="email" th:field="*{email}" placeholder="Enter Email" required>
-</td>
-</tr>
-<tr>
-<th>Password</th>
-<td>
+
+<label>Password</label>
 <input type="password" th:field="*{password}" placeholder="Enter Password" required>
-</td>
-</tr>
-<tr>
-<th>Role</th>
-<td>
+
+<label>Role</label>
 <select th:field="*{role}" required>
 <option value="">Select Role</option>
 <option value="Restaurant">Restaurant</option>
 <option value="NGO">NGO</option>
 </select>
-</td>
-</tr>
-<tr>
 
-<th>
 <button type="submit" class="b1">Register</button>
-</th>
-</tr>
-</table>
 
 </form>
 
-<p>
+<p style="margin-top:20px;">
 Already have an account?
 <a th:href="@{/login}">Login</a>
 </p>
 
 </div>
-
 
 </body>
 </html>

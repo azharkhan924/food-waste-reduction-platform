@@ -44,4 +44,15 @@ return null;
 }
 
 
+public void updatePassword(String email, String newPassword){
+
+User user = userRepository.findByEmail(email);
+
+if(user != null){
+user.setPassword(newPassword);
+userRepository.save(user);
+}
+
+}
+
 }

@@ -22,35 +22,26 @@
 <h1>Food Waste Platform</h1>
 <h2>Login</h2>
 
-<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+<p th:if="${error}" th:text="${error}" style="color:#ef5350;"></p>
+<p th:if="${success}" th:text="${success}" style="color:#66bb6a;"></p>
 
 <form th:action="@{/login}" method="post">
-<table class="t1">
-<tr>
-<th>Email</th>
-<td><input type="email" name="email" placeholder="Enter Email" required></td>
-</tr>
-<tr>
-<th>Password</th>
-<td><input type="password" name="password" placeholder="Enter Password" required></td>
-</tr>
-<tr>
-<th>
-<p>
+
+<label>Email</label>
+<input type="email" name="email" placeholder="Enter Email" required>
+
+<label>Password</label>
+<input type="password" name="password" placeholder="Enter Password" required>
+
+<p style="text-align:right; margin-top:8px;">
 <a th:href="@{/forgot-password}">Forgot Password?</a>
 </p>
-</th>
-</tr>
-<tr  >
-<th colspan="2" >
-<button type="submit" class="b1">Login</button>
-</th>
-</tr>
 
-</table>
+<button type="submit" class="b1">Login</button>
+
 </form>
 
-<p>
+<p style="margin-top:20px;">
 Don't have an account?
 <a th:href="@{/register}">Register</a>
 </p>

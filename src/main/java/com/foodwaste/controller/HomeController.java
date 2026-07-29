@@ -9,6 +9,9 @@ import com.foodwaste.entity.User;
 import com.foodwaste.service.EmailService;
 import com.foodwaste.service.UserService;
 
+import java.util.HashMap;
+import java.util.Random;
+
 @Controller
 public class HomeController {
 
@@ -18,6 +21,8 @@ UserService service;
 @Autowired
 EmailService emailService;
 
+// storing otp temporarily in memory
+private HashMap<String, String> otpStorage = new HashMap<>();
 
 
 
@@ -32,7 +37,6 @@ return "login";
 public String login() {
 return "login";
 }
-
 
 
 
@@ -120,11 +124,59 @@ model.addAttribute("error","Email not found");
 return "forgot-password";
 }
 
-model.addAttribute("email", email);
+// generate 6 digit otp
+Random random = new Random();
+String otp = String.valueOf(100000 + random.nextInt(900000));
 
-return "reset-password";
+// store otp against email
+otpStorage.put(email, otp);
+
+// send otp to email
+emailService.sendOtp(email, otp);
+
+model.addAttribute("email", email);
+model.addAttribute("success", "OTP sent to your email");
+
+return "verify-otp";
 
 } 
+
+
+@PostMapping("/verify-otp")
+public String verifyOtp(@RequestParam String email, @RequestParam String otp, Model model){
+
+String storedOtp = otpStorage.get(email);
+
+if(storedOtp == null || !storedOtp.equals(otp)){
+model.addAttribute("error", "Invalid OTP");
+model.addAttribute("email", email);
+return "verify-otp";
+}
+
+// otp verified, remove it
+otpStorage.remove(email);
+
+model.addAttribute("email", email);
+return "reset-password";
+
+}
+
+
+@PostMapping("/reset-password")
+public String updatePassword(@RequestParam String email, @RequestParam String password, @RequestParam String confirmPassword, Model model){
+
+if(!password.equals(confirmPassword)){
+model.addAttribute("error", "Passwords do not match");
+model.addAttribute("email", email);
+return "reset-password";
+}
+
+service.updatePassword(email, password);
+
+model.addAttribute("success", "Password updated successfully");
+return "login";
+
+}
 
 
 
@@ -137,5 +189,4 @@ return "restaurant/dashboard";
 public String ngoDashboard(){
 return "ngo/dashboard";
 }
-
 }

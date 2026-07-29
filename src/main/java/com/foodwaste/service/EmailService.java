@@ -23,4 +23,16 @@ mailSender.send(message);
 
 }
 
+public void sendOtp(String to, String otp){
+
+SimpleMailMessage message=new SimpleMailMessage();
+
+message.setTo(to);
+message.setSubject("Password Reset OTP - Food Waste Platform");
+message.setText("Hello,\n\nYour OTP for password reset is: " + otp + "\n\nThis OTP is valid for 5 minutes.\n\nIf you did not request this, please ignore this email.");
+
+mailSender.send(message);
+
+}
+
 }
