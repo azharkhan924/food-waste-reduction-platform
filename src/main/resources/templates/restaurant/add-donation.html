@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Donation</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div id="mymenu">
+		<ul>
+			<li><a th:href="@{/restaurant/dashboard}">Dashboard</a></li>
+			<li><a th:href="@{/restaurant/add-donation}">Add Donation</a></li>
+			<li><a th:href="@{/restaurant/history}">History</a></li>
+			<li><a th:href="@{/logout}">Logout</a></li>
+		</ul>
+	</div>
+
+<div class="card" style="margin-top:40px;">
+
+<h1>Food Waste Platform</h1>
+<h2>Add Food Donation</h2>
+
+<form th:action="@{/restaurant/add-donation}" method="post">
+
+<label>Food Name</label>
+<input type="text" name="foodName" placeholder="e.g. Rice, Dal, Bread" required>
+
+<label>Quantity (in servings)</label>
+<input type="text" name="qty" placeholder="e.g. 50" required>
+
+<label>Expiry Date</label>
+<input type="date" name="expiry" required style="width:100%; padding:11px 14px; border:2px solid rgba(255,255,255,0.2); border-radius:8px; background-color:rgba(255,255,255,0.08); color:white; font-size:14px; outline:none;">
+
+<label>Pickup Address</label>
+<input type="text" name="pickupAddress" placeholder="Enter pickup location" required>
+
+<button type="submit" class="b1">Submit Donation</button>
+
+</form>
+
+<p style="margin-top:15px;">
+<a th:href="@{/restaurant/dashboard}">Back to Dashboard</a>
+</p>
+
+</div>
+
+</body>
+</html>

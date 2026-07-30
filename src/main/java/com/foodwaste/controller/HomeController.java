@@ -9,6 +9,7 @@ import com.foodwaste.entity.User;
 import com.foodwaste.service.EmailService;
 import com.foodwaste.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -42,7 +43,7 @@ return "login";
 
 
 @PostMapping("/login")
-public String loginUser(@RequestParam String email,@RequestParam String password,Model model){
+public String loginUser(@RequestParam String email,@RequestParam String password,Model model, HttpSession session){
 	
 User user=service.loginUser(email,password);
 
@@ -51,7 +52,13 @@ model.addAttribute("error","Invalid Email or Password");
 return "login";
 }
 
-else if(user.getRole().equals("Restaurant")){
+// store user info in session
+session.setAttribute("userId", user.getId());
+session.setAttribute("userName", user.getName());
+session.setAttribute("userEmail", user.getEmail());
+session.setAttribute("userRole", user.getRole());
+
+if(user.getRole().equals("Restaurant")){
 return "redirect:/restaurant/dashboard";
 }
 
@@ -100,8 +107,9 @@ return "Mail Sent Successfully";
 
 
 @GetMapping("/logout")
-public String logout() {
+public String logout(HttpSession session) {
 
+session.invalidate();
 return "redirect:/login";
 
 }
@@ -178,15 +186,4 @@ return "login";
 
 }
 
-
-
-@GetMapping("/restaurant/dashboard")
-public String restaurantDashboard(){
-return "restaurant/dashboard";
-}
-
-@GetMapping("/ngo/dashboard")
-public String ngoDashboard(){
-return "ngo/dashboard";
-}
 }
