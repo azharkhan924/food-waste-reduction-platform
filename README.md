@@ -11,6 +11,6 @@ Ui for login register and forgot password
 
 forgot and reset password with otp
 
-completed restaurant dashboard full functional
+completed restaurant dashboard compelete functionality
 
 implemented ago dashboard ui
