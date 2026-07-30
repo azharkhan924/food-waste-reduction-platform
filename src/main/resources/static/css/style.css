@@ -13,8 +13,6 @@ body{
 	min-height:100vh;
 }
 
-/* ---- Navbar ---- */
-
 #mymenu{
 	background-color:rgba(0,0,0,0.7);
 	padding:0 30px;
@@ -45,8 +43,6 @@ body{
 	color:white;
 }
 
-/* ---- Card ---- */
-
 .card{
 	margin:60px auto;
 	width:420px;
@@ -75,8 +71,9 @@ body{
 	margin:10px 0;
 	font-size:14px;
 }
-
-/* ---- Table (for login/register) ---- */
+.card form{
+	margin-top:10px;
+}
 
 .t1{
 	width:100%;
@@ -91,8 +88,6 @@ body{
 .t1 td{
 	padding:2px 0 8px 0;
 }
-
-/* ---- Inputs ---- */
 
 input[type="text"],
 input[type="email"],
@@ -115,7 +110,6 @@ input[type="password"]:focus{
 input::placeholder{
 	color:rgba(255,255,255,0.4);
 }
-
 select{
 	width:100%;
 	padding:11px 14px;
@@ -129,7 +123,6 @@ select{
 select:focus{
 	border-color:#66bb6a;
 }
-
 label{
 	display:block;
 	text-align:left;
@@ -139,8 +132,6 @@ label{
 	margin-top:15px;
 	font-weight:bold;
 }
-
-/* ---- Buttons ---- */
 
 .b1{
 	background-color:#43a047;
@@ -158,9 +149,6 @@ label{
 .b1:hover{
 	background-color:#2e7d32;
 }
-
-/* ---- Links ---- */
-
 a{
 	color:#81c784;
 	text-decoration:none;
@@ -169,14 +157,6 @@ a:hover{
 	color:#a5d6a7;
 	text-decoration:underline;
 }
-
-/* ---- Form spacing ---- */
-
-.card form{
-	margin-top:10px;
-}
-
-/* ---- Dashboard ---- */
 
 .dashboard-container{
 	max-width:900px;
@@ -195,7 +175,6 @@ a:hover{
 	margin-bottom:15px;
 	color:#e0e0e0;
 }
-
 .stats-row{
 	display:flex;
 	gap:20px;
@@ -218,13 +197,9 @@ a:hover{
 	font-size:14px;
 	color:#bbb;
 }
-
 .section{
 	margin-top:10px;
 }
-
-/* ---- Data Table ---- */
-
 .data-table{
 	width:100%;
 	border-collapse:collapse;
@@ -245,8 +220,6 @@ a:hover{
 .data-table tr:hover{
 	background-color:rgba(255,255,255,0.05);
 }
-
-/* status badges */
 .status-pending{
 	background-color:#ff9800;
 	color:black;
@@ -271,7 +244,6 @@ a:hover{
 	font-size:12px;
 	font-weight:bold;
 }
-
 .btn-delete{
 	background-color:#e53935;
 	color:white;
@@ -284,7 +256,6 @@ a:hover{
 .btn-delete:hover{
 	background-color:#c62828;
 }
-
 .btn-accept{
 	background-color:#43a047;
 	color:white;
@@ -297,7 +268,6 @@ a:hover{
 .btn-accept:hover{
 	background-color:#2e7d32;
 }
-
 .btn-pickup{
 	background-color:#1976d2;
 	color:white;

@@ -30,11 +30,9 @@ return "redirect:/login";
 String name = (String) session.getAttribute("userName");
 model.addAttribute("name", name);
 
-// get all donations by this restaurant
 List<Donation> donations = donationService.getDonationsByRestaurant(userId);
 model.addAttribute("donations", donations);
 
-// count for stats
 long totalDonations = donations.size();
 int totalMeals = 0;
 for(Donation d : donations){

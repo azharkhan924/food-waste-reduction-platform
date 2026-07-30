@@ -17,7 +17,7 @@ public class Donation {
     private LocalDate expiry;
     private String pickupAddress;
 
-    private String status; // Pending, Accepted, Picked Up
+    private String status;
 
     private Long restaurantId;
     private String restaurantName;

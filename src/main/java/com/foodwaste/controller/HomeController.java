@@ -22,7 +22,6 @@ UserService service;
 @Autowired
 EmailService emailService;
 
-// storing otp temporarily in memory
 private HashMap<String, String> otpStorage = new HashMap<>();
 
 
@@ -52,7 +51,6 @@ model.addAttribute("error","Invalid Email or Password");
 return "login";
 }
 
-// store user info in session
 session.setAttribute("userId", user.getId());
 session.setAttribute("userName", user.getName());
 session.setAttribute("userEmail", user.getEmail());
@@ -132,14 +130,11 @@ model.addAttribute("error","Email not found");
 return "forgot-password";
 }
 
-// generate 6 digit otp
 Random random = new Random();
 String otp = String.valueOf(100000 + random.nextInt(900000));
 
-// store otp against email
 otpStorage.put(email, otp);
 
-// send otp to email
 emailService.sendOtp(email, otp);
 
 model.addAttribute("email", email);
@@ -161,7 +156,6 @@ model.addAttribute("email", email);
 return "verify-otp";
 }
 
-// otp verified, remove it
 otpStorage.remove(email);
 
 model.addAttribute("email", email);
