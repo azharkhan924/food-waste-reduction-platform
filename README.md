@@ -4,9 +4,15 @@ Flipr Task
 -
 
 What have done so far:
-
-Completed login and register with database connectivity
-
-Ui for login register and forgot password
-
-forgot and reset password (otp generation is ongoing)
+1. Authentication & Security
+Complete Login and Registration flows connected to MySQL database.
+Forgot & Reset Password system integrated with email OTP verification.
+Role-based account handling for Restaurants and NGOs.
+2. Frontend & User Interface
+UI for Login, Registration, Forgot Password, and Reset Password pages.
+NGO Dashboard UI design completed.
+3. Restaurant Module
+Complete Restaurant Dashboard functionality:
+Create and publish surplus food donation posts.
+View and manage active and past food listings.
+Real-time status tracking for posted donations.
