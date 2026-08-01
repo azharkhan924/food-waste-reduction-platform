@@ -16,35 +16,33 @@
 		</ul>
 	</div>
 
-<div class="dashboard-container">
+<div class="main-box">
 
 <h1>Welcome, <span th:text="${name}">Restaurant</span> 👋</h1>
 
-<div class="stats-row">
-<div class="stat-box">
+<div class="info-row">
+<div class="info-card">
 <h3 th:text="${totalDonations}">0</h3>
 <p>Total Donations</p>
 </div>
-<div class="stat-box">
+<div class="info-card">
 <h3 th:text="${totalMeals}">0</h3>
 <p>Meals Donated</p>
 </div>
 </div>
 
-
-<div class="section">
+<div class="content-area">
 
 <h2>Your Active Donations</h2>
 
-<a th:href="@{/restaurant/add-donation}">
-<button class="b1" style="width:auto; padding:10px 25px; margin-bottom:15px;">+ Add New Donation</button>
-</a>
+<a th:href="@{/restaurant/add-donation}" class="add-btn">+ Add New Donation</a>
 
 <div th:if="${#lists.isEmpty(donations)}">
-<p style="color:#aaa;">No donations yet. Start by adding one!</p>
+<p class="no-data">No donations yet. Start by adding one!</p>
 </div>
 
-<table class="data-table" th:if="${!#lists.isEmpty(donations)}">
+<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
+<thead>
 <tr>
 <th>Food Item</th>
 <th>Qty</th>
@@ -53,22 +51,25 @@
 <th>Status</th>
 <th>Action</th>
 </tr>
+</thead>
+<tbody>
 <tr th:each="d : ${donations}">
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
 <td th:text="${d.expiry}"></td>
 <td th:text="${d.pickupAddress}"></td>
 <td>
-<span class="status-pending" th:if="${d.status == 'Pending'}">Pending</span>
-<span class="status-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-<span class="status-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
+<span class="st-pending" th:if="${d.status == 'Pending'}">Pending</span>
+<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
+<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
 </td>
 <td>
 <a th:href="@{/restaurant/delete/{id}(id=${d.id})}" th:if="${d.status == 'Pending'}" onclick="return confirm('Are you sure?')">
-<button class="btn-delete">Delete</button>
+<button class="del-btn">Delete</button>
 </a>
 </td>
 </tr>
+</tbody>
 </table>
 
 </div>

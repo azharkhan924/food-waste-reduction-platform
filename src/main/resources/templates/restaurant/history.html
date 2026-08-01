@@ -16,15 +16,16 @@
 		</ul>
 	</div>
 
-<div class="dashboard-container">
+<div class="main-box">
 
 <h1>Donation History</h1>
 
 <div th:if="${#lists.isEmpty(donations)}">
-<p style="color:#aaa;">No donations found.</p>
+<p class="no-data">No donations found.</p>
 </div>
 
-<table class="data-table" th:if="${!#lists.isEmpty(donations)}">
+<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
+<thead>
 <tr>
 <th>Food Item</th>
 <th>Qty</th>
@@ -34,23 +35,26 @@
 <th>Accepted By</th>
 <th>Date Added</th>
 </tr>
+</thead>
+<tbody>
 <tr th:each="d : ${donations}">
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
 <td th:text="${d.expiry}"></td>
 <td th:text="${d.pickupAddress}"></td>
 <td>
-<span class="status-pending" th:if="${d.status == 'Pending'}">Pending</span>
-<span class="status-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-<span class="status-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
+<span class="st-pending" th:if="${d.status == 'Pending'}">Pending</span>
+<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
+<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
 </td>
 <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
 <td th:text="${d.createdAt}"></td>
 </tr>
+</tbody>
 </table>
 
-<p style="margin-top:20px;">
-<a th:href="@{/restaurant/dashboard}">Back to Dashboard</a>
+<p style="margin-top:25px;">
+<a th:href="@{/restaurant/dashboard}" class="goback">← Back to Dashboard</a>
 </p>
 
 </div>

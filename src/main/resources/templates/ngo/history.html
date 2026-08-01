@@ -15,26 +15,27 @@
 		</ul>
 	</div>
 
-<div class="dashboard-container">
+<div class="main-box">
 
 <h1>My Accepted Donations</h1>
 
-<div class="stats-row">
-<div class="stat-box">
+<div class="info-row">
+<div class="info-card">
 <h3 th:text="${totalAccepted}">0</h3>
 <p>Total Accepted</p>
 </div>
-<div class="stat-box">
+<div class="info-card">
 <h3 th:text="${totalMeals}">0</h3>
 <p>Meals Received</p>
 </div>
 </div>
 
 <div th:if="${#lists.isEmpty(donations)}">
-<p style="color:#aaa;">You haven't accepted any donations yet.</p>
+<p class="no-data">You haven't accepted any donations yet.</p>
 </div>
 
-<table class="data-table" th:if="${!#lists.isEmpty(donations)}">
+<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
+<thead>
 <tr>
 <th>Food Item</th>
 <th>Qty</th>
@@ -44,6 +45,8 @@
 <th>Status</th>
 <th>Action</th>
 </tr>
+</thead>
+<tbody>
 <tr th:each="d : ${donations}">
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
@@ -51,20 +54,21 @@
 <td th:text="${d.pickupAddress}"></td>
 <td th:text="${d.restaurantName}"></td>
 <td>
-<span class="status-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-<span class="status-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
+<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
+<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
 </td>
 <td>
 <a th:href="@{/ngo/pickup/{id}(id=${d.id})}" th:if="${d.status == 'Accepted'}" onclick="return confirm('Mark as picked up?')">
-<button class="btn-pickup">Mark Picked Up</button>
+<button class="pickup-btn">Mark Picked Up</button>
 </a>
-<span th:if="${d.status == 'Picked Up'}" style="color:#4caf50;">Done ✓</span>
+<span th:if="${d.status == 'Picked Up'}" class="st-picked">Done ✓</span>
 </td>
 </tr>
+</tbody>
 </table>
 
-<p style="margin-top:20px;">
-<a th:href="@{/ngo/dashboard}">Back to Dashboard</a>
+<p style="margin-top:25px;">
+<a th:href="@{/ngo/dashboard}" class="goback">← Back to Dashboard</a>
 </p>
 
 </div>

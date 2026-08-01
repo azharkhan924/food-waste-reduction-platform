@@ -15,19 +15,20 @@
 		</ul>
 	</div>
 
-<div class="dashboard-container">
+<div class="main-box">
 
 <h1>Welcome, <span th:text="${name}">NGO</span> 👋</h1>
 
-<div class="section">
+<div class="content-area">
 
 <h2>Available Donations</h2>
 
 <div th:if="${#lists.isEmpty(donations)}">
-<p style="color:#aaa;">No donations available right now. Check back later!</p>
+<p class="no-data">No donations available right now. Check back later!</p>
 </div>
 
-<table class="data-table" th:if="${!#lists.isEmpty(donations)}">
+<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
+<thead>
 <tr>
 <th>Food Item</th>
 <th>Qty</th>
@@ -36,6 +37,8 @@
 <th>Donated By</th>
 <th>Action</th>
 </tr>
+</thead>
+<tbody>
 <tr th:each="d : ${donations}">
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
@@ -44,10 +47,11 @@
 <td th:text="${d.restaurantName}"></td>
 <td>
 <a th:href="@{/ngo/accept/{id}(id=${d.id})}" onclick="return confirm('Accept this donation?')">
-<button class="btn-accept">Accept</button>
+<button class="accept-btn">Accept</button>
 </a>
 </td>
 </tr>
+</tbody>
 </table>
 
 </div>
