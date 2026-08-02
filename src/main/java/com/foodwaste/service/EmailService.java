@@ -35,4 +35,24 @@ mailSender.send(message);
 
 }
 
+public void sendDonationAlert(String to, String foodName, int qty, String pickupAddress, String restaurantName){
+
+SimpleMailMessage message = new SimpleMailMessage();
+
+message.setFrom("khanazhar618190@gmail.com");
+message.setTo(to);
+message.setSubject("New Food Donation Available - " + foodName);
+message.setText("Hi,\n\n"
+        + "A new food donation has been added on the Food Waste Platform!\n\n"
+        + "Food Item: " + foodName + "\n"
+        + "Quantity: " + qty + " servings\n"
+        + "Pickup Address: " + pickupAddress + "\n"
+        + "Donated By: " + restaurantName + "\n\n"
+        + "Login to the platform to accept this donation before someone else does.\n\n"
+        + "Thank you,\nFood Waste Reduction Platform");
+
+mailSender.send(message);
+
+}
+
 }

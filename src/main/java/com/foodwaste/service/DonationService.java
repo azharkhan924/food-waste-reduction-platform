@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foodwaste.entity.Donation;
+import com.foodwaste.entity.User;
 import com.foodwaste.repository.DonationRepository;
+import com.foodwaste.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,12 +17,33 @@ public class DonationService {
 @Autowired
 private DonationRepository donationRepo;
 
+@Autowired
+private UserRepository userRepo;
+
+@Autowired
+private EmailService emailService;
+
 public void addDonation(Donation donation){
 
 donation.setStatus("Pending");
 donation.setCreatedAt(LocalDateTime.now());
 
 donationRepo.save(donation);
+
+List<User> ngoUsers = userRepo.findByRole("NGO");
+
+for(User ngo : ngoUsers){
+try{
+emailService.sendDonationAlert(
+    ngo.getEmail(),
+    donation.getFoodName(),
+    donation.getQty(),
+    donation.getPickupAddress(),
+    donation.getRestaurantName()
+);
+}catch(Exception e){
+}
+}
 }
 
 public List<Donation> getDonationsByRestaurant(Long restaurantId){
@@ -66,3 +89,4 @@ return donationRepo.findByRestaurantId(restaurantId).size();
 }
 
 }
+
