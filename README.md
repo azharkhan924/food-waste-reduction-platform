@@ -25,3 +25,10 @@ Accept donations.
 Mark accepted donations as picked up.
 Donation history page with status tracking.
 Impact statistics showing total accepted donations and meals received.
+5. Notifications
+Implement email alerts for NGOs when new donations are added.
+Add optional push/local notifications (if required).
+6.Admin Panel
+User management: add, block, or update restaurants/NGOs.
+View all donations with filters + status.
+Basic analytics & data summaries (daily/weekly/monthly donations).
