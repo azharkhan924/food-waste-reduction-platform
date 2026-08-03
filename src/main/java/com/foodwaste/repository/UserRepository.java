@@ -13,4 +13,8 @@ boolean existsByEmail(String email);
 
 List<User> findByRole(String role);
 
+long countByRole(String role);
+
+long countByBlocked(boolean blocked);
+
 }

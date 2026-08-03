@@ -20,6 +20,8 @@ public class User {
     @Column(nullable =false)
     private String role;
 
+    private boolean blocked = false;
+
     public User() {
     }
     public User(String name, String email, String password, String role) {
@@ -31,6 +33,18 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public String getName() {

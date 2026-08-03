@@ -51,6 +51,11 @@ model.addAttribute("error","Invalid Email or Password");
 return "login";
 }
 
+if(user.isBlocked()){
+model.addAttribute("error","Your account has been blocked. Contact admin.");
+return "login";
+}
+
 session.setAttribute("userId", user.getId());
 session.setAttribute("userName", user.getName());
 session.setAttribute("userEmail", user.getEmail());
@@ -59,7 +64,9 @@ session.setAttribute("userRole", user.getRole());
 if(user.getRole().equals("Restaurant")){
 return "redirect:/restaurant/dashboard";
 }
-
+else if(user.getRole().equals("Admin")){
+return "redirect:/admin/dashboard";
+}
 
 else
 return "redirect:/ngo/dashboard";

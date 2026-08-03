@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Donations</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div id="mymenu">
+<ul>
+<li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+<li><a th:href="@{/admin/users}">Users</a></li>
+<li><a th:href="@{/admin/donations}">Donations</a></li>
+<li><a th:href="@{/logout}">Logout</a></li>
+</ul>
+</div>
+
+<div class="main-box" style="max-width:1100px;">
+
+<h1>All Donations</h1>
+
+<div class="filter-bar">
+<form th:action="@{/admin/donations}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+<select name="statusFilter" style="width:140px;">
+<option value="">All Status</option>
+<option value="Pending" th:selected="${statusFilter == 'Pending'}">Pending</option>
+<option value="Accepted" th:selected="${statusFilter == 'Accepted'}">Accepted</option>
+<option value="Picked Up" th:selected="${statusFilter == 'Picked Up'}">Picked Up</option>
+</select>
+<select name="period" style="width:140px;">
+<option value="">All Time</option>
+<option value="today" th:selected="${period == 'today'}">Today</option>
+<option value="week" th:selected="${period == 'week'}">Last 7 Days</option>
+<option value="month" th:selected="${period == 'month'}">Last 30 Days</option>
+</select>
+<button type="submit" class="accept-btn">Apply</button>
+<a th:href="@{/admin/donations}" class="del-btn" style="text-decoration:none; padding:8px 14px;">Clear</a>
+</form>
+<p style="color:#888; margin-top:8px; font-size:13px;">
+Showing <strong th:text="${totalShowing}" style="color:#66bb6a;">0</strong> donation(s)
+</p>
+</div>
+
+<div th:if="${#lists.isEmpty(donations)}">
+<p class="no-data">No donations found.</p>
+</div>
+
+<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
+<thead>
+<tr>
+<th>ID</th>
+<th>Food</th>
+<th>Qty</th>
+<th>Expiry</th>
+<th>Address</th>
+<th>Restaurant</th>
+<th>NGO</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="d : ${donations}">
+<td th:text="${d.id}"></td>
+<td th:text="${d.foodName}"></td>
+<td th:text="${d.qty}"></td>
+<td th:text="${d.expiry}"></td>
+<td th:text="${d.pickupAddress}"></td>
+<td th:text="${d.restaurantName}"></td>
+<td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
+<td>
+<span class="st-pending" th:if="${d.status == 'Pending'}">Pending</span>
+<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
+<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
+</td>
+<td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</body>
+</html>
