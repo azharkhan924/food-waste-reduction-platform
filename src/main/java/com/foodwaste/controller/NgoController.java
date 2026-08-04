@@ -37,6 +37,24 @@ return "ngo/dashboard";
 }
 
 
+@GetMapping("/ngo/map")
+public String mapView(HttpSession session, Model model){
+
+    Long userId = (Long) session.getAttribute("userId");
+    if(userId == null){
+        return "redirect:/login";
+    }
+
+    String name = (String) session.getAttribute("userName");
+    model.addAttribute("name", name);
+
+    List<Donation> pendingDonations = donationService.getPendingDonations();
+    model.addAttribute("donations", pendingDonations);
+
+    return "ngo/map";
+}
+
+
 @GetMapping("/ngo/accept/{id}")
 public String acceptDonation(@PathVariable Long id, HttpSession session){
 

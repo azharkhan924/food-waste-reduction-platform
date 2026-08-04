@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Add Donation</title>
 <link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
 <body>
 <div id="mymenu">
@@ -16,7 +17,7 @@
 		</ul>
 	</div>
 
-<div class="card" style="margin-top:40px;">
+<div class="card" style="margin-top:40px; width:520px;">
 
 <h1>Food Waste Platform</h1>
 <h2>Add Food Donation</h2>
@@ -33,7 +34,16 @@
 <input type="date" name="expiry" required style="width:100%; padding:11px 14px; border:2px solid rgba(255,255,255,0.15); border-radius:8px; background-color:rgba(255,255,255,0.07); color:white; font-size:14px; outline:none;">
 
 <label>Pickup Address</label>
-<input type="text" name="pickupAddress" placeholder="Enter pickup location" required>
+<input type="text" name="pickupAddress" id="addressInput" placeholder="Enter pickup location or click on map" required>
+
+<input type="hidden" name="latitude" id="latField">
+<input type="hidden" name="longitude" id="lngField">
+
+<label>Select Location on Map</label>
+<p style="font-size:11px; color:#999; margin-top:-4px; margin-bottom:8px;">Click on the map to pin your pickup location</p>
+<div id="map" style="width:100%; height:280px; border-radius:10px; border:2px solid rgba(255,255,255,0.1); margin-bottom:10px;"></div>
+
+<p id="coordsDisplay" style="font-size:12px; color:#81c784; margin-bottom:5px; text-align:left;"></p>
 
 <button type="submit" class="b1">Submit Donation</button>
 
@@ -44,6 +54,49 @@
 </p>
 
 </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+var marker = null;
+
+map.on('click', function(e) {
+    var lat = e.latlng.lat;
+    var lng = e.latlng.lng;
+
+    document.getElementById('latField').value = lat;
+    document.getElementById('lngField').value = lng;
+    document.getElementById('coordsDisplay').innerHTML = '📍 Lat: ' + lat.toFixed(4) + ', Lng: ' + lng.toFixed(4);
+
+    if(marker != null){
+        map.removeLayer(marker);
+    }
+    marker = L.marker([lat, lng]).addTo(map);
+
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng)
+    .then(function(response){ return response.json(); })
+    .then(function(data){
+        if(data.display_name){
+            document.getElementById('addressInput').value = data.display_name;
+        }
+    })
+    .catch(function(err){
+        console.log(err);
+    });
+});
+
+if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+        map.setView([pos.coords.latitude, pos.coords.longitude], 14);
+    });
+}
+</script>
 
 </body>
 </html>

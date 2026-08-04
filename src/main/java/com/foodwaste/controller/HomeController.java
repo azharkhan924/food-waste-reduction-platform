@@ -120,12 +120,21 @@ return "redirect:/login";
 }
 
 
+
+
+
+
 @GetMapping("/forgot-password")
 public String forgotPassword() {
 
 return "forgot-password";
 
 }
+
+
+
+
+
 
 @PostMapping("/forgot-password")
 public String resetPassword(@RequestParam String email, Model model) {
@@ -150,6 +159,10 @@ model.addAttribute("success", "OTP sent to your email");
 return "verify-otp";
 
 } 
+
+
+
+
 
 
 @PostMapping("/verify-otp")

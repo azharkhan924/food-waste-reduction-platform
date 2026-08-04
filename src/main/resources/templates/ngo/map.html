@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donation Map</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+#mapContainer {
+    width: 100%;
+    height: 480px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.1);
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+#routeInfo {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(102,187,106,0.3);
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-top: 10px;
+    display: none;
+}
+#routeInfo h3 {
+    color: #66bb6a;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+#routeInfo p {
+    color: #ccc;
+    font-size: 14px;
+    margin: 4px 0;
+}
+.directions-btn {
+    background: #1e88e5;
+    color: white;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 5px;
+}
+.directions-btn:hover {
+    background: #1565c0;
+}
+.map-accept-btn {
+    background: #43a047;
+    color: white;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+.map-accept-btn:hover {
+    background: #2e7d32;
+}
+.clear-route-btn {
+    background: transparent;
+    color: #ef5350;
+    border: 1px solid #ef5350;
+    padding: 6px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
+}
+.clear-route-btn:hover {
+    background: #ef5350;
+    color: white;
+}
+.legend-box {
+    background: rgba(0,0,0,0.5);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #aaa;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.legend-box span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+
+<div id="mymenu">
+    <ul>
+        <li><a th:href="@{/ngo/dashboard}">Dashboard</a></li>
+        <li><a th:href="@{/ngo/map}">Map View</a></li>
+        <li><a th:href="@{/ngo/history}">My Donations</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</div>
+
+<div class="main-box" style="max-width:1000px;">
+
+<h1>🗺️ Donation Map View</h1>
+<p style="color:#aaa; margin-top:-20px; margin-bottom:20px; font-size:14px;">See available donations near you. Click on a marker for details & directions.</p>
+
+<div class="legend-box">
+    <span><span class="legend-dot" style="background:#43a047;"></span> Donor Location</span>
+    <span><span class="legend-dot" style="background:#1e88e5;"></span> Your Location</span>
+    <span style="color:#81c784;">Total on map: <strong id="markerCount">0</strong></span>
+</div>
+
+<div id="mapContainer"></div>
+
+<div id="routeInfo">
+    <h3>📍 Route Details</h3>
+    <p><strong>To:</strong> <span id="routeDest">-</span></p>
+    <p><strong>Distance:</strong> <span id="routeDistance" style="color:#66bb6a;">-</span></p>
+    <p><strong>Estimated Time:</strong> <span id="routeTime" style="color:#ffb74d;">-</span></p>
+    <button class="clear-route-btn" onclick="clearRoute()">✕ Clear Route</button>
+</div>
+
+<div th:if="${#lists.isEmpty(donations)}">
+    <p class="no-data">No pending donations right now. Check back later!</p>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script th:inline="javascript">
+
+var map = L.map('mapContainer').setView([20.5937, 78.9629], 5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+var myLocationMarker = null;
+var myLat = null;
+var myLng = null;
+var routeLine = null;
+var allMarkers = [];
+
+var donorIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+var myIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+        myLat = pos.coords.latitude;
+        myLng = pos.coords.longitude;
+        myLocationMarker = L.marker([myLat, myLng], {icon: myIcon}).addTo(map);
+        myLocationMarker.bindPopup('<b>You are here</b>').openPopup();
+        map.setView([myLat, myLng], 12);
+    }, function(err){
+        console.log(err.message);
+    });
+}
+
+fetch('/api/donations/pending')
+.then(function(res){ return res.json(); })
+.then(function(data){
+    document.getElementById('markerCount').innerText = data.length;
+
+    if(data.length > 0){
+        var bounds = [];
+
+        for(var i = 0; i < data.length; i++){
+            var d = data[i];
+
+            var popupHtml = '<div style="min-width:200px; font-family:Arial;">';
+            popupHtml += '<h4 style="margin:0 0 6px 0; color:#2e7d32;">' + d.foodName + '</h4>';
+            popupHtml += '<p style="margin:2px 0; font-size:13px;"><b>Qty:</b> ' + d.qty + ' servings</p>';
+            popupHtml += '<p style="margin:2px 0; font-size:13px;"><b>Expiry:</b> ' + d.expiry + '</p>';
+            popupHtml += '<p style="margin:2px 0; font-size:13px;"><b>By:</b> ' + d.restaurantName + '</p>';
+            popupHtml += '<p style="margin:2px 0; font-size:13px;"><b>Address:</b> ' + d.pickupAddress + '</p>';
+            popupHtml += '<hr style="margin:8px 0; border-color:#ddd;">';
+            popupHtml += '<button class="directions-btn" onclick="getRoute(' + d.lat + ',' + d.lng + ',\'' + d.pickupAddress.replace(/'/g, "\\'") + '\')">🧭 Get Directions</button>';
+            popupHtml += '<a href="/ngo/accept/' + d.id + '" onclick="return confirm(\'Accept this donation?\')" style="text-decoration:none;">';
+            popupHtml += '<button class="map-accept-btn">✓ Accept</button></a>';
+            popupHtml += '</div>';
+
+            var m = L.marker([d.lat, d.lng], {icon: donorIcon}).addTo(map);
+            m.bindPopup(popupHtml);
+            allMarkers.push(m);
+            bounds.push([d.lat, d.lng]);
+        }
+
+        if(myLat != null){
+            bounds.push([myLat, myLng]);
+        }
+
+        if(bounds.length > 1){
+            map.fitBounds(bounds, {padding: [40, 40]});
+        } else if(bounds.length == 1){
+            map.setView(bounds[0], 13);
+        }
+    }
+})
+.catch(function(err){
+    console.log(err);
+});
+
+
+function getRoute(destLat, destLng, destAddr){
+
+    if(myLat == null || myLng == null){
+        alert('Could not get your location. Please allow location access and refresh.');
+        return;
+    }
+
+    if(routeLine != null){
+        map.removeLayer(routeLine);
+    }
+
+    var url = 'https://router.project-osrm.org/route/v1/driving/' + myLng + ',' + myLat + ';' + destLng + ',' + destLat + '?overview=full&geometries=geojson';
+
+    fetch(url)
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+        if(data.routes && data.routes.length > 0){
+            var route = data.routes[0];
+            var coords = route.geometry.coordinates;
+
+            var latLngs = [];
+            for(var j = 0; j < coords.length; j++){
+                latLngs.push([coords[j][1], coords[j][0]]);
+            }
+
+            routeLine = L.polyline(latLngs, {
+                color: '#1e88e5',
+                weight: 4,
+                opacity: 0.8
+            }).addTo(map);
+
+            map.fitBounds(routeLine.getBounds(), {padding: [50, 50]});
+
+            var distKm = (route.distance / 1000).toFixed(1);
+            var timeMin = Math.round(route.duration / 60);
+
+            var timeStr = '';
+            if(timeMin >= 60){
+                var hrs = Math.floor(timeMin / 60);
+                var mins = timeMin % 60;
+                timeStr = hrs + ' hr ' + mins + ' min';
+            } else {
+                timeStr = timeMin + ' min';
+            }
+
+            document.getElementById('routeDest').innerText = destAddr;
+            document.getElementById('routeDistance').innerText = distKm + ' km';
+            document.getElementById('routeTime').innerText = timeStr;
+            document.getElementById('routeInfo').style.display = 'block';
+
+        } else {
+            alert('Could not find a route.');
+        }
+    })
+    .catch(function(err){
+        console.log(err);
+        alert('Error getting directions.');
+    });
+}
+
+
+function clearRoute(){
+    if(routeLine != null){
+        map.removeLayer(routeLine);
+        routeLine = null;
+    }
+    document.getElementById('routeInfo').style.display = 'none';
+}
+
+</script>
+
+</body>
+</html>
