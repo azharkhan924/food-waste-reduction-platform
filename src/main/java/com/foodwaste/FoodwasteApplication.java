@@ -18,9 +18,12 @@ public class FoodwasteApplication {
 	@Bean
 	public CommandLineRunner initAdmin(UserRepository userRepo) {
 		return args -> {
-			if (!userRepo.existsByEmail("admin@gmail.com")) {
-				User admin = new User("Admin", "admin@gmail.com", "admin123", "Admin");
-				userRepo.save(admin);
+			try {
+				if (!userRepo.existsByEmail("admin@gmail.com")) {
+					User admin = new User("Admin", "admin@gmail.com", "admin123", "Admin");
+					userRepo.save(admin);
+				}
+			} catch (Exception e) {
 			}
 		};
 	}
