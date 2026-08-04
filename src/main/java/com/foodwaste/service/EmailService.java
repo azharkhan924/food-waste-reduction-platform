@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-@Autowired
+@Autowired(required = false)
 private JavaMailSender mailSender;
 
 public void sendMail(String to){
 try {
+if(mailSender == null) return;
 SimpleMailMessage message=new SimpleMailMessage();
 message.setTo(to);
 message.setSubject("Testing Spring Boot Mail");
@@ -24,6 +25,7 @@ mailSender.send(message);
 
 public void sendOtp(String to, String otp){
 try {
+if(mailSender == null) return;
 SimpleMailMessage message=new SimpleMailMessage();
 message.setTo(to);
 message.setSubject("OTP for Password Reset");
@@ -35,6 +37,7 @@ mailSender.send(message);
 
 public void sendDonationAlert(String to, String foodName, int qty, String pickupAddress, String restaurantName){
 try {
+if(mailSender == null) return;
 SimpleMailMessage message = new SimpleMailMessage();
 message.setFrom("khanazhar618190@gmail.com");
 message.setTo(to);
