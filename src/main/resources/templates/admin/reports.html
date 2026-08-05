@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" th:href="@{/css/admin.css}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="mymenu">
+<ul>
+<li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+<li><a th:href="@{/admin/users}">Users</a></li>
+<li><a th:href="@{/admin/donations}">Donations</a></li>
+<li><a th:href="@{/admin/reports}">Reports</a></li>
+<li><a th:href="@{/logout}">Logout</a></li>
+</ul>
+</div>
+
+<div class="main-box" style="max-width:1100px;">
+
+<h1>Reports & Analytics</h1>
+
+<div class="content-area">
+<h2>Donation Stats</h2>
+<div class="info-row">
+<div class="info-card">
+<h3 th:text="${totalDonations}">0</h3>
+<p>Total Donations</p>
+</div>
+<div class="info-card">
+<h3 th:text="${pending}" style="color:#ffb74d;">0</h3>
+<p>Pending</p>
+</div>
+<div class="info-card">
+<h3 th:text="${accepted}" style="color:#64b5f6;">0</h3>
+<p>Accepted</p>
+</div>
+<div class="info-card">
+<h3 th:text="${pickedUp}" style="color:#81c784;">0</h3>
+<p>Picked Up</p>
+</div>
+</div>
+</div>
+
+<div class="content-area">
+<h2>Food Saved & Meal Impact</h2>
+<div class="info-row">
+<div class="info-card">
+<h3 th:text="${totalFood} + ' kg'">0 kg</h3>
+<p>Total Food Donated</p>
+</div>
+<div class="info-card">
+<h3 th:text="${foodSaved} + ' kg'" style="color:#81c784;">0 kg</h3>
+<p>Food Saved (Picked Up)</p>
+</div>
+<div class="info-card">
+<h3 th:text="${meals}" style="color:#ce93d8;">0</h3>
+<p>Estimated Meals</p>
+</div>
+</div>
+<p style="color:#888; font-size:13px;">* Approx 1 kg = 2 meals</p>
+</div>
+
+<div class="content-area">
+<h2>NGO & Restaurant Engagement</h2>
+<div class="info-row">
+<div class="info-card">
+<h3 th:text="${totalNgos}">0</h3>
+<p>Total NGOs</p>
+</div>
+<div class="info-card">
+<h3 th:text="${ngoClaimed}" style="color:#64b5f6;">0</h3>
+<p>Donations Claimed</p>
+</div>
+<div class="info-card">
+<h3 th:text="${totalRestaurants}" style="color:#81c784;">0</h3>
+<p>Total Restaurants</p>
+</div>
+</div>
+</div>
+
+<div class="content-area">
+<h2>Trends (Last 6 Months)</h2>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+<div style="flex:1; min-width:300px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:18px;">
+<p style="color:#c8e6c9; font-size:14px; font-weight:600; margin-bottom:10px;">Monthly Donations</p>
+<canvas id="chart1"></canvas>
+</div>
+<div style="flex:1; min-width:300px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:18px;">
+<p style="color:#c8e6c9; font-size:14px; font-weight:600; margin-bottom:10px;">Food Saved Per Month (kg)</p>
+<canvas id="chart2"></canvas>
+</div>
+</div>
+
+<div style="max-width:400px; margin:20px auto 0; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:18px;">
+<p style="color:#c8e6c9; font-size:14px; font-weight:600; margin-bottom:10px; text-align:center;">Status Breakdown</p>
+<canvas id="chart3"></canvas>
+</div>
+
+</div>
+
+</div>
+
+<script th:inline="javascript">
+var months = /*[[${months}]]*/ [];
+var counts = /*[[${counts}]]*/ [];
+var foodPerMonth = /*[[${foodPerMonth}]]*/ [];
+var pending = /*[[${pending}]]*/ 0;
+var accepted = /*[[${accepted}]]*/ 0;
+var pickedUp = /*[[${pickedUp}]]*/ 0;
+
+new Chart(document.getElementById('chart1'), {
+    type: 'bar',
+    data: {
+        labels: months,
+        datasets: [{
+            label: 'Donations',
+            data: counts,
+            backgroundColor: 'rgba(102,187,106,0.6)',
+            borderColor: '#66bb6a',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { color: '#aaa' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            x: { ticks: { color: '#aaa' }, grid: { display: false } }
+        }
+    }
+});
+
+new Chart(document.getElementById('chart2'), {
+    type: 'line',
+    data: {
+        labels: months,
+        datasets: [{
+            label: 'Food (kg)',
+            data: foodPerMonth,
+            borderColor: '#64b5f6',
+            backgroundColor: 'rgba(100,181,246,0.15)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { color: '#aaa' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            x: { ticks: { color: '#aaa' }, grid: { display: false } }
+        }
+    }
+});
+
+new Chart(document.getElementById('chart3'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Pending', 'Accepted', 'Picked Up'],
+        datasets: [{
+            data: [pending, accepted, pickedUp],
+            backgroundColor: ['rgba(255,183,77,0.8)', 'rgba(100,181,246,0.8)', 'rgba(129,199,132,0.8)'],
+            borderColor: '#1a1a1a',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { position: 'bottom', labels: { color: '#ccc', padding: 12 } }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
