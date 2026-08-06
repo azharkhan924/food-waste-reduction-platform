@@ -40,7 +40,7 @@
 <tr th:each="d : ${donations}">
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
-<td th:text="${d.expiry}"></td>
+<td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
 <td th:text="${d.pickupAddress}"></td>
 <td>
 <span class="st-pending" th:if="${d.status == 'Pending'}">Pending</span>
@@ -48,7 +48,7 @@
 <span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
 </td>
 <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
-<td th:text="${d.createdAt}"></td>
+<td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
 </tr>
 </tbody>
 </table>

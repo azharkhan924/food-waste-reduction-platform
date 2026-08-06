@@ -67,7 +67,7 @@ Showing <strong th:text="${totalShowing}" style="color:#66bb6a;">0</strong> dona
 <td th:text="${d.id}"></td>
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
-<td th:text="${d.expiry}"></td>
+<td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
 <td th:text="${d.pickupAddress}"></td>
 <td th:text="${d.restaurantName}"></td>
 <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>

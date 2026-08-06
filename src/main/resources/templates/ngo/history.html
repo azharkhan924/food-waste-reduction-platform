@@ -51,7 +51,7 @@
 <tr th:each="d : ${donations}">
 <td th:text="${d.foodName}"></td>
 <td th:text="${d.qty}"></td>
-<td th:text="${d.expiry}"></td>
+<td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
 <td th:text="${d.pickupAddress}"></td>
 <td th:text="${d.restaurantName}"></td>
 <td>
