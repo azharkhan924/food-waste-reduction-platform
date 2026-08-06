@@ -27,23 +27,9 @@ public void addDonation(Donation donation){
 
 donation.setStatus("Pending");
 donation.setCreatedAt(LocalDateTime.now());
-
 donationRepo.save(donation);
 
-List<User> ngoUsers = userRepo.findByRole("NGO");
-
-for(User ngo : ngoUsers){
-try{
-emailService.sendDonationAlert(
-    ngo.getEmail(),
-    donation.getFoodName(),
-    donation.getQty(),
-    donation.getPickupAddress(),
-    donation.getRestaurantName()
-);
-}catch(Exception e){
-}
-}
+emailService.notifyNgos(donation);
 }
 
 public List<Donation> getDonationsByRestaurant(Long restaurantId){
@@ -89,4 +75,3 @@ return donationRepo.findByRestaurantId(restaurantId).size();
 }
 
 }
-

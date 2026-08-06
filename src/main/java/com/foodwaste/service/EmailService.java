@@ -3,13 +3,23 @@ package com.foodwaste.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import com.foodwaste.entity.Donation;
+import com.foodwaste.entity.User;
+import com.foodwaste.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 public class EmailService {
 
 @Autowired(required = false)
 private JavaMailSender mailSender;
+
+@Autowired
+private UserRepository userRepo;
 
 public void sendMail(String to){
 try {
@@ -32,6 +42,20 @@ message.setSubject("OTP for Password Reset");
 message.setText("Your OTP is: " + otp + "\n\nUse this to reset your password.");
 mailSender.send(message);
 } catch (Exception e) {
+}
+}
+
+@Async
+public void notifyNgos(Donation donation){
+try {
+List<User> ngoUsers = userRepo.findByRole("NGO");
+for(User ngo : ngoUsers){
+try {
+sendDonationAlert(ngo.getEmail(), donation.getFoodName(), donation.getQty(), donation.getPickupAddress(), donation.getRestaurantName());
+} catch(Exception e){
+}
+}
+} catch(Exception e){
 }
 }
 
