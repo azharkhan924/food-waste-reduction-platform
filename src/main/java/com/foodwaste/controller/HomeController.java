@@ -98,19 +98,6 @@ return "redirect:/login";
 
 
 
-@GetMapping("/test-mail")
-@ResponseBody
-public String testMail(){
-
-emailService.sendMail("khanazhar618190@gmail.com");
-
-return "Mail Sent Successfully";
-
-}
-
-
-
-
 @GetMapping("/logout")
 public String logout(HttpSession session) {
 
