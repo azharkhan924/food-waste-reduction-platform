@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Donations — FoodRescue Admin</title>
+  <title>Food Donations — FoodRescue Admin</title>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,29 +12,31 @@
 
 <body class="dash-body role-admin">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- White Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Overview</div>
+    <div class="sidebar-label">ANALYTICS</div>
     <nav class="sidebar-nav">
       <a th:href="@{/admin/dashboard}" class="sidebar-link">
         <i data-lucide="layout-dashboard"></i> Dashboard
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Management</div>
+      <div class="sidebar-label">MANAGEMENT</div>
       <a th:href="@{/admin/users}" class="sidebar-link">
-        <i data-lucide="users"></i> Users
+        <i data-lucide="users"></i> Users Directory
       </a>
       <a th:href="@{/admin/donations}" class="sidebar-link active">
-        <i data-lucide="package"></i> Donations
+        <i data-lucide="package"></i> Food Donations
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Analytics</div>
+      <div class="sidebar-label">REPORTS</div>
       <a th:href="@{/admin/reports}" class="sidebar-link">
-        <i data-lucide="chart-no-axes-combined"></i> Reports
+        <i data-lucide="chart-no-axes-combined"></i> Reports &amp; Analytics
       </a>
     </nav>
     <div class="sidebar-footer">
@@ -42,39 +44,53 @@
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Floating Topbar Card -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="package"></i> All Donations</div>
-      <div class="topbar-actions"></div>
+
+      <div class="sneat-search-wrap">
+        <i data-lucide="search" class="sneat-search-icon"></i>
+        <input type="text" class="sneat-search-input" placeholder="Search donations...">
+      </div>
+
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'A'}">A</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Admin</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>All Donations</h1>
-        <p>Browse and filter all food donations on the platform</p>
+      <div class="page-header" style="margin-bottom:20px;">
+        <h1 style="font-size:22px; font-weight:700; color:#566A7F;">Food Donations</h1>
+        <p style="font-size:14px; color:#8592A3;">Browse, filter, and audit all food donation records</p>
       </div>
 
-      <!-- Filter + Table -->
+      <!-- Donations Table Card -->
       <div class="section-card">
-        <div class="filter-bar" style="border-bottom:1px solid var(--border-light);">
+        <div class="filter-bar" style="border-bottom:1px solid #F5F5F9; background:#FFFFFF;">
           <form th:action="@{/admin/donations}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
-            <select name="statusFilter" class="dash-select" style="width:150px;">
+            <select name="statusFilter" class="dash-select" style="width:150px; font-size:13px;">
               <option value="">All Status</option>
               <option value="Pending" th:selected="${statusFilter == 'Pending'}">Pending</option>
               <option value="Accepted" th:selected="${statusFilter == 'Accepted'}">Accepted</option>
               <option value="Picked Up" th:selected="${statusFilter == 'Picked Up'}">Picked Up</option>
             </select>
-            <select name="period" class="dash-select" style="width:150px;">
+            <select name="period" class="dash-select" style="width:150px; font-size:13px;">
               <option value="">All Time</option>
               <option value="today" th:selected="${period == 'today'}">Today</option>
               <option value="week" th:selected="${period == 'week'}">Last 7 Days</option>
               <option value="month" th:selected="${period == 'month'}">Last 30 Days</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="filter"></i> Apply</button>
-            <a th:href="@{/admin/donations}" class="btn btn-outline btn-sm"><i data-lucide="x"></i> Clear</a>
-            <span style="margin-left:auto; font-size:13px; color:var(--text-muted);">
-              Showing <strong th:text="${totalShowing}" style="color:var(--accent);">0</strong> donation(s)
+            <button type="submit" class="sneat-btn-primary" style="padding:6px 14px; font-size:12px;">Apply Filter</button>
+            <a th:href="@{/admin/donations}" class="btn btn-outline btn-sm">Clear</a>
+            <span style="margin-left:auto; font-size:13px; color:#8592A3;">
+              Showing <strong th:text="${totalShowing}" style="color:#059669;">0</strong> record(s)
             </span>
           </form>
         </div>
@@ -84,31 +100,31 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Food</th>
+                <th>Food Item</th>
                 <th>Qty</th>
                 <th>Expiry</th>
-                <th>Address</th>
-                <th>Restaurant</th>
-                <th>NGO</th>
+                <th>Pickup Address</th>
+                <th>Restaurant Donor</th>
+                <th>NGO Partner</th>
                 <th>Status</th>
                 <th>Date</th>
               </tr>
             </thead>
             <tbody>
               <tr th:each="d : ${donations}">
-                <td class="td-bold" th:text="${d.id}"></td>
-                <td th:text="${d.foodName}"></td>
-                <td th:text="${d.qty}"></td>
-                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
-                <td th:text="${d.pickupAddress}"></td>
-                <td th:text="${d.restaurantName}"></td>
-                <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
+                <td class="td-bold" th:text="'#' + ${d.id}">#1</td>
+                <td th:text="${d.foodName}">Food Item</td>
+                <td th:text="${d.qty} + ' servings'">40</td>
+                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}">Date</td>
+                <td th:text="${d.pickupAddress}">Address</td>
+                <td th:text="${d.restaurantName}">Restaurant</td>
+                <td th:text="${d.ngoName != null ? d.ngoName : '-'}">-</td>
                 <td>
-                  <span class="badge badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock"></i> Pending</span>
-                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
-                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
+                  <span class="sneat-badge-pending" th:if="${d.status == 'Pending'}">Pending</span>
+                  <span class="sneat-badge-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
+                  <span class="sneat-badge-active" th:if="${d.status == 'Picked Up'}">Completed</span>
                 </td>
-                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
+                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}">Date</td>
               </tr>
             </tbody>
           </table>
@@ -116,9 +132,9 @@
 
         <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">
           <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="inbox"></i></div>
+            <div class="empty-state-icon" style="background:#ECFDF5;"><i data-lucide="inbox" style="color:#059669;"></i></div>
             <h3>No donations found</h3>
-            <p>Try adjusting your filters or check back later.</p>
+            <p>No donation records match your filter criteria.</p>
           </div>
         </div>
       </div>

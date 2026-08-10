@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reports — FoodRescue Admin</title>
+  <title>Reports &amp; Analytics — FoodRescue Admin</title>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,29 +13,31 @@
 
 <body class="dash-body role-admin">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- White Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Overview</div>
+    <div class="sidebar-label">ANALYTICS</div>
     <nav class="sidebar-nav">
       <a th:href="@{/admin/dashboard}" class="sidebar-link">
         <i data-lucide="layout-dashboard"></i> Dashboard
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Management</div>
+      <div class="sidebar-label">MANAGEMENT</div>
       <a th:href="@{/admin/users}" class="sidebar-link">
-        <i data-lucide="users"></i> Users
+        <i data-lucide="users"></i> Users Directory
       </a>
       <a th:href="@{/admin/donations}" class="sidebar-link">
-        <i data-lucide="package"></i> Donations
+        <i data-lucide="package"></i> Food Donations
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Analytics</div>
+      <div class="sidebar-label">REPORTS</div>
       <a th:href="@{/admin/reports}" class="sidebar-link active">
-        <i data-lucide="chart-no-axes-combined"></i> Reports
+        <i data-lucide="chart-no-axes-combined"></i> Reports &amp; Analytics
       </a>
     </nav>
     <div class="sidebar-footer">
@@ -43,120 +45,114 @@
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Floating Topbar Card -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="chart-no-axes-combined"></i> Reports & Analytics</div>
-      <div class="topbar-actions"></div>
+
+      <div class="sneat-search-wrap">
+        <i data-lucide="search" class="sneat-search-icon"></i>
+        <input type="text" class="sneat-search-input" placeholder="Search analytics...">
+      </div>
+
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'A'}">A</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Admin</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Reports & Analytics</h1>
-        <p>Insights into food rescue performance and community impact</p>
+      <div class="page-header" style="margin-bottom:20px;">
+        <h1 style="font-size:22px; font-weight:700; color:#566A7F;">Reports &amp; Analytics</h1>
+        <p style="font-size:14px; color:#8592A3;">Detailed metrics on food saved, environmental impact, and platform growth</p>
       </div>
 
-      <!-- Donation Stats -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Donation Stats</h3>
-      <div class="kpi-grid" style="margin-bottom:32px;">
-        <div class="kpi-card">
-          <div class="kpi-icon accent"><i data-lucide="package"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalDonations}">0</div>
-            <div class="kpi-label">Total Donations</div>
+      <!-- KPI Metric Cards: Donation Overview -->
+      <h3 style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:#A1ACBD; margin-bottom:12px;">Donation Stats</h3>
+      <div class="sneat-kpi-grid">
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-purple"><i data-lucide="package"></i></div>
+            <span class="sneat-trend-up"><i data-lucide="trending-up" style="width:14px; height:14px;"></i> +18%</span>
           </div>
+          <div class="sneat-kpi-label">Total Donations</div>
+          <div class="sneat-kpi-val" th:text="${totalDonations}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon amber"><i data-lucide="clock"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${pending}">0</div>
-            <div class="kpi-label">Pending</div>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon blue"><i data-lucide="check-circle"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${accepted}">0</div>
-            <div class="kpi-label">Accepted</div>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i data-lucide="check-check"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${pickedUp}">0</div>
-            <div class="kpi-label">Picked Up</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Food Impact -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Food Saved & Meal Impact</h3>
-      <div class="kpi-grid" style="margin-bottom:32px;">
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i data-lucide="weight"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalFood} + ' kg'">0 kg</div>
-            <div class="kpi-label">Total Food Donated</div>
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-amber"><i data-lucide="clock"></i></div>
           </div>
+          <div class="sneat-kpi-label">Pending Pickup</div>
+          <div class="sneat-kpi-val" th:text="${pending}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon teal"><i data-lucide="leaf"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${foodSaved} + ' kg'">0 kg</div>
-            <div class="kpi-label">Food Saved (Picked Up)</div>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon purple"><i data-lucide="utensils"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${meals}">0</div>
-            <div class="kpi-label">Estimated Meals</div>
-          </div>
-        </div>
-      </div>
-      <p style="font-size:12px; color:var(--text-light); margin-top:-20px; margin-bottom:28px;">* Approx 1 kg = 2 meals</p>
 
-      <!-- Engagement -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">NGO & Restaurant Engagement</h3>
-      <div class="kpi-grid" style="margin-bottom:32px;">
-        <div class="kpi-card">
-          <div class="kpi-icon teal"><i data-lucide="heart-handshake"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalNgos}">0</div>
-            <div class="kpi-label">Total NGOs</div>
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-cyan"><i data-lucide="check-circle"></i></div>
           </div>
+          <div class="sneat-kpi-label">Accepted</div>
+          <div class="sneat-kpi-val" th:text="${accepted}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon blue"><i data-lucide="package-check"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${ngoClaimed}">0</div>
-            <div class="kpi-label">Donations Claimed</div>
+
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-green"><i data-lucide="check-check"></i></div>
+            <span class="sneat-trend-up"><i data-lucide="trending-up" style="width:14px; height:14px;"></i> +22%</span>
           </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon amber"><i data-lucide="store"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalRestaurants}">0</div>
-            <div class="kpi-label">Total Restaurants</div>
-          </div>
+          <div class="sneat-kpi-label">Picked Up</div>
+          <div class="sneat-kpi-val" th:text="${pickedUp}">0</div>
         </div>
       </div>
 
-      <!-- Charts -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Trends (Last 6 Months)</h3>
+      <!-- KPI Metric Cards: Impact -->
+      <h3 style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:#A1ACBD; margin-bottom:12px;">Community &amp; Environmental Impact</h3>
+      <div class="sneat-kpi-grid">
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-green"><i data-lucide="weight"></i></div>
+          </div>
+          <div class="sneat-kpi-label">Total Food Donated</div>
+          <div class="sneat-kpi-val" th:text="${totalFood} + ' kg'">0 kg</div>
+        </div>
+
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-cyan"><i data-lucide="leaf"></i></div>
+          </div>
+          <div class="sneat-kpi-label">Food Saved (Rescued)</div>
+          <div class="sneat-kpi-val" th:text="${foodSaved} + ' kg'">0 kg</div>
+        </div>
+
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-purple"><i data-lucide="utensils"></i></div>
+          </div>
+          <div class="sneat-kpi-label">Estimated Meals Provided</div>
+          <div class="sneat-kpi-val" th:text="${meals}">0</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <h3 style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:#A1ACBD; margin-bottom:12px;">Trends &amp; Growth (Last 6 Months)</h3>
       <div class="chart-grid">
-        <div class="chart-card">
-          <div class="chart-card-title">Monthly Donations</div>
+        <div class="chart-card" style="background:#FFFFFF; border:1px solid #ECEEF1; border-radius:12px; box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.06);">
+          <div class="chart-card-title" style="color:#566A7F; font-size:15px; font-weight:700;">Monthly Donations</div>
           <canvas id="chart1"></canvas>
         </div>
-        <div class="chart-card">
-          <div class="chart-card-title">Food Saved Per Month (kg)</div>
+        <div class="chart-card" style="background:#FFFFFF; border:1px solid #ECEEF1; border-radius:12px; box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.06);">
+          <div class="chart-card-title" style="color:#566A7F; font-size:15px; font-weight:700;">Food Saved Per Month (kg)</div>
           <canvas id="chart2"></canvas>
         </div>
       </div>
 
-      <div class="chart-card chart-card-centered" style="margin-bottom:24px;">
-        <div class="chart-card-title" style="text-align:center;">Status Breakdown</div>
+      <div class="chart-card chart-card-centered" style="background:#FFFFFF; border:1px solid #ECEEF1; border-radius:12px; box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.06); margin-bottom:24px;">
+        <div class="chart-card-title" style="text-align:center; color:#566A7F; font-size:15px; font-weight:700;">Status Breakdown</div>
         <canvas id="chart3"></canvas>
       </div>
     </div>
@@ -177,18 +173,17 @@
     var accepted = /*[[${accepted}]]*/ 0;
     var pickedUp = /*[[${pickedUp}]]*/ 0;
 
-    var chartColors = {
-      green: 'rgba(34,197,94,0.7)',
-      greenBorder: '#22C55E',
-      blue: 'rgba(59,130,246,0.7)',
-      blueBorder: '#3B82F6',
-      blueLight: 'rgba(59,130,246,0.1)',
-      amber: 'rgba(245,158,11,0.7)',
-      amberBorder: '#F59E0B',
-      purple: 'rgba(99,102,241,0.7)',
-      purpleBorder: '#6366F1',
-      gridColor: 'rgba(0,0,0,0.04)',
-      tickColor: '#94A3B8'
+    // Green Theme Palette: Emerald Green #059669
+    var greenColors = {
+      primary: 'rgba(5, 150, 105, 0.85)',
+      primaryBorder: '#059669',
+      green: 'rgba(113, 221, 55, 0.85)',
+      greenBorder: '#71DD37',
+      greenLight: 'rgba(5, 150, 105, 0.15)',
+      cyan: 'rgba(3, 195, 236, 0.85)',
+      amber: 'rgba(255, 171, 0, 0.85)',
+      gridColor: '#ECEEF1',
+      tickColor: '#8592A3'
     };
 
     new Chart(document.getElementById('chart1'), {
@@ -198,8 +193,8 @@
         datasets: [{
           label: 'Donations',
           data: counts,
-          backgroundColor: chartColors.purple,
-          borderColor: chartColors.purpleBorder,
+          backgroundColor: greenColors.primary,
+          borderColor: greenColors.primaryBorder,
           borderWidth: 1,
           borderRadius: 6
         }]
@@ -207,8 +202,8 @@
       options: {
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: true, ticks: { color: chartColors.tickColor }, grid: { color: chartColors.gridColor } },
-          x: { ticks: { color: chartColors.tickColor }, grid: { display: false } }
+          y: { beginAtZero: true, ticks: { color: greenColors.tickColor }, grid: { color: greenColors.gridColor } },
+          x: { ticks: { color: greenColors.tickColor }, grid: { display: false } }
         }
       }
     });
@@ -220,19 +215,19 @@
         datasets: [{
           label: 'Food (kg)',
           data: foodPerMonth,
-          borderColor: chartColors.blueBorder,
-          backgroundColor: chartColors.blueLight,
+          borderColor: greenColors.primaryBorder,
+          backgroundColor: greenColors.greenLight,
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: chartColors.blueBorder,
+          pointBackgroundColor: greenColors.primaryBorder,
           pointRadius: 4
         }]
       },
       options: {
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: true, ticks: { color: chartColors.tickColor }, grid: { color: chartColors.gridColor } },
-          x: { ticks: { color: chartColors.tickColor }, grid: { display: false } }
+          y: { beginAtZero: true, ticks: { color: greenColors.tickColor }, grid: { color: greenColors.gridColor } },
+          x: { ticks: { color: greenColors.tickColor }, grid: { display: false } }
         }
       }
     });
@@ -243,14 +238,14 @@
         labels: ['Pending', 'Accepted', 'Picked Up'],
         datasets: [{
           data: [pending, accepted, pickedUp],
-          backgroundColor: [chartColors.amber, chartColors.blue, chartColors.green],
-          borderColor: '#fff',
+          backgroundColor: [greenColors.amber, greenColors.cyan, greenColors.primary],
+          borderColor: '#FFFFFF',
           borderWidth: 3
         }]
       },
       options: {
         plugins: {
-          legend: { position: 'bottom', labels: { color: chartColors.tickColor, padding: 16, font: { size: 13 } } }
+          legend: { position: 'bottom', labels: { color: greenColors.tickColor, padding: 16, font: { size: 13 } } }
         }
       }
     });

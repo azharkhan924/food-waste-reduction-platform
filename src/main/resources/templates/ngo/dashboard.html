@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — FoodRescue NGO</title>
+  <title>Available Food — FoodRescue NGO</title>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,16 +12,20 @@
 
 <body class="dash-body role-ngo">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Navigation</div>
+    <div class="sidebar-label">NGO Portal</div>
     <nav class="sidebar-nav">
       <a th:href="@{/ngo/dashboard}" class="sidebar-link active">
-        <i data-lucide="layout-dashboard"></i> Dashboard
+        <i data-lucide="layout-dashboard"></i> Available Food
       </a>
       <a th:href="@{/ngo/map}" class="sidebar-link">
         <i data-lucide="map"></i> Map View
@@ -31,84 +35,132 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'N'}"></div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name" th:text="${name}">NGO</div>
-          <div class="sidebar-user-role">NGO Partner</div>
-        </div>
-      </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Top Bar -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="layout-dashboard"></i> Dashboard</div>
-      <div class="topbar-actions">
-        <a th:href="@{/ngo/map}" class="btn btn-primary"><i data-lucide="map"></i> View Map</a>
+
+      <!-- Live Search Input -->
+      <div class="malinessa-search-wrap">
+        <i data-lucide="search" class="malinessa-search-icon"></i>
+        <input type="text" id="searchInput" onkeyup="filterDonations()" class="malinessa-search-input" placeholder="Search available food...">
+      </div>
+
+      <!-- Right Profile Pill -->
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'N'}">N</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">NGO Partner</span>
+          </div>
+        </div>
       </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Welcome, <span th:text="${name}">NGO</span></h1>
-        <p>Browse available food donations and accept what you can collect</p>
+      <!-- Page Head -->
+      <div class="malinessa-page-head">
+        <h1 class="malinessa-page-title">Available Food Donations</h1>
+        <a th:href="@{/ngo/map}" class="btn-mcard-confirm" style="background:#059669; flex: initial; padding: 8px 18px;">
+          <i data-lucide="map" style="width:16px; height:16px;"></i> Map View
+        </a>
       </div>
 
-      <!-- Available Donations Table -->
-      <div class="section-card">
-        <div class="section-card-header">
-          <div class="section-card-title"><i data-lucide="package-search"></i> Available Donations</div>
-          <a th:href="@{/ngo/map}" class="btn btn-outline btn-sm"><i data-lucide="map-pin"></i> See on Map</a>
-        </div>
+      <!-- NGO Cards Grid -->
+      <div class="malinessa-grid" id="donationGrid">
 
-        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(donations)}">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Food Item</th>
-                <th>Qty</th>
-                <th>Expiry</th>
-                <th>Pickup Address</th>
-                <th>Donated By</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="d : ${donations}">
-                <td class="td-bold" th:text="${d.foodName}"></td>
-                <td th:text="${d.qty}"></td>
-                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
-                <td th:text="${d.pickupAddress}"></td>
-                <td th:text="${d.restaurantName}"></td>
-                <td>
-                  <a th:href="@{/ngo/accept/{id}(id=${d.id})}" onclick="return confirm('Accept this donation?')">
-                    <button class="btn btn-success btn-sm"><i data-lucide="check-circle"></i> Accept</button>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <!-- Available Donation Cards (D-1 removed) -->
+        <div th:each="d : ${donations}" class="malinessa-card ngo-card-item">
+          <!-- Card Header -->
+          <div class="mcard-header">
+            <span class="mcard-status-incoming" style="background:#ECFDF5; color:#059669; border-color:#A7F3D0;">
+              <i data-lucide="clock" style="width:12px; height:12px; margin-right:4px;"></i> Available Now
+            </span>
+          </div>
 
-        <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">
-          <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="search"></i></div>
-            <h3>No donations available</h3>
-            <p>There are no pending donations right now. Check back soon or view the map for updates.</p>
+          <!-- Card Body -->
+          <div class="mcard-body">
+            <!-- Left Info -->
+            <div class="mcard-left">
+              <div class="mcard-avatar" style="background:#ECFDF5; color:#059669;" th:text="${d.foodName != null ? d.foodName.substring(0,1).toUpperCase() : 'F'}">F</div>
+              <div class="mcard-title card-food-name" th:text="${d.foodName}">Food Item</div>
+              <div class="mcard-detail-line card-donor">
+                <i data-lucide="store" style="color:#059669;"></i>
+                <span th:text="'By ' + ${d.restaurantName}">Restaurant</span>
+              </div>
+              <div class="mcard-detail-line card-address">
+                <i data-lucide="map-pin"></i>
+                <span th:text="${d.pickupAddress}">Address</span>
+              </div>
+            </div>
+
+            <!-- Right Graphic Diagram -->
+            <div class="mcard-right-diagram">
+              <div class="table-graphic" style="border-color:#059669; background:#ECFDF5; color:#059669;">
+                <i data-lucide="utensils-crossed"></i>
+              </div>
+              <div class="mcard-servings">
+                <i data-lucide="users" style="width:12px; height:12px; color:#059669;"></i>
+                <span th:text="${d.qty} + ' servings'">40 servings</span>
+              </div>
+              <div class="mcard-time" th:if="${d.expiry != null}">
+                <i data-lucide="calendar" style="width:12px; height:12px;"></i>
+                <span th:text="${#temporals.format(d.expiry, 'dd MMM yyyy')}">Date</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer Action -->
+          <div class="mcard-footer">
+            <a th:href="@{/ngo/accept/{id}(id=${d.id})}" onclick="return confirm('Accept and claim this food donation?')" class="btn-mcard-confirm" style="background:#059669; width:100%;">
+              <i data-lucide="check-circle" style="width:16px; height:16px;"></i> Accept Donation
+            </a>
           </div>
         </div>
+
       </div>
+
+      <!-- Empty State -->
+      <div th:if="${#lists.isEmpty(donations)}" class="malinessa-card" style="margin-top:20px; text-align:center; padding:48px 24px;">
+        <div style="width:56px; height:56px; background:#ECFDF5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#059669;">
+          <i data-lucide="inbox" style="width:28px; height:28px;"></i>
+        </div>
+        <h3 style="font-size:16px; font-weight:700; color:#111827; margin-bottom:6px;">No food available right now</h3>
+        <p style="font-size:14px; color:#6B7280;">New donations posted by partner restaurants will appear here in real time.</p>
+      </div>
+
     </div>
   </main>
 
   <script>
     lucide.createIcons();
+
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    // Live search filter for NGO available donations
+    function filterDonations() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.ngo-card-item');
+
+      cards.forEach(card => {
+        const foodName = card.querySelector('.card-food-name')?.innerText.toLowerCase() || '';
+        const donor = card.querySelector('.card-donor')?.innerText.toLowerCase() || '';
+        const address = card.querySelector('.card-address')?.innerText.toLowerCase() || '';
+
+        if (foodName.includes(query) || donor.includes(query) || address.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     }
   </script>
 </body>

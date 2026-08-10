@@ -15,7 +15,7 @@
   <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-  <!-- Sidebar (Malinessa White Sidebar) -->
+  <!-- Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
       <a th:href="@{/}" class="sidebar-logo">
@@ -35,13 +35,6 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name" th:text="${name}">Restaurant</div>
-          <div class="sidebar-user-role">Restaurant Partner</div>
-        </div>
-      </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
     </div>
   </aside>
@@ -75,21 +68,17 @@
         <h1 class="malinessa-page-title">Donation History</h1>
       </div>
 
-      <!-- History Grid Cards -->
+      <!-- History Grid Cards (Accepted / Picked Up / Completed items) -->
       <div class="malinessa-grid" id="historyGrid">
-        <div th:each="d : ${donations}" class="malinessa-card history-card-item">
-          <!-- Card Header -->
+        <div th:each="d : ${donations}" th:if="${d.status == 'Picked Up' or d.status == 'Accepted'}" class="malinessa-card history-card-item">
+          <!-- Card Header (D-1 tag removed) -->
           <div class="mcard-header">
-            <span class="mcard-status-incoming" th:if="${d.status == 'Pending'}">Pending Pickup</span>
-            <span class="mcard-status-confirmed" th:if="${d.status == 'Accepted'}">Accepted by NGO</span>
-            <span class="mcard-status-completed" th:if="${d.status == 'Picked Up'}">Picked Up</span>
-
-            <div class="mcard-header-right">
-              <span class="mcard-table-tag">
-                <i data-lucide="package" style="width:13px; height:13px;"></i>
-                <span th:text="'D-' + ${d.id}">D-1</span>
-              </span>
-            </div>
+            <span class="mcard-status-confirmed" th:if="${d.status == 'Accepted'}">
+              <i data-lucide="heart-handshake" style="width:12px; height:12px; margin-right:4px;"></i> Accepted by NGO
+            </span>
+            <span class="mcard-status-completed" th:if="${d.status == 'Picked Up'}">
+              <i data-lucide="package-check" style="width:12px; height:12px; margin-right:4px;"></i> Picked Up / Completed
+            </span>
           </div>
 
           <!-- Card Body -->
@@ -107,10 +96,15 @@
               </div>
             </div>
 
+            <!-- Right Diagram -->
             <div class="mcard-right-diagram">
-              <div class="table-graphic">
-                <i data-lucide="utensils-crossed"></i>
+              <div class="table-graphic graphic-accepted" th:if="${d.status == 'Accepted'}">
+                <i data-lucide="heart-handshake"></i>
               </div>
+              <div class="table-graphic graphic-picked" th:if="${d.status == 'Picked Up'}">
+                <i data-lucide="package-check"></i>
+              </div>
+
               <div class="mcard-servings">
                 <i data-lucide="users" style="width:12px; height:12px; color:#059669;"></i>
                 <span th:text="${d.qty} + ' servings'">40 servings</span>
@@ -125,8 +119,9 @@
           <!-- Card Footer -->
           <div class="mcard-footer">
             <span class="btn-mcard-confirm" style="background:#F8FAFC; color:#475569; border:1px solid #E2E8F0; cursor:default; width:100%;">
-              <i data-lucide="check-circle" style="width:14px; height:14px; color:#059669;"></i>
-              <span th:text="${d.status}">Status</span>
+              <i data-lucide="package-check" style="width:14px; height:14px; color:#059669;" th:if="${d.status == 'Picked Up'}"></i>
+              <i data-lucide="heart-handshake" style="width:14px; height:14px; color:#059669;" th:if="${d.status == 'Accepted'}"></i>
+              <span th:text="${d.status == 'Picked Up' ? 'Picked Up / Completed' : 'Accepted by NGO'}">Completed</span>
             </span>
           </div>
         </div>
@@ -136,8 +131,8 @@
         <div style="width:56px; height:56px; background:#ECFDF5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#059669;">
           <i data-lucide="inbox" style="width:28px; height:28px;"></i>
         </div>
-        <h3 style="font-size:16px; font-weight:700; color:#111827; margin-bottom:6px;">No donation history</h3>
-        <p style="font-size:14px; color:#6B7280;">Your past donation records will appear here.</p>
+        <h3 style="font-size:16px; font-weight:700; color:#111827; margin-bottom:6px;">No donation history yet</h3>
+        <p style="font-size:14px; color:#6B7280;">Accepted and picked up donation records will appear here.</p>
       </div>
 
     </div>

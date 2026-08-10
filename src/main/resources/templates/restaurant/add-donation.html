@@ -16,7 +16,7 @@
   <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-  <!-- Sidebar (Malinessa White Sidebar) -->
+  <!-- Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
       <a th:href="@{/}" class="sidebar-logo">
@@ -36,13 +36,6 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name" th:text="${name}">Restaurant</div>
-          <div class="sidebar-user-role">Restaurant Partner</div>
-        </div>
-      </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
     </div>
   </aside>
@@ -54,7 +47,7 @@
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
 
       <div class="topbar-title" style="font-size:16px; font-weight:700; color:#111827; display:flex; align-items:center; gap:8px;">
-        <i data-lucide="plus-circle" style="color:#059669;"></i> Create Donation
+        <i data-lucide="plus-circle" style="color:#059669;"></i> Add Donation
       </div>
 
       <!-- Right profile pill -->
@@ -121,7 +114,7 @@
           <p id="coordsDisplay" style="font-size:12px; color:#059669; font-weight:600; margin:10px 0;"></p>
 
           <button type="submit" class="btn-mcard-confirm" style="width:100%; justify-content:center; padding:12px 24px; font-size:15px; margin-top:8px;">
-            <i data-lucide="plus-circle" style="width:18px; height:18px;"></i> Submit Donation
+            <i data-lucide="plus-circle" style="width:18px; height:18px;"></i> Add Donation
           </button>
         </form>
       </div>

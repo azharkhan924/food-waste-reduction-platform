@@ -8,185 +8,249 @@
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body class="dash-body role-admin">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Overview</div>
+    <div class="sidebar-label">ANALYTICS</div>
     <nav class="sidebar-nav">
       <a th:href="@{/admin/dashboard}" class="sidebar-link active">
         <i data-lucide="layout-dashboard"></i> Dashboard
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Management</div>
+      <div class="sidebar-label">MANAGEMENT</div>
       <a th:href="@{/admin/users}" class="sidebar-link">
-        <i data-lucide="users"></i> Users
+        <i data-lucide="users"></i> Users Directory
       </a>
       <a th:href="@{/admin/donations}" class="sidebar-link">
-        <i data-lucide="package"></i> Donations
+        <i data-lucide="package"></i> Food Donations
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Analytics</div>
+      <div class="sidebar-label">REPORTS</div>
       <a th:href="@{/admin/reports}" class="sidebar-link">
-        <i data-lucide="chart-no-axes-combined"></i> Reports
+        <i data-lucide="chart-no-axes-combined"></i> Reports &amp; Analytics
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'A'}"></div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name" th:text="${name}">Admin</div>
-          <div class="sidebar-user-role">Administrator</div>
-        </div>
-      </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Top Bar -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="shield-check"></i> Admin Panel</div>
-      <div class="topbar-actions"></div>
+
+      <!-- Live Search Input -->
+      <div class="malinessa-search-wrap">
+        <i data-lucide="search" class="malinessa-search-icon"></i>
+        <input type="text" id="searchInput" onkeyup="filterTable()" class="malinessa-search-input" placeholder="Search platform...">
+      </div>
+
+      <!-- Right Profile Pill -->
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'A'}">A</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Admin</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Welcome, <span th:text="${name}">Admin</span></h1>
-        <p>Platform overview and management at a glance</p>
-      </div>
-
-      <!-- Users KPIs -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Users</h3>
-      <div class="kpi-grid" style="margin-bottom:32px;">
-        <div class="kpi-card">
-          <div class="kpi-icon purple"><i data-lucide="users"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalUsers}">0</div>
-            <div class="kpi-label">Total Users</div>
-          </div>
+      <!-- Welcome Banner Card -->
+      <div class="sneat-welcome-card" style="background: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%); border-color: #A7F3D0;">
+        <div>
+          <div class="sneat-welcome-title">Welcome Back, <span th:text="${name}">Admin</span>! 🎉</div>
+          <div class="sneat-welcome-desc">System operations are fully active with <strong th:text="${todayDonations}">0</strong> new donations added today.</div>
+          <a th:href="@{/admin/reports}" class="sneat-btn-primary">
+            <i data-lucide="chart-no-axes-combined" style="width:16px; height:16px;"></i> Full Analytics Report
+          </a>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon amber"><i data-lucide="store"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalRestaurants}">0</div>
-            <div class="kpi-label">Restaurants</div>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon teal"><i data-lucide="heart-handshake"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalNgos}">0</div>
-            <div class="kpi-label">NGOs</div>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon rose"><i data-lucide="shield-ban"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${blockedUsers}">0</div>
-            <div class="kpi-label">Blocked</div>
-          </div>
+        <div class="sneat-badge-badge" style="background:#059669; color:#FFF;">
+          <i data-lucide="shield-check"></i>
         </div>
       </div>
 
-      <!-- Donations KPIs -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Donations</h3>
-      <div class="kpi-grid" style="margin-bottom:32px;">
-        <div class="kpi-card">
-          <div class="kpi-icon accent"><i data-lucide="package"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalDonations}">0</div>
-            <div class="kpi-label">Total</div>
+      <!-- Users & Activity KPI Grid (Dynamic Attributes) -->
+      <h3 style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:#9CA3AF; margin-bottom:12px;">Platform Users</h3>
+      <div class="sneat-kpi-grid">
+        <!-- Total Users -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-purple"><i data-lucide="users"></i></div>
+            <span class="sneat-trend-up"><i data-lucide="trending-up" style="width:14px; height:14px;"></i> Live</span>
           </div>
+          <div class="sneat-kpi-label">Total Registered Users</div>
+          <div class="sneat-kpi-val" th:text="${totalUsers}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon amber"><i data-lucide="clock"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${pendingCount}">0</div>
-            <div class="kpi-label">Pending</div>
+
+        <!-- Restaurants -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-amber"><i data-lucide="store"></i></div>
+            <span class="sneat-trend-up" style="color:#059669;">Donor</span>
           </div>
+          <div class="sneat-kpi-label">Active Restaurants</div>
+          <div class="sneat-kpi-val" th:text="${totalRestaurants}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon blue"><i data-lucide="check-circle"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${acceptedCount}">0</div>
-            <div class="kpi-label">Accepted</div>
+
+        <!-- NGOs -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-cyan"><i data-lucide="heart-handshake"></i></div>
+            <span class="sneat-trend-up" style="color:#0891B2;">Partner</span>
           </div>
+          <div class="sneat-kpi-label">NGO Partners</div>
+          <div class="sneat-kpi-val" th:text="${totalNgos}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i data-lucide="check-check"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${pickedUpCount}">0</div>
-            <div class="kpi-label">Picked Up</div>
+
+        <!-- Blocked Accounts -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-red"><i data-lucide="user-x"></i></div>
+            <span class="sneat-trend-down" th:if="${blockedUsers > 0}">Action</span>
           </div>
+          <div class="sneat-kpi-label">Blocked Accounts</div>
+          <div class="sneat-kpi-val" th:text="${blockedUsers}" style="color:#EF4444;">0</div>
         </div>
       </div>
 
-      <!-- Analytics KPIs -->
-      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Activity</h3>
-      <div class="kpi-grid" style="margin-bottom:32px;">
-        <div class="kpi-card">
-          <div class="kpi-icon purple"><i data-lucide="calendar-check"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${todayDonations}">0</div>
-            <div class="kpi-label">Today</div>
+      <!-- Food Donation Status KPI Grid (Dynamic Attributes) -->
+      <h3 style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:#9CA3AF; margin-bottom:12px;">Donation Status Breakdown</h3>
+      <div class="sneat-kpi-grid">
+        <!-- Total Donations -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-purple"><i data-lucide="package"></i></div>
+            <span class="sneat-trend-up"><i data-lucide="trending-up" style="width:14px; height:14px;"></i> Total</span>
           </div>
+          <div class="sneat-kpi-label">Total Food Posts</div>
+          <div class="sneat-kpi-val" th:text="${totalDonations}">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon blue"><i data-lucide="calendar-range"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${weeklyDonations}">0</div>
-            <div class="kpi-label">This Week</div>
+
+        <!-- Pending Count -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-amber"><i data-lucide="clock"></i></div>
+            <span class="sneat-trend-down" style="color:#F59E0B;">Waiting</span>
           </div>
+          <div class="sneat-kpi-label">Pending Pickup</div>
+          <div class="sneat-kpi-val" th:text="${pendingCount}" style="color:#D97706;">0</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i data-lucide="calendar"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${monthlyDonations}">0</div>
-            <div class="kpi-label">This Month</div>
+
+        <!-- Accepted Count -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-cyan"><i data-lucide="check-circle"></i></div>
+            <span class="sneat-trend-up" style="color:#0891B2;">Claimed</span>
           </div>
+          <div class="sneat-kpi-label">Accepted by NGO</div>
+          <div class="sneat-kpi-val" th:text="${acceptedCount}" style="color:#0891B2;">0</div>
+        </div>
+
+        <!-- Picked Up Count -->
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-green"><i data-lucide="package-check"></i></div>
+            <span class="sneat-trend-up"><i data-lucide="check-check" style="width:14px; height:14px;"></i> Saved</span>
+          </div>
+          <div class="sneat-kpi-label">Completed Pickups</div>
+          <div class="sneat-kpi-val" th:text="${pickedUpCount}" style="color:#059669;">0</div>
         </div>
       </div>
 
-      <!-- Recent Donations Table -->
+      <!-- Time-Period Metrics Cards -->
+      <h3 style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:#9CA3AF; margin-bottom:12px;">Activity Timeline</h3>
+      <div class="sneat-kpi-grid">
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-green"><i data-lucide="calendar-days"></i></div>
+          </div>
+          <div class="sneat-kpi-label">Donations Today</div>
+          <div class="sneat-kpi-val" th:text="${todayDonations}">0</div>
+        </div>
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-cyan"><i data-lucide="calendar-range"></i></div>
+          </div>
+          <div class="sneat-kpi-label">Last 7 Days</div>
+          <div class="sneat-kpi-val" th:text="${weeklyDonations}">0</div>
+        </div>
+        <div class="sneat-kpi-card">
+          <div class="sneat-kpi-head">
+            <div class="sneat-kpi-icon sneat-icon-purple"><i data-lucide="calendar"></i></div>
+          </div>
+          <div class="sneat-kpi-label">Last 30 Days</div>
+          <div class="sneat-kpi-val" th:text="${monthlyDonations}">0</div>
+        </div>
+      </div>
+
+      <!-- Interactive Charts Row -->
+      <div class="chart-grid" style="margin-bottom:24px;">
+        <!-- Status Doughnut Chart -->
+        <div class="chart-card" style="background:#FFFFFF; border:1px solid #ECEEF1; border-radius:16px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+          <div class="chart-card-title" style="color:#111827; font-size:15px; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+            <i data-lucide="pie-chart" style="color:#059669;"></i> Real-Time Status Ratio
+          </div>
+          <canvas id="statusDoughnutChart" style="max-height:240px;"></canvas>
+        </div>
+
+        <!-- Activity Timeline Bar Chart -->
+        <div class="chart-card" style="background:#FFFFFF; border:1px solid #ECEEF1; border-radius:16px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+          <div class="chart-card-title" style="color:#111827; font-size:15px; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+            <i data-lucide="bar-chart-3" style="color:#059669;"></i> Donation Posts Velocity
+          </div>
+          <canvas id="velocityBarChart" style="max-height:240px;"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Donations Table in Card Wrapper -->
       <div class="section-card">
         <div class="section-card-header">
-          <div class="section-card-title"><i data-lucide="list"></i> Recent Donations</div>
-          <a th:href="@{/admin/donations}" class="btn btn-outline btn-sm"><i data-lucide="external-link"></i> View All</a>
+          <div class="section-card-title"><i data-lucide="package-search" style="color:#059669;"></i> Recent Food Donations Directory</div>
+          <a th:href="@{/admin/donations}" class="sneat-btn-primary" style="padding: 6px 14px; font-size: 12px;">
+            View All <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>
+          </a>
         </div>
 
-        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(allDonations)}">
-          <table class="data-table">
+        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(allDonations)}" style="overflow-x:auto;">
+          <table class="data-table" id="donationsTable">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Food</th>
+                <th>Food Item</th>
                 <th>Qty</th>
-                <th>Restaurant</th>
-                <th>NGO</th>
+                <th>Restaurant Donor</th>
+                <th>NGO Partner</th>
                 <th>Status</th>
                 <th>Date</th>
               </tr>
             </thead>
             <tbody>
-              <tr th:each="d : ${allDonations}">
-                <td class="td-bold" th:text="${d.id}"></td>
-                <td th:text="${d.foodName}"></td>
-                <td th:text="${d.qty}"></td>
-                <td th:text="${d.restaurantName}"></td>
-                <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
+              <tr th:each="d : ${allDonations}" class="table-row-item">
+                <td class="td-bold" th:text="'#' + ${d.id}">#1</td>
+                <td class="col-food" th:text="${d.foodName}">Food Item</td>
+                <td th:text="${d.qty} + ' servings'">40</td>
+                <td class="col-donor" th:text="${d.restaurantName}">Restaurant</td>
+                <td th:text="${d.ngoName != null ? d.ngoName : '-'}">-</td>
                 <td>
-                  <span class="badge badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock"></i> Pending</span>
-                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
-                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
+                  <span class="sneat-badge-pending" th:if="${d.status == 'Pending'}">Pending</span>
+                  <span class="sneat-badge-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
+                  <span class="sneat-badge-active" th:if="${d.status == 'Picked Up'}">Completed</span>
                 </td>
-                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
+                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}">Date</td>
               </tr>
             </tbody>
           </table>
@@ -194,20 +258,88 @@
 
         <div class="section-card-body" th:if="${#lists.isEmpty(allDonations)}">
           <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="inbox"></i></div>
-            <h3>No donations yet</h3>
-            <p>Donation records will appear here as users start adding them.</p>
+            <div class="empty-state-icon" style="background:#ECFDF5;"><i data-lucide="inbox" style="color:#059669;"></i></div>
+            <h3>No donations record</h3>
+            <p>Recent donation records will appear here as activity occurs on the platform.</p>
           </div>
         </div>
       </div>
     </div>
   </main>
 
-  <script>
+  <script th:inline="javascript">
     lucide.createIcons();
+
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    // Dynamic Thymeleaf attribute bindings for Charts
+    var pendingCount = /*[[${pendingCount}]]*/ 0;
+    var acceptedCount = /*[[${acceptedCount}]]*/ 0;
+    var pickedUpCount = /*[[${pickedUpCount}]]*/ 0;
+
+    var todayDonations = /*[[${todayDonations}]]*/ 0;
+    var weeklyDonations = /*[[${weeklyDonations}]]*/ 0;
+    var monthlyDonations = /*[[${monthlyDonations}]]*/ 0;
+    var totalDonations = /*[[${totalDonations}]]*/ 0;
+
+    // Status Doughnut Chart
+    new Chart(document.getElementById('statusDoughnutChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending Pickup', 'Accepted by NGO', 'Picked Up'],
+        datasets: [{
+          data: [pendingCount, acceptedCount, pickedUpCount],
+          backgroundColor: ['#F59E0B', '#0891B2', '#059669'],
+          borderColor: '#FFFFFF',
+          borderWidth: 3
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#6B7280', font: { size: 12 } } }
+        }
+      }
+    });
+
+    // Activity Timeline Velocity Bar Chart
+    new Chart(document.getElementById('velocityBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Today', 'Last 7 Days', 'Last 30 Days', 'All Time'],
+        datasets: [{
+          label: 'Donation Count',
+          data: [todayDonations, weeklyDonations, monthlyDonations, totalDonations],
+          backgroundColor: ['#34D399', '#059669', '#047857', '#064E3B'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#9CA3AF' }, grid: { color: '#F3F4F6' } },
+          x: { ticks: { color: '#9CA3AF' }, grid: { display: false } }
+        }
+      }
+    });
+
+    // Live search filter for recent donations table
+    function filterTable() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.table-row-item');
+
+      rows.forEach(row => {
+        const food = row.querySelector('.col-food')?.innerText.toLowerCase() || '';
+        const donor = row.querySelector('.col-donor')?.innerText.toLowerCase() || '';
+
+        if (food.includes(query) || donor.includes(query)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
     }
   </script>
 </body>

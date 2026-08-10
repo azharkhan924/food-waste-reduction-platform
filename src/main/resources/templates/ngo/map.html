@@ -13,16 +13,20 @@
 
 <body class="dash-body role-ngo">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- Sidebar (Malinessa White Sidebar) -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Navigation</div>
+    <div class="sidebar-label">NGO Portal</div>
     <nav class="sidebar-nav">
       <a th:href="@{/ngo/dashboard}" class="sidebar-link">
-        <i data-lucide="layout-dashboard"></i> Dashboard
+        <i data-lucide="layout-dashboard"></i> Available Food
       </a>
       <a th:href="@{/ngo/map}" class="sidebar-link active">
         <i data-lucide="map"></i> Map View
@@ -36,47 +40,66 @@
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Top Bar -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="map"></i> Donation Map</div>
-      <div class="topbar-actions">
-        <span style="font-size:13px; color:var(--text-muted);">Donations on map: <strong id="markerCount" style="color:var(--accent);">0</strong></span>
+
+      <div class="topbar-title" style="font-size:16px; font-weight:700; color:#111827; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="map" style="color:#059669;"></i> Interactive Donation Map
+      </div>
+
+      <!-- Right Profile Pill (Single username location) -->
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'N'}">N</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">NGO Partner</span>
+          </div>
+        </div>
       </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Donation Map View</h1>
-        <p>See available donations near you. Click a marker for details & directions.</p>
+      <!-- Page Head -->
+      <div class="malinessa-page-head">
+        <h1 class="malinessa-page-title">Live Donation Map</h1>
+        <div style="font-size:13px; color:#6B7280; background:#FFFFFF; border:1px solid #E5E7EB; padding:6px 14px; border-radius:20px;">
+          Available on map: <strong id="markerCount" style="color:#059669;">0</strong>
+        </div>
       </div>
 
       <!-- Legend -->
-      <div class="map-legend" style="margin-bottom:16px;">
-        <span><span class="legend-dot" style="background:#22C55E;"></span> Donor Location</span>
-        <span><span class="legend-dot" style="background:#3B82F6;"></span> Your Location</span>
+      <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:16px; font-size:13px; color:#4B5563;">
+        <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; border-radius:50%; background:#22C55E; display:inline-block;"></span> Donor Restaurant</span>
+        <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; border-radius:50%; background:#3B82F6; display:inline-block;"></span> Your Location</span>
       </div>
 
-      <!-- Map -->
-      <div class="section-card" style="overflow:hidden;">
-        <div id="mapContainer" class="map-container" style="border-radius:0; border:none;"></div>
+      <!-- Map Container Card -->
+      <div class="malinessa-card" style="padding:0; overflow:hidden; border-radius:16px; margin-bottom:20px;">
+        <div id="mapContainer" class="map-container" style="height:480px; border:none; border-radius:0;"></div>
       </div>
 
-      <!-- Route Info Panel -->
-      <div id="routeInfo" class="route-panel">
-        <h3><i data-lucide="navigation"></i> Route Details</h3>
-        <p><strong>To:</strong> <span id="routeDest">-</span></p>
-        <p><strong>Distance:</strong> <span id="routeDistance" class="route-value-green">-</span></p>
-        <p><strong>Estimated Time:</strong> <span id="routeTime" class="route-value-amber">-</span></p>
-        <button class="btn btn-danger btn-sm" onclick="clearRoute()" style="margin-top:10px;"><i data-lucide="x"></i> Clear Route</button>
+      <!-- Route Info Panel Card -->
+      <div id="routeInfo" class="malinessa-card" style="display:none; padding:20px;">
+        <h3 style="font-size:15px; font-weight:700; color:#111827; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          <i data-lucide="navigation" style="color:#059669; width:18px; height:18px;"></i> Route Details
+        </h3>
+        <p style="font-size:14px; color:#475569; margin:4px 0;"><strong>Destination:</strong> <span id="routeDest">-</span></p>
+        <p style="font-size:14px; color:#475569; margin:4px 0;"><strong>Distance:</strong> <span id="routeDistance" style="color:#059669; font-weight:600;">-</span></p>
+        <p style="font-size:14px; color:#475569; margin:4px 0;"><strong>Estimated Time:</strong> <span id="routeTime" style="color:#F59E0B; font-weight:600;">-</span></p>
+        <button class="btn-mcard-cancel" onclick="clearRoute()" style="margin-top:12px; max-width:160px; color:#EF4444; background:#FEF2F2; border:1px solid #FECACA;">
+          <i data-lucide="x" style="width:14px; height:14px;"></i> Clear Route
+        </button>
       </div>
 
-      <div th:if="${#lists.isEmpty(donations)}" style="margin-top:20px;">
-        <div class="empty-state">
-          <div class="empty-state-icon"><i data-lucide="map-pin-off"></i></div>
-          <h3>No pending donations</h3>
-          <p>Check back later for new food donations near you.</p>
+      <div th:if="${#lists.isEmpty(donations)}" class="malinessa-card" style="margin-top:20px; text-align:center; padding:48px 24px;">
+        <div style="width:56px; height:56px; background:#ECFDF5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#059669;">
+          <i data-lucide="map-pin-off" style="width:28px; height:28px;"></i>
         </div>
+        <h3 style="font-size:16px; font-weight:700; color:#111827; margin-bottom:6px;">No pending donations on map</h3>
+        <p style="font-size:14px; color:#6B7280;">Check back later for new food donations near you.</p>
       </div>
     </div>
   </main>
@@ -133,16 +156,16 @@
           for (var i = 0; i < data.length; i++) {
             var d = data[i];
             var popupHtml = '<div style="min-width:220px; font-family:Inter,sans-serif;">';
-            popupHtml += '<h4 style="margin:0 0 8px 0; color:#0891B2; font-size:15px;">' + d.foodName + '</h4>';
+            popupHtml += '<h4 style="margin:0 0 8px 0; color:#059669; font-size:15px; font-weight:700;">' + d.foodName + '</h4>';
             popupHtml += '<p style="margin:3px 0; font-size:13px; color:#475569;"><b>Qty:</b> ' + d.qty + ' servings</p>';
             popupHtml += '<p style="margin:3px 0; font-size:13px; color:#475569;"><b>Expiry:</b> ' + d.expiry + '</p>';
-            popupHtml += '<p style="margin:3px 0; font-size:13px; color:#475569;"><b>By:</b> ' + d.restaurantName + '</p>';
+            popupHtml += '<p style="margin:3px 0; font-size:13px; color:#475569;"><b>Donor:</b> ' + d.restaurantName + '</p>';
             popupHtml += '<p style="margin:3px 0; font-size:13px; color:#475569;"><b>Address:</b> ' + d.pickupAddress + '</p>';
             popupHtml += '<hr style="margin:10px 0; border:none; border-top:1px solid #E2E8F0;">';
             popupHtml += '<div style="display:flex; gap:6px;">';
             popupHtml += '<button onclick="getRoute(' + d.lat + ',' + d.lng + ',\'' + d.pickupAddress.replace(/'/g, "\\'") + '\')" style="background:#3B82F6; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">Directions</button>';
             popupHtml += '<a href="/ngo/accept/' + d.id + '" onclick="return confirm(\'Accept this donation?\')" style="text-decoration:none;">';
-            popupHtml += '<button style="background:#22C55E; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">Accept</button></a>';
+            popupHtml += '<button style="background:#059669; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">Accept</button></a>';
             popupHtml += '</div></div>';
 
             var m = L.marker([d.lat, d.lng], { icon: donorIcon }).addTo(map);
@@ -171,7 +194,7 @@
             var latLngs = [];
             for (var j = 0; j < coords.length; j++) { latLngs.push([coords[j][1], coords[j][0]]); }
 
-            routeLine = L.polyline(latLngs, { color: '#3B82F6', weight: 4, opacity: 0.8 }).addTo(map);
+            routeLine = L.polyline(latLngs, { color: '#059669', weight: 4, opacity: 0.8 }).addTo(map);
             map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
 
             var distKm = (route.distance / 1000).toFixed(1);

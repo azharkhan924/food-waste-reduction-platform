@@ -12,29 +12,31 @@
 
 <body class="dash-body role-admin">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- White Sidebar -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Overview</div>
+    <div class="sidebar-label">ANALYTICS</div>
     <nav class="sidebar-nav">
       <a th:href="@{/admin/dashboard}" class="sidebar-link">
         <i data-lucide="layout-dashboard"></i> Dashboard
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Management</div>
+      <div class="sidebar-label">MANAGEMENT</div>
       <a th:href="@{/admin/users}" class="sidebar-link active">
-        <i data-lucide="users"></i> Users
+        <i data-lucide="users"></i> Users Directory
       </a>
       <a th:href="@{/admin/donations}" class="sidebar-link">
-        <i data-lucide="package"></i> Donations
+        <i data-lucide="package"></i> Food Donations
       </a>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-label">Analytics</div>
+      <div class="sidebar-label">REPORTS</div>
       <a th:href="@{/admin/reports}" class="sidebar-link">
-        <i data-lucide="chart-no-axes-combined"></i> Reports
+        <i data-lucide="chart-no-axes-combined"></i> Reports &amp; Analytics
       </a>
     </nav>
     <div class="sidebar-footer">
@@ -42,58 +44,68 @@
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Floating Topbar Card -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="users"></i> Manage Users</div>
-      <div class="topbar-actions"></div>
+
+      <div class="sneat-search-wrap">
+        <i data-lucide="search" class="sneat-search-icon"></i>
+        <input type="text" class="sneat-search-input" placeholder="Search users...">
+      </div>
+
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'A'}">A</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Admin</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Manage Users</h1>
-        <p>View, filter, add, edit, and manage platform users</p>
+      <div class="page-header" style="margin-bottom:20px;">
+        <h1 style="font-size:22px; font-weight:700; color:#566A7F;">Users Directory</h1>
+        <p style="font-size:14px; color:#8592A3;">Manage restaurant donors, NGO partners, and system accounts</p>
       </div>
 
-      <!-- Filter Bar -->
-      <div class="section-card" style="margin-bottom:20px;">
-        <div class="filter-bar">
-          <form th:action="@{/admin/users}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
-            <select name="filterRole" class="dash-select" style="width:150px;">
+      <!-- Add User Form Card -->
+      <div class="section-card" style="margin-bottom:24px;">
+        <div class="section-card-header">
+          <div class="section-card-title"><i data-lucide="user-plus" style="color:#059669;"></i> Add New Platform User</div>
+        </div>
+        <div class="section-card-body">
+          <form th:action="@{/admin/add-user}" method="post" class="add-user-form">
+            <input type="text" name="name" class="dash-input" placeholder="User Name" required>
+            <input type="email" name="email" class="dash-input" placeholder="Email Address" required>
+            <input type="password" name="password" class="dash-input" placeholder="Password" required>
+            <select name="role" class="dash-select" required style="min-width:140px;">
+              <option value="">Select Role</option>
+              <option value="Restaurant">Restaurant</option>
+              <option value="NGO">NGO</option>
+            </select>
+            <button type="submit" class="sneat-btn-primary"><i data-lucide="plus"></i> Add User</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Users Table Card -->
+      <div class="section-card">
+        <div class="section-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="section-card-title"><i data-lucide="users" style="color:#059669;"></i> All Registered Users</div>
+          
+          <!-- Filter Form -->
+          <form th:action="@{/admin/users}" method="get" style="display:flex; gap:8px; align-items:center;">
+            <select name="filterRole" class="dash-select" style="padding:6px 12px; font-size:13px;">
               <option value="">All Roles</option>
               <option value="Restaurant" th:selected="${filterRole == 'Restaurant'}">Restaurant</option>
               <option value="NGO" th:selected="${filterRole == 'NGO'}">NGO</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="filter"></i> Filter</button>
-            <a th:href="@{/admin/users}" class="btn btn-outline btn-sm"><i data-lucide="x"></i> Clear</a>
+            <button type="submit" class="sneat-btn-primary" style="padding:6px 14px; font-size:12px;">Filter</button>
+            <a th:href="@{/admin/users}" class="btn btn-outline btn-sm">Clear</a>
           </form>
-        </div>
-      </div>
-
-      <!-- Add User Card -->
-      <div class="section-card" style="margin-bottom:20px;">
-        <div class="section-card-header">
-          <div class="section-card-title"><i data-lucide="user-plus"></i> Add New User</div>
-        </div>
-        <div class="section-card-body">
-          <form th:action="@{/admin/add-user}" method="post" class="add-user-form">
-            <input type="text" name="name" class="dash-input" placeholder="Name" required>
-            <input type="email" name="email" class="dash-input" placeholder="Email" required>
-            <input type="password" name="password" class="dash-input" placeholder="Password" required>
-            <select name="role" class="dash-select" required style="min-width:130px;">
-              <option value="">Role</option>
-              <option value="Restaurant">Restaurant</option>
-              <option value="NGO">NGO</option>
-            </select>
-            <button type="submit" class="btn btn-primary"><i data-lucide="plus"></i> Add User</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Users Table -->
-      <div class="section-card">
-        <div class="section-card-header">
-          <div class="section-card-title"><i data-lucide="list"></i> All Users</div>
         </div>
 
         <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(users)}">
@@ -109,28 +121,28 @@
               </tr>
             </thead>
             <tbody>
-              <tr th:each="u : ${users}" th:style="${u.blocked ? 'opacity:0.55' : ''}">
-                <td class="td-bold" th:text="${u.id}"></td>
-                <td th:text="${u.name}"></td>
-                <td th:text="${u.email}"></td>
+              <tr th:each="u : ${users}" th:style="${u.blocked ? 'opacity:0.6' : ''}">
+                <td class="td-bold" th:text="'#' + ${u.id}">#1</td>
+                <td th:text="${u.name}">User Name</td>
+                <td th:text="${u.email}">user@example.com</td>
                 <td>
-                  <span class="badge badge-restaurant" th:if="${u.role == 'Restaurant'}">Restaurant</span>
-                  <span class="badge badge-ngo" th:if="${u.role == 'NGO'}">NGO</span>
-                  <span class="badge badge-admin" th:if="${u.role == 'Admin'}">Admin</span>
+                  <span class="sneat-badge-restaurant" th:if="${u.role == 'Restaurant'}">Restaurant</span>
+                  <span class="sneat-badge-ngo" th:if="${u.role == 'NGO'}">NGO</span>
+                  <span class="sneat-badge-admin" th:if="${u.role == 'Admin'}">Admin</span>
                 </td>
                 <td>
-                  <span class="badge badge-picked" th:if="${!u.blocked}"><i data-lucide="check"></i> Active</span>
-                  <span class="badge badge-blocked" th:if="${u.blocked}"><i data-lucide="ban"></i> Blocked</span>
+                  <span class="sneat-badge-active" th:if="${!u.blocked}">Active</span>
+                  <span class="sneat-badge-blocked" th:if="${u.blocked}">Blocked</span>
                 </td>
                 <td>
-                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <a th:href="@{/admin/block/{id}(id=${u.id})}" onclick="return confirm('Sure?')">
+                  <div style="display:flex; gap:6px;">
+                    <a th:href="@{/admin/block/{id}(id=${u.id})}" onclick="return confirm('Toggle block status?')">
                       <button class="btn btn-warn btn-sm" th:text="${u.blocked ? 'Unblock' : 'Block'}">Block</button>
                     </a>
                     <button class="btn btn-info btn-sm" th:data-id="${u.id}" th:data-name="${u.name}" th:data-email="${u.email}" th:data-role="${u.role}" onclick="openEdit(this)">
                       <i data-lucide="pencil"></i> Edit
                     </button>
-                    <a th:href="@{/admin/delete-user/{id}(id=${u.id})}" onclick="return confirm('Delete this user?')">
+                    <a th:href="@{/admin/delete-user/{id}(id=${u.id})}" onclick="return confirm('Delete this user account?')">
                       <button class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i></button>
                     </a>
                   </div>
@@ -142,9 +154,9 @@
 
         <div class="section-card-body" th:if="${#lists.isEmpty(users)}">
           <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="user-x"></i></div>
+            <div class="empty-state-icon" style="background:#ECFDF5;"><i data-lucide="user-x" style="color:#059669;"></i></div>
             <h3>No users found</h3>
-            <p>No users match your current filter. Try changing filters or adding a new user.</p>
+            <p>No user accounts match your filter query.</p>
           </div>
         </div>
       </div>
@@ -154,7 +166,7 @@
   <!-- Edit Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-card">
-      <h2><i data-lucide="user-cog"></i> Edit User</h2>
+      <h2 style="color:#566A7F;"><i data-lucide="user-cog" style="color:#059669;"></i> Edit User</h2>
       <form th:action="@{/admin/update-user}" method="post">
         <input type="hidden" name="id" id="editId">
         <div style="margin-bottom:16px;">
@@ -174,7 +186,7 @@
           </select>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> Save Changes</button>
+          <button type="submit" class="sneat-btn-primary"><i data-lucide="check"></i> Save Changes</button>
           <button type="button" class="btn btn-outline" onclick="closeEdit()"><i data-lucide="x"></i> Cancel</button>
         </div>
       </form>
@@ -201,7 +213,6 @@
       document.getElementById('editModal').classList.remove('open');
     }
 
-    // Close modal on overlay click
     document.getElementById('editModal').addEventListener('click', function (e) {
       if (e.target === this) closeEdit();
     });
