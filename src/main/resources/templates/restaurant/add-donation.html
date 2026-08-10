@@ -1,102 +1,149 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Add Donation</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Donation — FoodRescue Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-		<ul>
-			<li><a th:href="@{/restaurant/dashboard}">Dashboard</a></li>
-			<li><a th:href="@{/restaurant/add-donation}">Add Donation</a></li>
-			<li><a th:href="@{/restaurant/history}">History</a></li>
-			<li><a th:href="@{/logout}">Logout</a></li>
-		</ul>
-	</div>
 
-<div class="card" style="margin-top:40px; width:520px;">
+<body class="dash-body role-restaurant">
 
-<h1>Food Waste Platform</h1>
-<h2>Add Food Donation</h2>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<form th:action="@{/restaurant/add-donation}" method="post">
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+    </div>
+    <div class="sidebar-label">Menu</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/restaurant/dashboard}" class="sidebar-link">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <a th:href="@{/restaurant/add-donation}" class="sidebar-link active">
+        <i data-lucide="plus-circle"></i> Add Donation
+      </a>
+      <a th:href="@{/restaurant/history}" class="sidebar-link">
+        <i data-lucide="clock"></i> History
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+    </div>
+  </aside>
 
-<label>Food Name</label>
-<input type="text" name="foodName" placeholder="e.g. Rice, Dal, Bread" required>
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div class="topbar-title"><i data-lucide="plus-circle"></i> Add Donation</div>
+      <div class="topbar-actions"></div>
+    </header>
 
-<label>Quantity (in servings)</label>
-<input type="text" name="qty" placeholder="e.g. 50" required>
+    <div class="dash-content">
+      <div class="page-header">
+        <h1>Add Food Donation</h1>
+        <p>Share your surplus food with NGOs and communities in need</p>
+      </div>
 
-<label>Expiry Date</label>
-<input type="date" name="expiry" required style="width:100%; padding:11px 14px; border:2px solid rgba(255,255,255,0.15); border-radius:8px; background-color:rgba(255,255,255,0.07); color:white; font-size:14px; outline:none;">
+      <div class="form-card">
+        <form th:action="@{/restaurant/add-donation}" method="post">
+          <div class="form-group">
+            <label class="dash-label">Food Name</label>
+            <input type="text" name="foodName" class="dash-input" placeholder="e.g. Rice, Dal, Bread" required>
+          </div>
 
-<label>Pickup Address</label>
-<input type="text" name="pickupAddress" id="addressInput" placeholder="Enter pickup location or click on map" required>
+          <div class="form-group">
+            <label class="dash-label">Quantity (in servings)</label>
+            <input type="text" name="qty" class="dash-input" placeholder="e.g. 50" required>
+          </div>
 
-<input type="hidden" name="latitude" id="latField">
-<input type="hidden" name="longitude" id="lngField">
+          <div class="form-group">
+            <label class="dash-label">Expiry Date</label>
+            <input type="date" name="expiry" class="dash-input" required>
+          </div>
 
-<label>Select Location on Map</label>
-<p style="font-size:11px; color:#999; margin-top:-4px; margin-bottom:8px;">Click on the map to pin your pickup location</p>
-<div id="map" style="width:100%; height:280px; border-radius:10px; border:2px solid rgba(255,255,255,0.1); margin-bottom:10px;"></div>
+          <div class="form-group">
+            <label class="dash-label">Pickup Address</label>
+            <input type="text" name="pickupAddress" id="addressInput" class="dash-input" placeholder="Enter pickup location or click on map" required>
+          </div>
 
-<p id="coordsDisplay" style="font-size:12px; color:#81c784; margin-bottom:5px; text-align:left;"></p>
+          <input type="hidden" name="latitude" id="latField">
+          <input type="hidden" name="longitude" id="lngField">
 
-<button type="submit" class="b1">Submit Donation</button>
+          <div class="form-group">
+            <label class="dash-label">Select Location on Map</label>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Click on the map to pin your pickup location</p>
+            <div id="map" class="map-container" style="height:280px;"></div>
+          </div>
 
-</form>
+          <p id="coordsDisplay" style="font-size:12px; color:var(--accent); margin:10px 0;"></p>
 
-<p style="margin-top:15px;">
-<a th:href="@{/restaurant/dashboard}">← Back to Dashboard</a>
-</p>
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px 24px; font-size:15px; margin-top:8px;">
+            <i data-lucide="send"></i> Submit Donation
+          </button>
+        </form>
 
-</div>
+        <p style="margin-top:20px;">
+          <a th:href="@{/restaurant/dashboard}" style="font-size:13px; color:var(--accent); display:inline-flex; align-items:center; gap:6px;">
+            <i data-lucide="arrow-left" style="width:14px; height:14px;"></i> Back to Dashboard
+          </a>
+        </p>
+      </div>
+    </div>
+  </main>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    lucide.createIcons();
 
-<script>
-var map = L.map('map').setView([20.5937, 78.9629], 5);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-}).addTo(map);
-
-var marker = null;
-
-map.on('click', function(e) {
-    var lat = e.latlng.lat;
-    var lng = e.latlng.lng;
-
-    document.getElementById('latField').value = lat;
-    document.getElementById('lngField').value = lng;
-    document.getElementById('coordsDisplay').innerHTML = '📍 Lat: ' + lat.toFixed(4) + ', Lng: ' + lng.toFixed(4);
-
-    if(marker != null){
-        map.removeLayer(marker);
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
     }
-    marker = L.marker([lat, lng]).addTo(map);
 
-    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng)
-    .then(function(response){ return response.json(); })
-    .then(function(data){
-        if(data.display_name){
+    var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker = null;
+
+    map.on('click', function (e) {
+      var lat = e.latlng.lat;
+      var lng = e.latlng.lng;
+
+      document.getElementById('latField').value = lat;
+      document.getElementById('lngField').value = lng;
+      document.getElementById('coordsDisplay').innerHTML = 'Lat: ' + lat.toFixed(4) + ', Lng: ' + lng.toFixed(4);
+
+      if (marker != null) {
+        map.removeLayer(marker);
+      }
+      marker = L.marker([lat, lng]).addTo(map);
+
+      fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng)
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (data.display_name) {
             document.getElementById('addressInput').value = data.display_name;
-        }
-    })
-    .catch(function(err){
-        console.log(err);
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
     });
-});
 
-if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(pos){
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (pos) {
         map.setView([pos.coords.latitude, pos.coords.longitude], 14);
-    });
-}
-</script>
-
+      });
+    }
+  </script>
 </body>
+
 </html>

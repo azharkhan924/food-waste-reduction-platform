@@ -1,78 +1,129 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Donations</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Pickups — FoodRescue NGO</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-		<ul>
-			<li><a th:href="@{/ngo/dashboard}">Dashboard</a></li>
-			<li><a th:href="@{/ngo/map}">Map View</a></li>
-			<li><a th:href="@{/ngo/history}">My Donations</a></li>
-			<li><a th:href="@{/logout}">Logout</a></li>
-		</ul>
-	</div>
 
-<div class="main-box">
+<body class="dash-body role-ngo">
 
-<h1>My Accepted Donations</h1>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<div class="info-row">
-<div class="info-card">
-<h3 th:text="${totalAccepted}">0</h3>
-<p>Total Accepted</p>
-</div>
-<div class="info-card">
-<h3 th:text="${totalMeals}">0</h3>
-<p>Meals Received</p>
-</div>
-</div>
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+    </div>
+    <div class="sidebar-label">Navigation</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/ngo/dashboard}" class="sidebar-link">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <a th:href="@{/ngo/map}" class="sidebar-link">
+        <i data-lucide="map"></i> Map View
+      </a>
+      <a th:href="@{/ngo/history}" class="sidebar-link active">
+        <i data-lucide="clipboard-list"></i> My Pickups
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+    </div>
+  </aside>
 
-<div th:if="${#lists.isEmpty(donations)}">
-<p class="no-data">You haven't accepted any donations yet.</p>
-</div>
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div class="topbar-title"><i data-lucide="clipboard-list"></i> My Pickups</div>
+      <div class="topbar-actions"></div>
+    </header>
 
-<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
-<thead>
-<tr>
-<th>Food Item</th>
-<th>Qty</th>
-<th>Expiry</th>
-<th>Pickup Address</th>
-<th>Donated By</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody>
-<tr th:each="d : ${donations}">
-<td th:text="${d.foodName}"></td>
-<td th:text="${d.qty}"></td>
-<td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
-<td th:text="${d.pickupAddress}"></td>
-<td th:text="${d.restaurantName}"></td>
-<td>
-<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
-</td>
-<td>
-<a th:href="@{/ngo/pickup/{id}(id=${d.id})}" th:if="${d.status == 'Accepted'}" onclick="return confirm('Mark as picked up?')">
-<button class="pickup-btn">Mark Picked Up</button>
-</a>
-<span th:if="${d.status == 'Picked Up'}" class="st-picked">Done ✓</span>
-</td>
-</tr>
-</tbody>
-</table>
+    <div class="dash-content">
+      <div class="page-header">
+        <h1>My Accepted Donations</h1>
+        <p>Track and manage the food donations you've accepted</p>
+      </div>
 
-<p style="margin-top:25px;">
-<a th:href="@{/ngo/dashboard}" class="goback">← Back to Dashboard</a>
-</p>
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon teal"><i data-lucide="package-check"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${totalAccepted}">0</div>
+            <div class="kpi-label">Total Accepted</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon amber"><i data-lucide="utensils"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${totalMeals}">0</div>
+            <div class="kpi-label">Meals Received</div>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <div class="section-card">
+        <div class="section-card-header">
+          <div class="section-card-title"><i data-lucide="list"></i> Accepted Donations</div>
+        </div>
 
+        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(donations)}">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Food Item</th>
+                <th>Qty</th>
+                <th>Expiry</th>
+                <th>Pickup Address</th>
+                <th>Donated By</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="d : ${donations}">
+                <td class="td-bold" th:text="${d.foodName}"></td>
+                <td th:text="${d.qty}"></td>
+                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
+                <td th:text="${d.pickupAddress}"></td>
+                <td th:text="${d.restaurantName}"></td>
+                <td>
+                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
+                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
+                </td>
+                <td>
+                  <a th:href="@{/ngo/pickup/{id}(id=${d.id})}" th:if="${d.status == 'Accepted'}" onclick="return confirm('Mark this donation as picked up?')">
+                    <button class="btn btn-success btn-sm"><i data-lucide="truck"></i> Mark Picked Up</button>
+                  </a>
+                  <span th:if="${d.status == 'Picked Up'}" class="badge badge-picked"><i data-lucide="circle-check"></i> Done</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="inbox"></i></div>
+            <h3>No accepted donations yet</h3>
+            <p>Head to the dashboard to browse and accept available food donations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+  </script>
 </body>
+
 </html>

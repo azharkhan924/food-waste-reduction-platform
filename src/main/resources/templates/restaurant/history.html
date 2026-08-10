@@ -1,63 +1,107 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Donation History</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History — FoodRescue Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-		<ul>
-			<li><a th:href="@{/restaurant/dashboard}">Dashboard</a></li>
-			<li><a th:href="@{/restaurant/add-donation}">Add Donation</a></li>
-			<li><a th:href="@{/restaurant/history}">History</a></li>
-			<li><a th:href="@{/logout}">Logout</a></li>
-		</ul>
-	</div>
 
-<div class="main-box">
+<body class="dash-body role-restaurant">
 
-<h1>Donation History</h1>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<div th:if="${#lists.isEmpty(donations)}">
-<p class="no-data">No donations found.</p>
-</div>
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+    </div>
+    <div class="sidebar-label">Menu</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/restaurant/dashboard}" class="sidebar-link">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <a th:href="@{/restaurant/add-donation}" class="sidebar-link">
+        <i data-lucide="plus-circle"></i> Add Donation
+      </a>
+      <a th:href="@{/restaurant/history}" class="sidebar-link active">
+        <i data-lucide="clock"></i> History
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+    </div>
+  </aside>
 
-<table class="mytable" th:if="${!#lists.isEmpty(donations)}">
-<thead>
-<tr>
-<th>Food Item</th>
-<th>Qty</th>
-<th>Expiry</th>
-<th>Pickup Address</th>
-<th>Status</th>
-<th>Accepted By</th>
-<th>Date Added</th>
-</tr>
-</thead>
-<tbody>
-<tr th:each="d : ${donations}">
-<td th:text="${d.foodName}"></td>
-<td th:text="${d.qty}"></td>
-<td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
-<td th:text="${d.pickupAddress}"></td>
-<td>
-<span class="st-pending" th:if="${d.status == 'Pending'}">Pending</span>
-<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
-</td>
-<td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
-<td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
-</tr>
-</tbody>
-</table>
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div class="topbar-title"><i data-lucide="clock"></i> Donation History</div>
+      <div class="topbar-actions"></div>
+    </header>
 
-<p style="margin-top:25px;">
-<a th:href="@{/restaurant/dashboard}" class="goback">← Back to Dashboard</a>
-</p>
+    <div class="dash-content">
+      <div class="page-header">
+        <h1>Donation History</h1>
+        <p>A complete record of all your food donations</p>
+      </div>
 
-</div>
+      <div class="section-card">
+        <div class="section-card-header">
+          <div class="section-card-title"><i data-lucide="list"></i> All Donations</div>
+        </div>
 
+        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(donations)}">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Food Item</th>
+                <th>Qty</th>
+                <th>Expiry</th>
+                <th>Pickup Address</th>
+                <th>Status</th>
+                <th>Accepted By</th>
+                <th>Date Added</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="d : ${donations}">
+                <td class="td-bold" th:text="${d.foodName}"></td>
+                <td th:text="${d.qty}"></td>
+                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
+                <td th:text="${d.pickupAddress}"></td>
+                <td>
+                  <span class="badge badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock"></i> Pending</span>
+                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
+                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
+                </td>
+                <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
+                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="inbox"></i></div>
+            <h3>No donations found</h3>
+            <p>Your donation history will appear here once you start adding food donations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+  </script>
 </body>
+
 </html>

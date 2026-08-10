@@ -1,130 +1,211 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Users</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
-<link rel="stylesheet" th:href="@{/css/admin.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users — FoodRescue Admin</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-<ul>
-<li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
-<li><a th:href="@{/admin/users}">Users</a></li>
-<li><a th:href="@{/admin/donations}">Donations</a></li>
-<li><a th:href="@{/admin/reports}">Reports</a></li>
-<li><a th:href="@{/logout}">Logout</a></li>
-</ul>
-</div>
 
-<div class="main-box" style="max-width:1100px;">
+<body class="dash-body role-admin">
 
-<h1>Manage Users</h1>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<div class="filter-bar">
-<form th:action="@{/admin/users}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-<select name="filterRole" style="width:150px;">
-<option value="">All</option>
-<option value="Restaurant" th:selected="${filterRole == 'Restaurant'}">Restaurant</option>
-<option value="NGO" th:selected="${filterRole == 'NGO'}">NGO</option>
-</select>
-<button type="submit" class="accept-btn">Filter</button>
-<a th:href="@{/admin/users}" class="del-btn" style="text-decoration:none; padding:8px 14px;">Clear</a>
-</form>
-</div>
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+    </div>
+    <div class="sidebar-label">Overview</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/admin/dashboard}" class="sidebar-link">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Management</div>
+      <a th:href="@{/admin/users}" class="sidebar-link active">
+        <i data-lucide="users"></i> Users
+      </a>
+      <a th:href="@{/admin/donations}" class="sidebar-link">
+        <i data-lucide="package"></i> Donations
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Analytics</div>
+      <a th:href="@{/admin/reports}" class="sidebar-link">
+        <i data-lucide="chart-no-axes-combined"></i> Reports
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+    </div>
+  </aside>
 
-<div class="filter-bar" style="margin-bottom:25px;">
-<p style="color:#c8e6c9; font-size:15px; margin-bottom:10px; font-weight:600;">Add New User</p>
-<form th:action="@{/admin/add-user}" method="post" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-<input type="text" name="name" placeholder="Name" required style="flex:1; min-width:120px;">
-<input type="email" name="email" placeholder="Email" required style="flex:1; min-width:150px;">
-<input type="password" name="password" placeholder="Password" required style="flex:1; min-width:100px;">
-<select name="role" required style="width:130px;">
-<option value="">Role</option>
-<option value="Restaurant">Restaurant</option>
-<option value="NGO">NGO</option>
-</select>
-<button type="submit" class="add-btn" style="margin:0;">Add</button>
-</form>
-</div>
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div class="topbar-title"><i data-lucide="users"></i> Manage Users</div>
+      <div class="topbar-actions"></div>
+    </header>
 
-<div th:if="${#lists.isEmpty(users)}">
-<p class="no-data">No users found.</p>
-</div>
+    <div class="dash-content">
+      <div class="page-header">
+        <h1>Manage Users</h1>
+        <p>View, filter, add, edit, and manage platform users</p>
+      </div>
 
-<table class="mytable" th:if="${!#lists.isEmpty(users)}">
-<thead>
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>Email</th>
-<th>Role</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody>
-<tr th:each="u : ${users}" th:style="${u.blocked ? 'opacity:0.5' : ''}">
-<td th:text="${u.id}"></td>
-<td th:text="${u.name}"></td>
-<td th:text="${u.email}"></td>
-<td>
-<span class="st-pending" th:if="${u.role == 'Restaurant'}">Restaurant</span>
-<span class="st-accepted" th:if="${u.role == 'NGO'}">NGO</span>
-<span class="st-picked" th:if="${u.role == 'Admin'}">Admin</span>
-</td>
-<td>
-<span class="st-picked" th:if="${!u.blocked}">Active</span>
-<span class="st-blocked" th:if="${u.blocked}">Blocked</span>
-</td>
-<td style="display:flex; gap:5px;">
-<a th:href="@{/admin/block/{id}(id=${u.id})}" onclick="return confirm('Sure?')">
-<button class="block-btn" th:text="${u.blocked ? 'Unblock' : 'Block'}">Block</button>
-</a>
-<button class="edit-btn" th:data-id="${u.id}" th:data-name="${u.name}" th:data-email="${u.email}" th:data-role="${u.role}" onclick="openEdit(this)">Edit</button>
-<a th:href="@{/admin/delete-user/{id}(id=${u.id})}" onclick="return confirm('Delete this user?')">
-<button class="del-btn" style="padding:5px 12px;">Delete</button>
-</a>
-</td>
-</tr>
-</tbody>
-</table>
+      <!-- Filter Bar -->
+      <div class="section-card" style="margin-bottom:20px;">
+        <div class="filter-bar">
+          <form th:action="@{/admin/users}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
+            <select name="filterRole" class="dash-select" style="width:150px;">
+              <option value="">All Roles</option>
+              <option value="Restaurant" th:selected="${filterRole == 'Restaurant'}">Restaurant</option>
+              <option value="NGO" th:selected="${filterRole == 'NGO'}">NGO</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="filter"></i> Filter</button>
+            <a th:href="@{/admin/users}" class="btn btn-outline btn-sm"><i data-lucide="x"></i> Clear</a>
+          </form>
+        </div>
+      </div>
 
-</div>
+      <!-- Add User Card -->
+      <div class="section-card" style="margin-bottom:20px;">
+        <div class="section-card-header">
+          <div class="section-card-title"><i data-lucide="user-plus"></i> Add New User</div>
+        </div>
+        <div class="section-card-body">
+          <form th:action="@{/admin/add-user}" method="post" class="add-user-form">
+            <input type="text" name="name" class="dash-input" placeholder="Name" required>
+            <input type="email" name="email" class="dash-input" placeholder="Email" required>
+            <input type="password" name="password" class="dash-input" placeholder="Password" required>
+            <select name="role" class="dash-select" required style="min-width:130px;">
+              <option value="">Role</option>
+              <option value="Restaurant">Restaurant</option>
+              <option value="NGO">NGO</option>
+            </select>
+            <button type="submit" class="btn btn-primary"><i data-lucide="plus"></i> Add User</button>
+          </form>
+        </div>
+      </div>
 
-<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; justify-content:center; align-items:center;">
-<div style="background:rgba(30,30,30,0.97); border:1px solid rgba(102,187,106,0.25); border-radius:12px; padding:30px; width:400px; max-width:90%;">
-<h2 style="color:#66bb6a; margin-bottom:15px;">Edit User</h2>
-<form th:action="@{/admin/update-user}" method="post">
-<input type="hidden" name="id" id="editId">
-<label>Name</label>
-<input type="text" name="name" id="editName" required>
-<label>Email</label>
-<input type="email" name="email" id="editEmail" required>
-<label>Role</label>
-<select name="role" id="editRole">
-<option value="Restaurant">Restaurant</option>
-<option value="NGO">NGO</option>
-<option value="Admin">Admin</option>
-</select>
-<div style="display:flex; gap:10px; margin-top:18px;">
-<button type="submit" class="add-btn" style="margin:0; flex:1;">Save</button>
-<button type="button" class="del-btn" style="flex:1;" onclick="document.getElementById('editModal').style.display='none'">Cancel</button>
-</div>
-</form>
-</div>
-</div>
+      <!-- Users Table -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <div class="section-card-title"><i data-lucide="list"></i> All Users</div>
+        </div>
 
-<script>
-function openEdit(btn){
-document.getElementById('editId').value=btn.getAttribute('data-id');
-document.getElementById('editName').value=btn.getAttribute('data-name');
-document.getElementById('editEmail').value=btn.getAttribute('data-email');
-document.getElementById('editRole').value=btn.getAttribute('data-role');
-document.getElementById('editModal').style.display='flex';
-}
-</script>
+        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(users)}">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="u : ${users}" th:style="${u.blocked ? 'opacity:0.55' : ''}">
+                <td class="td-bold" th:text="${u.id}"></td>
+                <td th:text="${u.name}"></td>
+                <td th:text="${u.email}"></td>
+                <td>
+                  <span class="badge badge-restaurant" th:if="${u.role == 'Restaurant'}">Restaurant</span>
+                  <span class="badge badge-ngo" th:if="${u.role == 'NGO'}">NGO</span>
+                  <span class="badge badge-admin" th:if="${u.role == 'Admin'}">Admin</span>
+                </td>
+                <td>
+                  <span class="badge badge-picked" th:if="${!u.blocked}"><i data-lucide="check"></i> Active</span>
+                  <span class="badge badge-blocked" th:if="${u.blocked}"><i data-lucide="ban"></i> Blocked</span>
+                </td>
+                <td>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <a th:href="@{/admin/block/{id}(id=${u.id})}" onclick="return confirm('Sure?')">
+                      <button class="btn btn-warn btn-sm" th:text="${u.blocked ? 'Unblock' : 'Block'}">Block</button>
+                    </a>
+                    <button class="btn btn-info btn-sm" th:data-id="${u.id}" th:data-name="${u.name}" th:data-email="${u.email}" th:data-role="${u.role}" onclick="openEdit(this)">
+                      <i data-lucide="pencil"></i> Edit
+                    </button>
+                    <a th:href="@{/admin/delete-user/{id}(id=${u.id})}" onclick="return confirm('Delete this user?')">
+                      <button class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i></button>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
+        <div class="section-card-body" th:if="${#lists.isEmpty(users)}">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="user-x"></i></div>
+            <h3>No users found</h3>
+            <p>No users match your current filter. Try changing filters or adding a new user.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <h2><i data-lucide="user-cog"></i> Edit User</h2>
+      <form th:action="@{/admin/update-user}" method="post">
+        <input type="hidden" name="id" id="editId">
+        <div style="margin-bottom:16px;">
+          <label class="dash-label">Name</label>
+          <input type="text" name="name" id="editName" class="dash-input" style="width:100%;" required>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label class="dash-label">Email</label>
+          <input type="email" name="email" id="editEmail" class="dash-input" style="width:100%;" required>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label class="dash-label">Role</label>
+          <select name="role" id="editRole" class="dash-select" style="width:100%;">
+            <option value="Restaurant">Restaurant</option>
+            <option value="NGO">NGO</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> Save Changes</button>
+          <button type="button" class="btn btn-outline" onclick="closeEdit()"><i data-lucide="x"></i> Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    function openEdit(btn) {
+      document.getElementById('editId').value = btn.getAttribute('data-id');
+      document.getElementById('editName').value = btn.getAttribute('data-name');
+      document.getElementById('editEmail').value = btn.getAttribute('data-email');
+      document.getElementById('editRole').value = btn.getAttribute('data-role');
+      document.getElementById('editModal').classList.add('open');
+    }
+
+    function closeEdit() {
+      document.getElementById('editModal').classList.remove('open');
+    }
+
+    // Close modal on overlay click
+    document.getElementById('editModal').addEventListener('click', function (e) {
+      if (e.target === this) closeEdit();
+    });
+  </script>
 </body>
+
 </html>

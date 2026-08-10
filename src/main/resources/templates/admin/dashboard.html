@@ -1,127 +1,215 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
-<link rel="stylesheet" th:href="@{/css/admin.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — FoodRescue</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-<ul>
-<li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
-<li><a th:href="@{/admin/users}">Users</a></li>
-<li><a th:href="@{/admin/donations}">Donations</a></li>
-<li><a th:href="@{/admin/reports}">Reports</a></li>
-<li><a th:href="@{/logout}">Logout</a></li>
-</ul>
-</div>
 
-<div class="main-box" style="max-width:1100px;">
+<body class="dash-body role-admin">
 
-<h1>Admin Panel</h1>
-<p style="color:#aaa; margin-top:-18px; margin-bottom:25px;">Welcome, <span th:text="${name}">Admin</span></p>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<div class="content-area">
-<h2>Users</h2>
-<div class="info-row">
-<div class="info-card">
-<h3 th:text="${totalUsers}">0</h3>
-<p>Total Users</p>
-</div>
-<div class="info-card">
-<h3 th:text="${totalRestaurants}">0</h3>
-<p>Restaurants</p>
-</div>
-<div class="info-card">
-<h3 th:text="${totalNgos}">0</h3>
-<p>NGOs</p>
-</div>
-<div class="info-card">
-<h3 th:text="${blockedUsers}" style="color:#ef5350;">0</h3>
-<p>Blocked</p>
-</div>
-</div>
-</div>
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+    </div>
+    <div class="sidebar-label">Overview</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/admin/dashboard}" class="sidebar-link active">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Management</div>
+      <a th:href="@{/admin/users}" class="sidebar-link">
+        <i data-lucide="users"></i> Users
+      </a>
+      <a th:href="@{/admin/donations}" class="sidebar-link">
+        <i data-lucide="package"></i> Donations
+      </a>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Analytics</div>
+      <a th:href="@{/admin/reports}" class="sidebar-link">
+        <i data-lucide="chart-no-axes-combined"></i> Reports
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'A'}"></div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" th:text="${name}">Admin</div>
+          <div class="sidebar-user-role">Administrator</div>
+        </div>
+      </div>
+      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+    </div>
+  </aside>
 
-<div class="content-area">
-<h2>Donations</h2>
-<div class="info-row">
-<div class="info-card">
-<h3 th:text="${totalDonations}">0</h3>
-<p>Total</p>
-</div>
-<div class="info-card">
-<h3 th:text="${pendingCount}" style="color:#ffb74d;">0</h3>
-<p>Pending</p>
-</div>
-<div class="info-card">
-<h3 th:text="${acceptedCount}" style="color:#64b5f6;">0</h3>
-<p>Accepted</p>
-</div>
-<div class="info-card">
-<h3 th:text="${pickedUpCount}" style="color:#81c784;">0</h3>
-<p>Picked Up</p>
-</div>
-</div>
-</div>
+  <main class="dash-main">
+    <header class="dash-topbar">
+      <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+      <div class="topbar-title"><i data-lucide="shield-check"></i> Admin Panel</div>
+      <div class="topbar-actions"></div>
+    </header>
 
-<div class="content-area">
-<h2>Analytics</h2>
-<div class="info-row">
-<div class="info-card">
-<h3 th:text="${todayDonations}" style="color:#ce93d8;">0</h3>
-<p>Today</p>
-</div>
-<div class="info-card">
-<h3 th:text="${weeklyDonations}" style="color:#ce93d8;">0</h3>
-<p>This Week</p>
-</div>
-<div class="info-card">
-<h3 th:text="${monthlyDonations}" style="color:#ce93d8;">0</h3>
-<p>This Month</p>
-</div>
-</div>
-</div>
+    <div class="dash-content">
+      <div class="page-header">
+        <h1>Welcome, <span th:text="${name}">Admin</span></h1>
+        <p>Platform overview and management at a glance</p>
+      </div>
 
-<div class="content-area">
-<h2>Recent Donations</h2>
+      <!-- Users KPIs -->
+      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Users</h3>
+      <div class="kpi-grid" style="margin-bottom:32px;">
+        <div class="kpi-card">
+          <div class="kpi-icon purple"><i data-lucide="users"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${totalUsers}">0</div>
+            <div class="kpi-label">Total Users</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon amber"><i data-lucide="store"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${totalRestaurants}">0</div>
+            <div class="kpi-label">Restaurants</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon teal"><i data-lucide="heart-handshake"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${totalNgos}">0</div>
+            <div class="kpi-label">NGOs</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon rose"><i data-lucide="shield-ban"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${blockedUsers}">0</div>
+            <div class="kpi-label">Blocked</div>
+          </div>
+        </div>
+      </div>
 
-<div th:if="${#lists.isEmpty(allDonations)}">
-<p class="no-data">No donations yet.</p>
-</div>
+      <!-- Donations KPIs -->
+      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Donations</h3>
+      <div class="kpi-grid" style="margin-bottom:32px;">
+        <div class="kpi-card">
+          <div class="kpi-icon accent"><i data-lucide="package"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${totalDonations}">0</div>
+            <div class="kpi-label">Total</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon amber"><i data-lucide="clock"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${pendingCount}">0</div>
+            <div class="kpi-label">Pending</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon blue"><i data-lucide="check-circle"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${acceptedCount}">0</div>
+            <div class="kpi-label">Accepted</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon green"><i data-lucide="check-check"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${pickedUpCount}">0</div>
+            <div class="kpi-label">Picked Up</div>
+          </div>
+        </div>
+      </div>
 
-<table class="mytable" th:if="${!#lists.isEmpty(allDonations)}">
-<thead>
-<tr>
-<th>ID</th>
-<th>Food</th>
-<th>Qty</th>
-<th>Restaurant</th>
-<th>NGO</th>
-<th>Status</th>
-<th>Date</th>
-</tr>
-</thead>
-<tbody>
-<tr th:each="d : ${allDonations}">
-<td th:text="${d.id}"></td>
-<td th:text="${d.foodName}"></td>
-<td th:text="${d.qty}"></td>
-<td th:text="${d.restaurantName}"></td>
-<td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
-<td>
-<span class="st-pending" th:if="${d.status == 'Pending'}">Pending</span>
-<span class="st-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-<span class="st-picked" th:if="${d.status == 'Picked Up'}">Picked Up</span>
-</td>
-<td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
-</tr>
-</tbody>
-</table>
-</div>
+      <!-- Analytics KPIs -->
+      <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px;">Activity</h3>
+      <div class="kpi-grid" style="margin-bottom:32px;">
+        <div class="kpi-card">
+          <div class="kpi-icon purple"><i data-lucide="calendar-check"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${todayDonations}">0</div>
+            <div class="kpi-label">Today</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon blue"><i data-lucide="calendar-range"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${weeklyDonations}">0</div>
+            <div class="kpi-label">This Week</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon green"><i data-lucide="calendar"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value" th:text="${monthlyDonations}">0</div>
+            <div class="kpi-label">This Month</div>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <!-- Recent Donations Table -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <div class="section-card-title"><i data-lucide="list"></i> Recent Donations</div>
+          <a th:href="@{/admin/donations}" class="btn btn-outline btn-sm"><i data-lucide="external-link"></i> View All</a>
+        </div>
+
+        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(allDonations)}">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Food</th>
+                <th>Qty</th>
+                <th>Restaurant</th>
+                <th>NGO</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="d : ${allDonations}">
+                <td class="td-bold" th:text="${d.id}"></td>
+                <td th:text="${d.foodName}"></td>
+                <td th:text="${d.qty}"></td>
+                <td th:text="${d.restaurantName}"></td>
+                <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
+                <td>
+                  <span class="badge badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock"></i> Pending</span>
+                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
+                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
+                </td>
+                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-card-body" th:if="${#lists.isEmpty(allDonations)}">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="inbox"></i></div>
+            <h3>No donations yet</h3>
+            <p>Donation records will appear here as users start adding them.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+  </script>
 </body>
+
 </html>
