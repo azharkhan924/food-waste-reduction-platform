@@ -22,21 +22,30 @@
       <a th:href="@{/}" class="sidebar-logo">
         <img th:src="@{/images/logo.png}" alt="FoodRescue">
       </a>
+      <button class="sidebar-toggle-btn" onclick="toggleSidebarFold()" title="Fold Sidebar">
+        <i data-lucide="panel-left-close"></i>
+      </button>
     </div>
     <div class="sidebar-label">Main Menu</div>
     <nav class="sidebar-nav">
-      <a th:href="@{/restaurant/dashboard}" class="sidebar-link">
-        <i data-lucide="bookmark"></i> Active Donations
+      <a th:href="@{/restaurant/dashboard}" class="sidebar-link" title="Active Donations">
+        <i data-lucide="bookmark"></i>
+        <span class="sidebar-link-text">Active Donations</span>
       </a>
-      <a th:href="@{/restaurant/add-donation}" class="sidebar-link active">
-        <i data-lucide="plus-circle"></i> Add Donation
+      <a th:href="@{/restaurant/add-donation}" class="sidebar-link active" title="Add Donation">
+        <i data-lucide="plus-circle"></i>
+        <span class="sidebar-link-text">Add Donation</span>
       </a>
-      <a th:href="@{/restaurant/history}" class="sidebar-link">
-        <i data-lucide="clock"></i> History
+      <a th:href="@{/restaurant/history}" class="sidebar-link" title="History">
+        <i data-lucide="clock"></i>
+        <span class="sidebar-link-text">History</span>
       </a>
     </nav>
     <div class="sidebar-footer">
-      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+      <a th:href="@{/logout}" class="sidebar-logout" title="Sign Out">
+        <i data-lucide="log-out"></i>
+        <span class="sidebar-link-text">Sign Out</span>
+      </a>
     </div>
   </aside>
 
@@ -130,7 +139,18 @@
       document.getElementById('sidebarOverlay').classList.toggle('open');
     }
 
-    // Interactive category tab selection
+    function toggleSidebarFold() {
+      document.body.classList.toggle('sidebar-folded');
+      const isFolded = document.body.classList.contains('sidebar-folded');
+      localStorage.setItem('foodrescue_sidebar_folded', isFolded ? 'true' : 'false');
+    }
+
+    (function() {
+      if (localStorage.getItem('foodrescue_sidebar_folded') === 'true') {
+        document.body.classList.add('sidebar-folded');
+      }
+    })();
+
     function selectCategory(tabEl, prefix) {
       document.querySelectorAll('.malinessa-tab').forEach(t => t.classList.remove('active'));
       tabEl.classList.add('active');

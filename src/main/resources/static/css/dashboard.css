@@ -124,6 +124,9 @@ body.dash-body img { max-width: 100%; height: auto; display: block; }
 .sidebar-header {
   padding: 20px 20px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .sidebar-logo {
@@ -199,9 +202,95 @@ body.dash-body img { max-width: 100%; height: auto; display: block; }
   margin: 8px 16px;
 }
 
-.sidebar-footer {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+/* ---------- Folded / Compact Sidebar (Icon-Only Mode) ---------- */
+body.dash-body.sidebar-folded {
+  --sidebar-width: 76px;
+}
+
+body.dash-body.sidebar-folded .dash-sidebar {
+  width: 76px;
+}
+
+body.dash-body.sidebar-folded .dash-main {
+  margin-left: 76px;
+}
+
+body.dash-body.sidebar-folded .sidebar-header {
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Cuts text and shows ONLY circular leaf icon part of logo when folded */
+body.dash-body.sidebar-folded .sidebar-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+}
+
+body.dash-body.sidebar-folded .sidebar-logo img {
+  height: 36px;
+  width: auto;
+  max-width: none;
+  object-fit: cover;
+  object-position: left center;
+  transform: scale(1.05);
+}
+
+body.dash-body.sidebar-folded .sidebar-label {
+  display: none;
+}
+
+body.dash-body.sidebar-folded .sidebar-link {
+  justify-content: center;
+  padding: 12px 8px;
+  margin: 4px 8px;
+}
+
+body.dash-body.sidebar-folded .sidebar-link span,
+body.dash-body.sidebar-folded .sidebar-link-text {
+  display: none;
+}
+
+body.dash-body.sidebar-folded .sidebar-footer {
+  justify-content: center;
+  padding: 16px 8px;
+}
+
+body.dash-body.sidebar-folded .sidebar-logout span,
+body.dash-body.sidebar-folded .sidebar-logout .sidebar-link-text {
+  display: none;
+}
+
+.sidebar-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+
+.sidebar-toggle-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .sidebar-user {
@@ -2082,86 +2171,248 @@ body.dash-body img { max-width: 100%; height: auto; display: block; }
   font-size: 16px;
   font-weight: 700;
   color: #566A7F;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.role-admin .data-table thead th {
-  background: #F5F5F9;
-  color: #8592A3;
-  font-size: 12px;
+/* Interactive Filter Pills for Tables */
+.table-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.table-filter-pill {
+  padding: 6px 14px;
+  font-size: 13px;
   font-weight: 600;
-  border-bottom: 1px solid #ECEEF1;
+  border-radius: 20px;
+  border: 1px solid #E5E7EB;
+  background: #F9FAFB;
+  color: #4B5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.role-admin .data-table tbody td {
-  color: #566A7F;
-  border-bottom: 1px solid #F5F5F9;
+.table-filter-pill:hover,
+.table-filter-pill.active {
+  background: #059669;
+  color: #FFFFFF;
+  border-color: #059669;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
 }
 
-/* Sneat Status Badges */
-.sneat-badge-pending {
-  background: #FFF3D6;
-  color: #FFAB00;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
+/* Timeline Activity Widget */
+.activity-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.sneat-badge-accepted {
-  background: #E1F0FF;
-  color: #03C3EC;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
 }
 
-.sneat-badge-active {
-  background: #E8FADF;
-  color: #71DD37;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.sneat-badge-blocked {
-  background: #FFE5E5;
-  color: #FF3E1E;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.sneat-badge-restaurant {
+.timeline-icon-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background: #ECFDF5;
   color: #059669;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.sneat-badge-ngo {
-  background: #E1F0FF;
-  color: #03C3EC;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
+.timeline-content {
+  flex: 1;
 }
 
-.sneat-badge-admin {
-  background: #E8FADF;
-  color: #71DD37;
-  font-size: 12px;
+.timeline-title {
+  font-size: 13px;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
+  color: #111827;
 }
 
-/* PRINT */
+.timeline-time {
+  font-size: 11px;
+  color: #9CA3AF;
+}
+
+/* ============================================
+   MOBILE & TABLET RESPONSIVENESS (ALL DASHBOARDS)
+   ============================================ */
+@media (max-width: 1024px) {
+  .sneat-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chart-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .dash-content {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dash-sidebar {
+    left: -280px !important;
+    width: 280px !important;
+    box-shadow: 0 0 24px rgba(0,0,0,0.25);
+    z-index: 999;
+  }
+
+  .dash-sidebar.open {
+    left: 0 !important;
+  }
+
+  .dash-main {
+    margin-left: 0 !important;
+    padding-bottom: 32px;
+  }
+
+  body.dash-body.sidebar-folded .dash-main {
+    margin-left: 0 !important;
+  }
+
+  .topbar-hamburger {
+    display: flex !important;
+  }
+
+  .dash-topbar {
+    margin: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 16px !important;
+  }
+
+  .malinessa-search-wrap, .sneat-search-wrap {
+    width: 100%;
+    max-width: 180px;
+  }
+
+  .malinessa-search-input, .sneat-search-input {
+    width: 100%;
+  }
+
+  .malinessa-profile-name {
+    display: none;
+  }
+
+  .malinessa-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .sneat-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .sneat-welcome-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .sneat-badge-badge {
+    align-self: flex-end;
+  }
+
+  .section-card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+
+  .filter-bar form {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .filter-bar .dash-select {
+    width: 100% !important;
+  }
+
+  .add-user-form {
+    flex-direction: column;
+  }
+
+  .add-user-form input,
+  .add-user-form select,
+  .add-user-form button {
+    width: 100% !important;
+  }
+
+  .modal-card {
+    width: 92% !important;
+    padding: 24px 16px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .malinessa-page-head {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+  }
+
+  .malinessa-page-head .btn-mcard-confirm {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table-filter-pills {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sneat-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-content {
+    padding: 16px 12px;
+  }
+
+  .malinessa-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 8px;
+  }
+
+  .malinessa-tab {
+    display: inline-block;
+  }
+
+  .malinessa-search-wrap, .sneat-search-wrap {
+    max-width: 130px;
+  }
+
+  .data-table th, .data-table td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .sneat-welcome-title {
+    font-size: 18px !important;
+  }
+
+  .malinessa-page-title {
+    font-size: 20px !important;
+  }
+}
+
+/* PRINT STYLES */
 @media print {
   .dash-sidebar, .dash-topbar, .sidebar-overlay { display: none !important; }
   .dash-main { margin-left: 0 !important; }

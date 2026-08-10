@@ -21,21 +21,30 @@
       <a th:href="@{/}" class="sidebar-logo">
         <img th:src="@{/images/logo.png}" alt="FoodRescue">
       </a>
+      <button class="sidebar-toggle-btn" onclick="toggleSidebarFold()" title="Fold Sidebar">
+        <i data-lucide="panel-left-close"></i>
+      </button>
     </div>
     <div class="sidebar-label">NGO Portal</div>
     <nav class="sidebar-nav">
-      <a th:href="@{/ngo/dashboard}" class="sidebar-link">
-        <i data-lucide="layout-dashboard"></i> Available Food
+      <a th:href="@{/ngo/dashboard}" class="sidebar-link" title="Available Food">
+        <i data-lucide="layout-dashboard"></i>
+        <span class="sidebar-link-text">Available Food</span>
       </a>
-      <a th:href="@{/ngo/map}" class="sidebar-link">
-        <i data-lucide="map"></i> Map View
+      <a th:href="@{/ngo/map}" class="sidebar-link" title="Map View">
+        <i data-lucide="map"></i>
+        <span class="sidebar-link-text">Map View</span>
       </a>
-      <a th:href="@{/ngo/history}" class="sidebar-link active">
-        <i data-lucide="clipboard-list"></i> My Pickups
+      <a th:href="@{/ngo/history}" class="sidebar-link active" title="My Pickups">
+        <i data-lucide="clipboard-list"></i>
+        <span class="sidebar-link-text">My Pickups</span>
       </a>
     </nav>
     <div class="sidebar-footer">
-      <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
+      <a th:href="@{/logout}" class="sidebar-logout" title="Sign Out">
+        <i data-lucide="log-out"></i>
+        <span class="sidebar-link-text">Sign Out</span>
+      </a>
     </div>
   </aside>
 
@@ -86,10 +95,9 @@
         </div>
       </div>
 
-      <!-- NGO History Cards Grid (D-1 tag removed) -->
+      <!-- NGO History Cards Grid -->
       <div class="malinessa-grid" id="historyGrid">
         <div th:each="d : ${donations}" class="malinessa-card pickup-card-item">
-          <!-- Card Header -->
           <div class="mcard-header">
             <span class="mcard-status-confirmed" th:if="${d.status == 'Accepted'}" style="background:#ECFDF5; color:#059669; border-color:#A7F3D0;">
               <i data-lucide="clock" style="width:12px; height:12px; margin-right:4px;"></i> Ready for Pickup
@@ -99,7 +107,6 @@
             </span>
           </div>
 
-          <!-- Card Body -->
           <div class="mcard-body">
             <div class="mcard-left">
               <div class="mcard-avatar" style="background:#ECFDF5; color:#059669;" th:text="${d.foodName != null ? d.foodName.substring(0,1).toUpperCase() : 'F'}">F</div>
@@ -129,7 +136,6 @@
             </div>
           </div>
 
-          <!-- Card Footer Action -->
           <div class="mcard-footer">
             <th:block th:if="${d.status == 'Accepted'}">
               <a th:href="@{/ngo/pickup/{id}(id=${d.id})}" onclick="return confirm('Mark this donation as picked up?')" class="btn-mcard-confirm" style="background:#059669; width:100%;">
@@ -146,7 +152,6 @@
         </div>
       </div>
 
-      <!-- Empty State -->
       <div th:if="${#lists.isEmpty(donations)}" class="malinessa-card" style="margin-top:20px; text-align:center; padding:48px 24px;">
         <div style="width:56px; height:56px; background:#ECFDF5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#059669;">
           <i data-lucide="inbox" style="width:28px; height:28px;"></i>
@@ -166,7 +171,18 @@
       document.getElementById('sidebarOverlay').classList.toggle('open');
     }
 
-    // Live search filter for NGO history/pickups
+    function toggleSidebarFold() {
+      document.body.classList.toggle('sidebar-folded');
+      const isFolded = document.body.classList.contains('sidebar-folded');
+      localStorage.setItem('foodrescue_sidebar_folded', isFolded ? 'true' : 'false');
+    }
+
+    (function() {
+      if (localStorage.getItem('foodrescue_sidebar_folded') === 'true') {
+        document.body.classList.add('sidebar-folded');
+      }
+    })();
+
     function filterPickups() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const cards = document.querySelectorAll('.pickup-card-item');
