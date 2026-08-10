@@ -42,15 +42,15 @@
   --status-blocked: #EF4444;
   --status-blocked-border: #FECACA;
 
-  /* Default: Restaurant green */
-  --accent: #4CAF50;
-  --accent-dark: #2E7D32;
-  --accent-light: #81C784;
-  --accent-pale: #E8F5E9;
-  --accent-gradient: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-  --sidebar-bg: #1B2E1D;
-  --sidebar-hover: rgba(255,255,255,0.08);
-  --sidebar-active: rgba(76,175,80,0.2);
+  /* Restaurant: Malinessa Mint & Emerald Theme */
+  --accent: #059669;
+  --accent-dark: #047857;
+  --accent-light: #34D399;
+  --accent-pale: #ECFDF5;
+  --accent-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --sidebar-bg: #FFFFFF;
+  --sidebar-hover: #F8FAFC;
+  --sidebar-active: #ECFDF5;
 }
 
 /* NGO: Teal Blue */
@@ -1093,9 +1093,604 @@ body.dash-body img { max-width: 100%; height: auto; display: block; }
 }
 
 /* ============================================
-   PRINT
+   MALINESSA RESTAURANT DESIGN SYSTEM
    ============================================ */
+
+/* White Sidebar Overrides for Restaurant */
+.role-restaurant .dash-sidebar {
+  background: #FFFFFF;
+  border-right: 1px solid #EBEFEF;
+}
+
+.role-restaurant .sidebar-header {
+  border-bottom: 1px solid #F3F4F6;
+  padding: 24px;
+}
+
+.role-restaurant .sidebar-logo img {
+  filter: none;
+}
+
+.role-restaurant .sidebar-label {
+  color: #9CA3AF;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  padding: 20px 24px 8px;
+}
+
+.role-restaurant .sidebar-link {
+  color: #4B5563;
+  font-weight: 500;
+  border-left: none;
+  position: relative;
+  padding: 12px 24px;
+  margin: 2px 0;
+  transition: all 0.2s ease;
+}
+
+.role-restaurant .sidebar-link svg {
+  color: #6B7280;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.role-restaurant .sidebar-link:hover {
+  color: #111827;
+  background: #F9FAFB;
+}
+
+.role-restaurant .sidebar-link:hover svg {
+  color: #111827;
+}
+
+.role-restaurant .sidebar-link.active {
+  color: #059669;
+  font-weight: 700;
+  background: transparent;
+}
+
+.role-restaurant .sidebar-link.active svg {
+  color: #059669;
+}
+
+.role-restaurant .sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 26px;
+  background: #059669;
+  border-radius: 0 4px 4px 0;
+}
+
+.role-restaurant .sidebar-footer {
+  border-top: 1px solid #F3F4F6;
+  padding: 16px 24px;
+}
+
+.role-restaurant .sidebar-user-name {
+  color: #111827;
+  font-weight: 600;
+}
+
+.role-restaurant .sidebar-user-role {
+  color: #6B7280;
+}
+
+.role-restaurant .sidebar-logout {
+  color: #6B7280;
+}
+
+.role-restaurant .sidebar-logout:hover {
+  color: #EF4444;
+}
+
+/* Malinessa Topbar */
+.role-restaurant .dash-topbar {
+  background: #FFFFFF;
+  border-bottom: 1px solid #EBEFEF;
+  padding: 0 32px;
+  height: 70px;
+}
+
+.malinessa-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.malinessa-search-input {
+  background: #F3F4F6;
+  border: 1px solid transparent;
+  border-radius: 50px;
+  padding: 8px 16px 8px 38px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: #374151;
+  width: 240px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.malinessa-search-input:focus {
+  background: #FFFFFF;
+  border-color: #A7F3D0;
+  box-shadow: 0 0 0 3px rgba(5,150,105,0.08);
+}
+
+.malinessa-search-icon {
+  position: absolute;
+  left: 14px;
+  color: #9CA3AF;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.malinessa-top-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.malinessa-bell {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F3F4F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B5563;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.malinessa-bell:hover {
+  background: #E5E7EB;
+  color: #111827;
+}
+
+.malinessa-bell svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.malinessa-profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 50px;
+  padding: 4px 14px 4px 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.malinessa-profile-pill:hover {
+  border-color: #D1D5DB;
+  background: #F9FAFB;
+}
+
+.malinessa-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #111827;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.malinessa-profile-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.malinessa-profile-name svg {
+  width: 14px;
+  height: 14px;
+  color: #6B7280;
+}
+
+/* Malinessa Page Head & Grid */
+.malinessa-page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.malinessa-page-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.malinessa-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+}
+
+.malinessa-sort-btn svg {
+  width: 14px;
+  height: 14px;
+  color: #6B7280;
+}
+
+/* Card Grid */
+.malinessa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Card 0: Dashed Create Donation Card */
+.malinessa-create-card {
+  border: 2px dashed #6EE7B7;
+  background: #F0FDF4;
+  border-radius: 16px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.malinessa-create-card:hover {
+  border-color: #059669;
+  background: #ECFDF5;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(5,150,105,0.08);
+}
+
+.create-bell-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #FEF3C7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.create-bell-inner {
+  width: 44px;
+  height: 44px;
+  background: #059669;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+}
+
+.create-bell-inner svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+.create-card-btn {
+  background: #FFFFFF;
+  border: 1.5px solid #059669;
+  color: #059669;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 20px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Malinessa Donation Card */
+.malinessa-card {
+  background: #FFFFFF;
+  border: 1px solid #EAEFEB;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+}
+
+.malinessa-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+  border-color: #D1D5DB;
+}
+
+.mcard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.mcard-status-incoming {
+  background: #FFF7ED;
+  color: #EA580C;
+  border: 1px solid #FFEDD5;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.mcard-status-confirmed {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.mcard-status-completed {
+  background: #EFF6FF;
+  color: #2563EB;
+  border: 1px solid #BFDBFE;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.mcard-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mcard-table-tag {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mcard-menu-btn {
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.mcard-menu-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mcard-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mcard-left {
+  flex: 1;
+}
+
+.mcard-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ECFDF5;
+  color: #059669;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.mcard-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.mcard-detail-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+
+.mcard-detail-line svg {
+  width: 14px;
+  height: 14px;
+  color: #9CA3AF;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
+.mcard-right-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.table-graphic {
+  width: 60px;
+  height: 48px;
+  border: 1.5px solid #059669;
+  border-radius: 8px;
+  background: #F0FDF4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #059669;
+  margin-bottom: 8px;
+}
+
+.table-graphic svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.8;
+}
+
+.mcard-servings {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mcard-time {
+  font-size: 12px;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.mcard-footer {
+  display: flex;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.btn-mcard-confirm {
+  background: #059669;
+  color: #FFFFFF;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.btn-mcard-confirm:hover {
+  background: #047857;
+}
+
+.btn-mcard-cancel {
+  background: #F3F4F6;
+  color: #4B5563;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.btn-mcard-cancel:hover {
+  background: #E5E7EB;
+  color: #111827;
+}
+
+/* Category Tabs (Image 2 style) */
+.malinessa-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 24px;
+}
+
+.malinessa-tab {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4B5563;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.malinessa-tab:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+
+.malinessa-tab.active {
+  background: #ECFDF5;
+  color: #059669;
+  border-color: #A7F3D0;
+  font-weight: 600;
+}
+
+/* PRINT */
 @media print {
   .dash-sidebar, .dash-topbar, .sidebar-overlay { display: none !important; }
   .dash-main { margin-left: 0 !important; }
 }
+

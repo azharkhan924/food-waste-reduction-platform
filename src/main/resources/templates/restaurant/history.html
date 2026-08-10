@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>History — FoodRescue Restaurant</title>
+  <title>Donation History — FoodRescue Restaurant</title>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,16 +12,20 @@
 
 <body class="dash-body role-restaurant">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- Sidebar (Malinessa White Sidebar) -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Menu</div>
+    <div class="sidebar-label">Main Menu</div>
     <nav class="sidebar-nav">
       <a th:href="@{/restaurant/dashboard}" class="sidebar-link">
-        <i data-lucide="layout-dashboard"></i> Dashboard
+        <i data-lucide="bookmark"></i> Active Donations
       </a>
       <a th:href="@{/restaurant/add-donation}" class="sidebar-link">
         <i data-lucide="plus-circle"></i> Add Donation
@@ -31,75 +35,137 @@
       </a>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" th:text="${name}">Restaurant</div>
+          <div class="sidebar-user-role">Restaurant Partner</div>
+        </div>
+      </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Top Bar -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="clock"></i> Donation History</div>
-      <div class="topbar-actions"></div>
-    </header>
 
-    <div class="dash-content">
-      <div class="page-header">
-        <h1>Donation History</h1>
-        <p>A complete record of all your food donations</p>
+      <!-- Live Search Input -->
+      <div class="malinessa-search-wrap">
+        <i data-lucide="search" class="malinessa-search-icon"></i>
+        <input type="text" id="searchInput" onkeyup="filterHistory()" class="malinessa-search-input" placeholder="Search history...">
       </div>
 
-      <div class="section-card">
-        <div class="section-card-header">
-          <div class="section-card-title"><i data-lucide="list"></i> All Donations</div>
-        </div>
-
-        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(donations)}">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Food Item</th>
-                <th>Qty</th>
-                <th>Expiry</th>
-                <th>Pickup Address</th>
-                <th>Status</th>
-                <th>Accepted By</th>
-                <th>Date Added</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="d : ${donations}">
-                <td class="td-bold" th:text="${d.foodName}"></td>
-                <td th:text="${d.qty}"></td>
-                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
-                <td th:text="${d.pickupAddress}"></td>
-                <td>
-                  <span class="badge badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock"></i> Pending</span>
-                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
-                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
-                </td>
-                <td th:text="${d.ngoName != null ? d.ngoName : '-'}"></td>
-                <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">
-          <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="inbox"></i></div>
-            <h3>No donations found</h3>
-            <p>Your donation history will appear here once you start adding food donations.</p>
+      <!-- Right profile pill -->
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Restaurant</span>
           </div>
         </div>
       </div>
+    </header>
+
+    <div class="dash-content">
+      <!-- Page Head -->
+      <div class="malinessa-page-head">
+        <h1 class="malinessa-page-title">Donation History</h1>
+      </div>
+
+      <!-- History Grid Cards -->
+      <div class="malinessa-grid" id="historyGrid">
+        <div th:each="d : ${donations}" class="malinessa-card history-card-item">
+          <!-- Card Header -->
+          <div class="mcard-header">
+            <span class="mcard-status-incoming" th:if="${d.status == 'Pending'}">Pending Pickup</span>
+            <span class="mcard-status-confirmed" th:if="${d.status == 'Accepted'}">Accepted by NGO</span>
+            <span class="mcard-status-completed" th:if="${d.status == 'Picked Up'}">Picked Up</span>
+
+            <div class="mcard-header-right">
+              <span class="mcard-table-tag">
+                <i data-lucide="package" style="width:13px; height:13px;"></i>
+                <span th:text="'D-' + ${d.id}">D-1</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="mcard-body">
+            <div class="mcard-left">
+              <div class="mcard-avatar" th:text="${d.foodName != null ? d.foodName.substring(0,1).toUpperCase() : 'F'}">F</div>
+              <div class="mcard-title card-food-name" th:text="${d.foodName}">Food Item</div>
+              <div class="mcard-detail-line card-address">
+                <i data-lucide="map-pin"></i>
+                <span th:text="${d.pickupAddress}">Address</span>
+              </div>
+              <div class="mcard-detail-line" th:if="${d.ngoName != null}">
+                <i data-lucide="heart-handshake"></i>
+                <span th:text="'NGO: ' + ${d.ngoName}">NGO</span>
+              </div>
+            </div>
+
+            <div class="mcard-right-diagram">
+              <div class="table-graphic">
+                <i data-lucide="utensils-crossed"></i>
+              </div>
+              <div class="mcard-servings">
+                <i data-lucide="users" style="width:12px; height:12px; color:#059669;"></i>
+                <span th:text="${d.qty} + ' servings'">40 servings</span>
+              </div>
+              <div class="mcard-time" th:if="${d.createdAt != null}">
+                <i data-lucide="calendar" style="width:12px; height:12px;"></i>
+                <span th:text="${#temporals.format(d.createdAt, 'dd MMM yyyy')}">Date</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div class="mcard-footer">
+            <span class="btn-mcard-confirm" style="background:#F8FAFC; color:#475569; border:1px solid #E2E8F0; cursor:default; width:100%;">
+              <i data-lucide="check-circle" style="width:14px; height:14px; color:#059669;"></i>
+              <span th:text="${d.status}">Status</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div th:if="${#lists.isEmpty(donations)}" class="malinessa-card" style="margin-top:20px; text-align:center; padding:48px 24px;">
+        <div style="width:56px; height:56px; background:#ECFDF5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#059669;">
+          <i data-lucide="inbox" style="width:28px; height:28px;"></i>
+        </div>
+        <h3 style="font-size:16px; font-weight:700; color:#111827; margin-bottom:6px;">No donation history</h3>
+        <p style="font-size:14px; color:#6B7280;">Your past donation records will appear here.</p>
+      </div>
+
     </div>
   </main>
 
   <script>
     lucide.createIcons();
+
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    // Live search filter for history items
+    function filterHistory() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.history-card-item');
+
+      cards.forEach(card => {
+        const foodName = card.querySelector('.card-food-name')?.innerText.toLowerCase() || '';
+        const address = card.querySelector('.card-address')?.innerText.toLowerCase() || '';
+
+        if (foodName.includes(query) || address.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     }
   </script>
 </body>

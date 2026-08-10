@@ -13,16 +13,20 @@
 
 <body class="dash-body role-restaurant">
 
+  <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+  <!-- Sidebar (Malinessa White Sidebar) -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Menu</div>
+    <div class="sidebar-label">Main Menu</div>
     <nav class="sidebar-nav">
       <a th:href="@{/restaurant/dashboard}" class="sidebar-link">
-        <i data-lucide="layout-dashboard"></i> Dashboard
+        <i data-lucide="bookmark"></i> Active Donations
       </a>
       <a th:href="@{/restaurant/add-donation}" class="sidebar-link active">
         <i data-lucide="plus-circle"></i> Add Donation
@@ -32,66 +36,94 @@
       </a>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" th:text="${name}">Restaurant</div>
+          <div class="sidebar-user-role">Restaurant Partner</div>
+        </div>
+      </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
     </div>
   </aside>
 
+  <!-- Main Content -->
   <main class="dash-main">
+    <!-- Top Bar -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="plus-circle"></i> Add Donation</div>
-      <div class="topbar-actions"></div>
+
+      <div class="topbar-title" style="font-size:16px; font-weight:700; color:#111827; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="plus-circle" style="color:#059669;"></i> Create Donation
+      </div>
+
+      <!-- Right profile pill -->
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Restaurant</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Add Food Donation</h1>
-        <p>Share your surplus food with NGOs and communities in need</p>
+      <!-- Page Head -->
+      <div class="malinessa-page-head">
+        <h1 class="malinessa-page-title">Add Surplus Food Donation</h1>
       </div>
 
-      <div class="form-card">
+      <!-- Interactive Quick Food Category Tabs -->
+      <div class="malinessa-tabs">
+        <div class="malinessa-tab active" onclick="selectCategory(this, '')">All Types</div>
+        <div class="malinessa-tab" onclick="selectCategory(this, 'Main Course - ')">Main Courses</div>
+        <div class="malinessa-tab" onclick="selectCategory(this, 'Bakery - ')">Bakery &amp; Bread</div>
+        <div class="malinessa-tab" onclick="selectCategory(this, 'Soups/Dal - ')">Soups &amp; Dal</div>
+        <div class="malinessa-tab" onclick="selectCategory(this, 'Packaged - ')">Packaged Meals</div>
+        <div class="malinessa-tab" onclick="selectCategory(this, 'Beverages - ')">Beverages</div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="malinessa-card" style="max-width: 680px; min-height: auto;">
         <form th:action="@{/restaurant/add-donation}" method="post">
-          <div class="form-group">
-            <label class="dash-label">Food Name</label>
-            <input type="text" name="foodName" class="dash-input" placeholder="e.g. Rice, Dal, Bread" required>
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label class="dash-label">Food Name / Description</label>
+            <input type="text" name="foodName" id="foodNameInput" class="dash-input" placeholder="e.g. Scrambled egg toast, Dal Rice Combo" required style="width:100%;">
           </div>
 
-          <div class="form-group">
-            <label class="dash-label">Quantity (in servings)</label>
-            <input type="text" name="qty" class="dash-input" placeholder="e.g. 50" required>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div class="form-group">
+              <label class="dash-label">Quantity (Servings)</label>
+              <input type="number" min="1" name="qty" class="dash-input" placeholder="e.g. 50" required style="width:100%;">
+            </div>
+
+            <div class="form-group">
+              <label class="dash-label">Expiry Date</label>
+              <input type="date" name="expiry" class="dash-input" required style="width:100%;">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="dash-label">Expiry Date</label>
-            <input type="date" name="expiry" class="dash-input" required>
-          </div>
-
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom: 20px;">
             <label class="dash-label">Pickup Address</label>
-            <input type="text" name="pickupAddress" id="addressInput" class="dash-input" placeholder="Enter pickup location or click on map" required>
+            <input type="text" name="pickupAddress" id="addressInput" class="dash-input" placeholder="Enter pickup location or click on map below" required style="width:100%;">
           </div>
 
           <input type="hidden" name="latitude" id="latField">
           <input type="hidden" name="longitude" id="lngField">
 
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom: 20px;">
             <label class="dash-label">Select Location on Map</label>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Click on the map to pin your pickup location</p>
-            <div id="map" class="map-container" style="height:280px;"></div>
+            <p style="font-size:12px; color:#6B7280; margin-bottom:10px;">Click on the map to pin your exact pickup location</p>
+            <div id="map" class="map-container" style="height:260px; border-radius:12px;"></div>
           </div>
 
-          <p id="coordsDisplay" style="font-size:12px; color:var(--accent); margin:10px 0;"></p>
+          <p id="coordsDisplay" style="font-size:12px; color:#059669; font-weight:600; margin:10px 0;"></p>
 
-          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px 24px; font-size:15px; margin-top:8px;">
-            <i data-lucide="send"></i> Submit Donation
+          <button type="submit" class="btn-mcard-confirm" style="width:100%; justify-content:center; padding:12px 24px; font-size:15px; margin-top:8px;">
+            <i data-lucide="plus-circle" style="width:18px; height:18px;"></i> Submit Donation
           </button>
         </form>
-
-        <p style="margin-top:20px;">
-          <a th:href="@{/restaurant/dashboard}" style="font-size:13px; color:var(--accent); display:inline-flex; align-items:center; gap:6px;">
-            <i data-lucide="arrow-left" style="width:14px; height:14px;"></i> Back to Dashboard
-          </a>
-        </p>
       </div>
     </div>
   </main>
@@ -103,6 +135,22 @@
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    // Interactive category tab selection
+    function selectCategory(tabEl, prefix) {
+      document.querySelectorAll('.malinessa-tab').forEach(t => t.classList.remove('active'));
+      tabEl.classList.add('active');
+
+      const input = document.getElementById('foodNameInput');
+      if (prefix) {
+        if (!input.value.startsWith(prefix)) {
+          input.value = prefix + input.value.replace(/^(Main Course - |Bakery - |Soups\/Dal - |Packaged - |Beverages - )/, '');
+        }
+      } else {
+        input.value = input.value.replace(/^(Main Course - |Bakery - |Soups\/Dal - |Packaged - |Beverages - )/, '');
+      }
+      input.focus();
     }
 
     var map = L.map('map').setView([20.5937, 78.9629], 5);
@@ -119,7 +167,7 @@
 
       document.getElementById('latField').value = lat;
       document.getElementById('lngField').value = lng;
-      document.getElementById('coordsDisplay').innerHTML = 'Lat: ' + lat.toFixed(4) + ', Lng: ' + lng.toFixed(4);
+      document.getElementById('coordsDisplay').innerHTML = '📍 Lat: ' + lat.toFixed(4) + ', Lng: ' + lng.toFixed(4);
 
       if (marker != null) {
         map.removeLayer(marker);

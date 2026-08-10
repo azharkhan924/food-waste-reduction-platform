@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — FoodRescue Restaurant</title>
+  <title>Donations — FoodRescue Restaurant</title>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}">
   <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,15 +15,17 @@
   <!-- Sidebar Overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (Malinessa White Sidebar) -->
   <aside class="dash-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo"><img th:src="@{/images/logo.png}" alt="FoodRescue"></a>
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
     </div>
-    <div class="sidebar-label">Menu</div>
+    <div class="sidebar-label">Main Menu</div>
     <nav class="sidebar-nav">
       <a th:href="@{/restaurant/dashboard}" class="sidebar-link active">
-        <i data-lucide="layout-dashboard"></i> Dashboard
+        <i data-lucide="bookmark"></i> Active Donations
       </a>
       <a th:href="@{/restaurant/add-donation}" class="sidebar-link">
         <i data-lucide="plus-circle"></i> Add Donation
@@ -34,10 +36,10 @@
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-user">
-        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}"></div>
+        <div class="sidebar-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
         <div class="sidebar-user-info">
           <div class="sidebar-user-name" th:text="${name}">Restaurant</div>
-          <div class="sidebar-user-role">Restaurant</div>
+          <div class="sidebar-user-role">Restaurant Partner</div>
         </div>
       </div>
       <a th:href="@{/logout}" class="sidebar-logout"><i data-lucide="log-out"></i> Sign Out</a>
@@ -46,94 +48,148 @@
 
   <!-- Main Content -->
   <main class="dash-main">
+    <!-- Top Bar -->
     <header class="dash-topbar">
       <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-      <div class="topbar-title"><i data-lucide="layout-dashboard"></i> Dashboard</div>
-      <div class="topbar-actions">
-        <a th:href="@{/restaurant/add-donation}" class="btn btn-primary"><i data-lucide="plus"></i> New Donation</a>
+
+      <!-- Live Search Input -->
+      <div class="malinessa-search-wrap">
+        <i data-lucide="search" class="malinessa-search-icon"></i>
+        <input type="text" id="searchInput" onkeyup="filterDonations()" class="malinessa-search-input" placeholder="Search donations...">
+      </div>
+
+      <!-- Right profile pill -->
+      <div class="malinessa-top-right">
+        <div class="malinessa-profile-pill">
+          <div class="malinessa-avatar" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'R'}">R</div>
+          <div class="malinessa-profile-name">
+            <span th:text="${name}">Restaurant</span>
+          </div>
+        </div>
       </div>
     </header>
 
     <div class="dash-content">
-      <div class="page-header">
-        <h1>Welcome back, <span th:text="${name}">Restaurant</span></h1>
-        <p>Here's an overview of your food donations</p>
+      <!-- Page Head -->
+      <div class="malinessa-page-head">
+        <h1 class="malinessa-page-title">Active Donations</h1>
+        <a th:href="@{/restaurant/add-donation}" class="btn-mcard-confirm" style="flex: initial; padding: 8px 18px;">
+          <i data-lucide="plus" style="width:16px; height:16px;"></i> New Donation
+        </a>
       </div>
 
-      <!-- KPI Cards -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i data-lucide="package-check"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalDonations}">0</div>
-            <div class="kpi-label">Total Donations</div>
+      <!-- Donation Grid -->
+      <div class="malinessa-grid" id="donationGrid">
+
+        <!-- Card 0: Dashed Create Donation Card -->
+        <a th:href="@{/restaurant/add-donation}" class="malinessa-create-card">
+          <div class="create-bell-icon">
+            <div class="create-bell-inner">
+              <i data-lucide="utensils"></i>
+            </div>
+          </div>
+          <div class="create-card-btn">
+            Create donation +
+          </div>
+        </a>
+
+        <!-- Active Donation Cards -->
+        <div th:each="d : ${donations}" class="malinessa-card donation-card-item">
+          <!-- Card Header -->
+          <div class="mcard-header">
+            <span class="mcard-status-incoming" th:if="${d.status == 'Pending'}">Pending Pickup</span>
+            <span class="mcard-status-confirmed" th:if="${d.status == 'Accepted'}">Accepted by NGO</span>
+            <span class="mcard-status-completed" th:if="${d.status == 'Picked Up'}">Picked Up</span>
+
+            <div class="mcard-header-right">
+              <span class="mcard-table-tag">
+                <i data-lucide="package" style="width:13px; height:13px;"></i>
+                <span th:text="'D-' + ${d.id}">D-1</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="mcard-body">
+            <!-- Left Info -->
+            <div class="mcard-left">
+              <div class="mcard-avatar" th:text="${d.foodName != null ? d.foodName.substring(0,1).toUpperCase() : 'F'}">F</div>
+              <div class="mcard-title card-food-name" th:text="${d.foodName}">Food Item</div>
+              <div class="mcard-detail-line card-address">
+                <i data-lucide="map-pin"></i>
+                <span th:text="${d.pickupAddress}">Address</span>
+              </div>
+              <div class="mcard-detail-line" th:if="${d.ngoName != null}">
+                <i data-lucide="heart-handshake"></i>
+                <span th:text="'NGO: ' + ${d.ngoName}">NGO Partner</span>
+              </div>
+            </div>
+
+            <!-- Right Graphic Diagram -->
+            <div class="mcard-right-diagram">
+              <div class="table-graphic">
+                <i data-lucide="utensils-crossed"></i>
+              </div>
+              <div class="mcard-servings">
+                <i data-lucide="users" style="width:12px; height:12px; color:#059669;"></i>
+                <span th:text="${d.qty} + ' servings'">40 servings</span>
+              </div>
+              <div class="mcard-time" th:if="${d.expiry != null}">
+                <i data-lucide="clock" style="width:12px; height:12px;"></i>
+                <span th:text="${#temporals.format(d.expiry, 'dd MMM yyyy')}">Date</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer Actions -->
+          <div class="mcard-footer">
+            <th:block th:if="${d.status == 'Pending'}">
+              <a th:href="@{/restaurant/delete/{id}(id=${d.id})}" onclick="return confirm('Are you sure you want to cancel and delete this donation?')" class="btn-mcard-cancel" style="width: 100%; color: #EF4444; background: #FEF2F2; border: 1px solid #FECACA;">
+                <i data-lucide="trash-2" style="width:14px; height:14px;"></i> Delete Donation
+              </a>
+            </th:block>
+
+            <th:block th:if="${d.status == 'Accepted'}">
+              <span class="btn-mcard-confirm" style="background:#ECFDF5; color:#059669; border:1px solid #A7F3D0; cursor:default; width:100%;">
+                <i data-lucide="check-circle" style="width:14px; height:14px;"></i> Accepted by NGO
+              </span>
+            </th:block>
+
+            <th:block th:if="${d.status == 'Picked Up'}">
+              <span class="btn-mcard-confirm" style="background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE; cursor:default; width:100%;">
+                <i data-lucide="check-check" style="width:14px; height:14px;"></i> Completed
+              </span>
+            </th:block>
           </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon amber"><i data-lucide="utensils"></i></div>
-          <div class="kpi-info">
-            <div class="kpi-value" th:text="${totalMeals}">0</div>
-            <div class="kpi-label">Meals Donated</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Active Donations Table -->
-      <div class="section-card">
-        <div class="section-card-header">
-          <div class="section-card-title"><i data-lucide="package"></i> Active Donations</div>
-          <a th:href="@{/restaurant/add-donation}" class="btn btn-primary btn-sm"><i data-lucide="plus"></i> Add New</a>
-        </div>
-
-        <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(donations)}">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Food Item</th>
-                <th>Qty</th>
-                <th>Expiry</th>
-                <th>Pickup Address</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="d : ${donations}">
-                <td class="td-bold" th:text="${d.foodName}"></td>
-                <td th:text="${d.qty}"></td>
-                <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}"></td>
-                <td th:text="${d.pickupAddress}"></td>
-                <td>
-                  <span class="badge badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock"></i> Pending</span>
-                  <span class="badge badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="check"></i> Accepted</span>
-                  <span class="badge badge-picked" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check"></i> Picked Up</span>
-                </td>
-                <td>
-                  <a th:href="@{/restaurant/delete/{id}(id=${d.id})}" th:if="${d.status == 'Pending'}" onclick="return confirm('Are you sure you want to delete this donation?')">
-                    <button class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i> Delete</button>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">
-          <div class="empty-state">
-            <div class="empty-state-icon"><i data-lucide="package-open"></i></div>
-            <h3>No donations yet</h3>
-            <p>Start by adding your first food donation to help reduce waste in your community.</p>
-          </div>
-        </div>
       </div>
     </div>
   </main>
 
   <script>
     lucide.createIcons();
+
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    // Live search filter for donations
+    function filterDonations() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.donation-card-item');
+
+      cards.forEach(card => {
+        const foodName = card.querySelector('.card-food-name')?.innerText.toLowerCase() || '';
+        const address = card.querySelector('.card-address')?.innerText.toLowerCase() || '';
+
+        if (foodName.includes(query) || address.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     }
   </script>
 </body>
