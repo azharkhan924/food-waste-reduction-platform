@@ -1,52 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — FoodRescue</title>
+  <meta name="description" content="Login to your FoodRescue account to manage food donations, pickups, and community impact.">
+  <link rel="stylesheet" th:href="@{/css/auth.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-		<ul>
-			<li><a th:href="@{/login}">Home</a></li>
-			<li><a th:href="@{/login}">Login</a></li>
-			<li><a th:href="@{/register}">Register</a></li>
-			<li>About us</li>
-			<li>Contact us</li>
-		</ul>
-	</div>
+<body class="auth-body">
 
-<div class="card">
+  <!-- Navbar -->
+  <nav class="auth-nav">
+    <div class="auth-nav-inner">
+      <a th:href="@{/}" class="auth-nav-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
+      <ul class="auth-nav-links">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/register}" class="nav-btn">Register →</a></li>
+      </ul>
+    </div>
+  </nav>
 
-<h1>Food Waste Platform</h1>
-<h2>Login</h2>
+  <!-- Auth Content -->
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-card-icon">
+          <i data-lucide="log-in"></i>
+        </div>
+        <h1>Welcome Back</h1>
+        <p>Sign in to your FoodRescue account</p>
+      </div>
 
-<p th:if="${error}" th:text="${error}" style="color:#ef5350;"></p>
-<p th:if="${success}" th:text="${success}" style="color:#66bb6a;"></p>
+      <!-- Error Message -->
+      <div th:if="${error}" class="auth-message error">
+        <i data-lucide="alert-circle"></i>
+        <span th:text="${error}"></span>
+      </div>
 
-<form th:action="@{/login}" method="post">
+      <!-- Success Message -->
+      <div th:if="${success}" class="auth-message success">
+        <i data-lucide="circle-check"></i>
+        <span th:text="${success}"></span>
+      </div>
 
-<label>Email</label>
-<input type="email" name="email" placeholder="Enter Email" required>
+      <form th:action="@{/login}" method="post" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="form-input-wrap">
+            <input type="email" name="email" class="form-input" placeholder="Enter your email" required id="login-email">
+            <span class="form-input-icon"><i data-lucide="mail"></i></span>
+          </div>
+        </div>
 
-<label>Password</label>
-<input type="password" name="password" placeholder="Enter Password" required>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="form-input-wrap">
+            <input type="password" name="password" class="form-input" placeholder="Enter your password" required id="login-password">
+            <span class="form-input-icon"><i data-lucide="lock"></i></span>
+          </div>
+        </div>
 
-<p style="text-align:right; margin-top:8px;">
-<a th:href="@{/forgot-password}">Forgot Password?</a>
-</p>
+        <a th:href="@{/forgot-password}" class="forgot-link">Forgot Password?</a>
 
-<button type="submit" class="b1">Login</button>
+        <button type="submit" class="auth-btn" id="login-submit-btn">
+          <i data-lucide="log-in"></i>
+          Sign In
+        </button>
+      </form>
 
-</form>
+      <div class="auth-card-footer">
+        Don't have an account?
+        <a th:href="@{/register}">Create one</a>
+      </div>
+    </div>
+  </main>
 
-<p style="margin-top:20px;">
-Don't have an account?
-<a th:href="@{/register}">Register</a>
-</p>
+  <!-- Footer -->
+  <footer class="auth-page-footer">
+    &copy; 2026 FoodRescue. All rights reserved.
+  </footer>
 
-</div>
-
+  <script>lucide.createIcons();</script>
 </body>
 </html>

@@ -1,57 +1,153 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — FoodRescue</title>
+  <meta name="description"
+    content="Create your FoodRescue account. Join as a Restaurant or NGO and start reducing food waste in your community.">
+  <link rel="stylesheet" th:href="@{/css/auth.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<div id="mymenu">
-		<ul>
-			<li><a th:href="@{/login}">Home</a></li>
-			<li><a th:href="@{/login}">Login</a></li>
-			<li><a th:href="@{/register}">Register</a></li>
-			<li>About us</li>
-			<li>Contact us</li>
-		</ul>
-	</div>
 
-<div class="card">
+<body class="auth-body">
 
-<h1>Food Waste Platform</h1>
-<h2>Create Account</h2>
+  <!-- Navbar -->
+  <nav class="auth-nav">
+    <div class="auth-nav-inner">
+      <a th:href="@{/}" class="auth-nav-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
+      <ul class="auth-nav-links">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/login}" class="nav-btn">Login →</a></li>
+      </ul>
+    </div>
+  </nav>
 
-<p th:if="${error}" th:text="${error}" style="color:#ef5350;"></p>
+  <!-- Auth Content -->
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-card-icon">
+          <i data-lucide="user-plus"></i>
+        </div>
+        <h1>Create Account</h1>
+        <p>Join FoodRescue and start making a difference</p>
+      </div>
 
-<form th:action="@{/register}" th:object="${user}" method="post">
+      <!-- Error Message -->
+      <div th:if="${error}" class="auth-message error">
+        <i data-lucide="alert-circle"></i>
+        <span th:text="${error}"></span>
+      </div>
 
-<label>Full Name</label>
-<input type="text" th:field="*{name}" placeholder="Enter Full Name" required>
+      <form th:action="@{/register}" th:object="${user}" method="post" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="form-input-wrap">
+            <input type="text" th:field="*{name}" class="form-input" placeholder="Enter your full name" required
+              id="register-name">
+            <span class="form-input-icon"><i data-lucide="user"></i></span>
+          </div>
+        </div>
 
-<label>Email</label>
-<input type="email" th:field="*{email}" placeholder="Enter Email" required>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="form-input-wrap">
+            <input type="email" th:field="*{email}" class="form-input" placeholder="Enter your email" required
+              id="register-email">
+            <span class="form-input-icon"><i data-lucide="mail"></i></span>
+          </div>
+        </div>
 
-<label>Password</label>
-<input type="password" th:field="*{password}" placeholder="Enter Password" required>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="form-input-wrap">
+            <input type="password" th:field="*{password}" class="form-input" placeholder="Create a password" required
+              id="register-password">
+            <span class="form-input-icon"><i data-lucide="lock"></i></span>
+          </div>
+        </div>
 
-<label>Role</label>
-<select th:field="*{role}" required>
-<option value="">Select Role</option>
-<option value="Restaurant">Restaurant</option>
-<option value="NGO">NGO</option>
-</select>
+        <div class="form-group">
+          <label class="form-label">Select Role</label>
+          <input type="hidden" th:field="*{role}" id="register-role" required>
+          <div class="role-selector">
+            <div class="role-card" data-role="Restaurant" id="role-restaurant" onclick="selectRole('Restaurant')">
+              <div class="role-card-icon">
+                <i data-lucide="store"></i>
+              </div>
+              <div class="role-card-info">
+                <span class="role-card-title">Restaurant</span>
+                <span class="role-card-desc">I want to donate surplus food</span>
+              </div>
+              <div class="role-card-check">
+                <i data-lucide="circle-check"></i>
+              </div>
+            </div>
+            <div class="role-card" data-role="NGO" id="role-ngo" onclick="selectRole('NGO')">
+              <div class="role-card-icon">
+                <i data-lucide="heart-handshake"></i>
+              </div>
+              <div class="role-card-info">
+                <span class="role-card-title">NGO</span>
+                <span class="role-card-desc">I want to collect &amp; distribute food</span>
+              </div>
+              <div class="role-card-check">
+                <i data-lucide="circle-check"></i>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<button type="submit" class="b1">Register</button>
+        <button type="submit" class="auth-btn" id="register-submit-btn">
+          <i data-lucide="user-plus"></i>
+          Create Account
+        </button>
+      </form>
 
-</form>
+      <div class="auth-card-footer">
+        Already have an account?
+        <a th:href="@{/login}">Sign in</a>
+      </div>
+    </div>
+  </main>
 
-<p style="margin-top:20px;">
-Already have an account?
-<a th:href="@{/login}">Login</a>
-</p>
+  <!-- Footer -->
+  <footer class="auth-page-footer">
+    &copy; 2026 FoodRescue. All rights reserved.
+  </footer>
 
-</div>
+  <script>
+    lucide.createIcons();
 
+    function selectRole(role) {
+      // Set hidden input value
+      document.getElementById('register-role').value = role;
+
+      // Remove active from all cards
+      document.querySelectorAll('.role-card').forEach(card => {
+        card.classList.remove('active');
+      });
+
+      // Activate the clicked card
+      const selected = document.querySelector('.role-card[data-role="' + role + '"]');
+      if (selected) {
+        selected.classList.add('active');
+      }
+    }
+
+    // Pre-select if Thymeleaf already set a value (e.g. on validation error reload)
+    window.addEventListener('DOMContentLoaded', () => {
+      const existing = document.getElementById('register-role').value;
+      if (existing) {
+        selectRole(existing);
+      }
+    });
+  </script>
 </body>
+
 </html>
