@@ -23,17 +23,14 @@ private UserRepository userRepo;
 @Autowired
 private EmailService emailService;
 
-// method to add donation and notify all NGOs
 public void addDonation(Donation donation){
 
 donation.setStatus("Pending");
 donation.setCreatedAt(LocalDateTime.now());
 donationRepo.save(donation);
 
-// fetch all NGO users from database
 List<User> ngoUsers = userRepo.findByRole("NGO");
 
-// send email to each NGO about the new donation
 for(User ngo : ngoUsers){
 
     try {
@@ -46,7 +43,6 @@ for(User ngo : ngoUsers){
         );
         System.out.println("Email sent to NGO: " + ngo.getEmail());
     } catch(Exception e) {
-        // if email fails for one NGO, continue sending to others
         System.out.println("Failed to send email to: " + ngo.getEmail());
         e.printStackTrace();
     }

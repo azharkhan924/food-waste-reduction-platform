@@ -28,7 +28,7 @@ private HashMap<String, String> otpStorage = new HashMap<>();
 
 @GetMapping("/")
 public String home() {
-return "login";
+return "landing";
 }
 
 

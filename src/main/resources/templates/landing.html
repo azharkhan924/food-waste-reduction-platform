@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodRescue — Rescue Food. Reduce Waste. Feed Communities.</title>
+  <meta name="description" content="FoodRescue connects restaurants with surplus food to NGOs and charities that feed communities in need. Join the movement to reduce food waste.">
+  <link rel="stylesheet" th:href="@{/css/landing.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="landing-body">
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="landing-nav" id="landing-nav">
+    <div class="nav-inner">
+      <a th:href="@{/}" class="nav-logo" aria-label="FoodRescue Home">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue Logo">
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#how-it-works">Features</a></li>
+        <li><a href="#who">Community</a></li>
+        <li><a href="#impact">Impact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a th:href="@{/login}" class="btn-login" id="nav-login-btn">Login</a>
+        <a th:href="@{/register}" class="btn-register-nav" id="nav-register-btn">Register Now →</a>
+      </div>
+
+      <button class="nav-hamburger" id="hamburger-btn" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#home" onclick="closeMobileMenu()">Home</a>
+    <a href="#how-it-works" onclick="closeMobileMenu()">Features</a>
+    <a href="#who" onclick="closeMobileMenu()">Community</a>
+    <a href="#impact" onclick="closeMobileMenu()">Impact</a>
+    <a th:href="@{/login}" onclick="closeMobileMenu()">Login</a>
+    <a th:href="@{/register}" class="btn-primary" onclick="closeMobileMenu()">Register Now →</a>
+  </div>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero-section" id="home">
+    <div class="landing-container">
+      <div class="hero-inner">
+        <div class="hero-content fade-in-left">
+          <div class="hero-badge">
+            <i data-lucide="leaf"></i> Rescue Food. Reduce Waste. Feed Communities.
+          </div>
+          <h1 class="hero-title">
+            Reduce Food Waste,<br>
+            <span class="highlight">Feed Communities</span>
+          </h1>
+          <p class="hero-subtitle">
+            FoodRescue bridges the gap between restaurants with surplus food and NGOs that serve communities in need. Together, we can end food waste.
+          </p>
+          <div class="hero-buttons">
+            <a th:href="@{/register}" class="btn-primary" id="hero-register-btn">
+              Get Started →
+            </a>
+            <a href="#how-it-works" class="btn-secondary" id="hero-learn-btn">
+              Learn More ↓
+            </a>
+          </div>
+        </div>
+        <div class="hero-image fade-in-right">
+          <img th:src="@{/images/hero-illustration.png}" alt="FoodRescue — Connecting restaurants and NGOs to reduce food waste">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== STATS SECTION ========== -->
+  <section class="stats-section" id="stats">
+    <div class="landing-container">
+      <div class="stats-grid stagger-children">
+        <div class="stat-item fade-in">
+          <span class="stat-icon"><i data-lucide="utensils"></i></span>
+          <div class="stat-number" data-target="50000">0</div>
+          <div class="stat-label">Meals Rescued</div>
+        </div>
+        <div class="stat-item fade-in">
+          <span class="stat-icon"><i data-lucide="store"></i></span>
+          <div class="stat-number" data-target="500">0</div>
+          <div class="stat-label">Restaurant Partners</div>
+        </div>
+        <div class="stat-item fade-in">
+          <span class="stat-icon"><i data-lucide="heart-handshake"></i></span>
+          <div class="stat-number" data-target="200">0</div>
+          <div class="stat-label">NGOs Connected</div>
+        </div>
+        <div class="stat-item fade-in">
+          <span class="stat-icon"><i data-lucide="map-pin"></i></span>
+          <div class="stat-number" data-target="30">0</div>
+          <div class="stat-label">Cities Active</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOW IT WORKS SECTION ========== -->
+  <section class="how-section" id="how-it-works">
+    <div class="landing-container text-center">
+      <span class="section-tag fade-in">How It Works</span>
+      <h2 class="section-title fade-in">Simple Steps to <span class="text-green">Rescue Food</span></h2>
+      <p class="section-subtitle fade-in">
+        Our platform makes it effortless for restaurants to donate surplus food and for NGOs to collect it — all in real time.
+      </p>
+
+      <div class="how-grid stagger-children">
+        <div class="how-card fade-in">
+          <div class="how-icon"><i data-lucide="package-plus"></i></div>
+          <div class="how-step">Step 01</div>
+          <h3>Restaurants List Surplus</h3>
+          <p>Restaurants add details about surplus food — type, quantity, expiry time, and pickup location — in just a few clicks.</p>
+        </div>
+        <div class="how-card fade-in">
+          <div class="how-icon"><i data-lucide="heart-handshake"></i></div>
+          <div class="how-step">Step 02</div>
+          <h3>NGOs Accept Donations</h3>
+          <p>NGOs browse available donations near them, accept the ones they can handle, and coordinate pickups seamlessly.</p>
+        </div>
+        <div class="how-card fade-in">
+          <div class="how-icon"><i data-lucide="truck"></i></div>
+          <div class="how-step">Step 03</div>
+          <h3>Track & Deliver</h3>
+          <p>Track donation status in real time via our interactive map. Food gets delivered to those who need it most.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WHO IT'S FOR SECTION ========== -->
+  <section class="who-section" id="who">
+    <div class="landing-container text-center">
+      <span class="section-tag fade-in">Community</span>
+      <h2 class="section-title fade-in">Who Is <span class="text-green">FoodRescue</span> For?</h2>
+      <p class="section-subtitle fade-in">
+        Whether you run a restaurant, lead an NGO, or manage city programs — FoodRescue has the tools for you.
+      </p>
+
+      <div class="who-grid stagger-children">
+        <div class="who-card fade-in">
+          <div class="who-icon"><i data-lucide="utensils"></i></div>
+          <h3>Restaurants &amp; Cafés</h3>
+          <p>Turn surplus food into community impact. List donations in seconds, track your contribution history, and build your brand as a responsible business.</p>
+        </div>
+        <div class="who-card fade-in">
+          <div class="who-icon"><i data-lucide="hand-heart"></i></div>
+          <h3>NGOs &amp; Charities</h3>
+          <p>Find surplus food near you instantly. Accept donations, manage pickups, and view restaurant locations on an interactive map.</p>
+        </div>
+        <div class="who-card fade-in">
+          <div class="who-icon"><i data-lucide="layout-dashboard"></i></div>
+          <h3>City Administrators</h3>
+          <p>Monitor food rescue operations across your city. Access reports, manage users, and track food waste reduction metrics from a central dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== IMPACT SECTION ========== -->
+  <section class="impact-section" id="impact">
+    <div class="landing-container text-center">
+      <span class="section-tag fade-in">Our Impact</span>
+      <h2 class="section-title fade-in">Making a Real <span class="text-green">Difference</span></h2>
+      <p class="section-subtitle fade-in">
+        Every meal rescued is a step toward a hunger-free, zero-waste future.
+      </p>
+
+      <div class="impact-grid stagger-children">
+        <div class="impact-item fade-in">
+          <span class="impact-icon"><i data-lucide="recycle"></i></span>
+          <div class="impact-number" data-target="120">0</div>
+          <div class="impact-label">Tons of Food<br>Saved from Landfill</div>
+        </div>
+        <div class="impact-item fade-in">
+          <span class="impact-icon"><i data-lucide="users-round"></i></span>
+          <div class="impact-number" data-target="25000">0</div>
+          <div class="impact-label">Families Fed<br>Each Month</div>
+        </div>
+        <div class="impact-item fade-in">
+          <span class="impact-icon"><i data-lucide="leaf"></i></span>
+          <div class="impact-number" data-target="340">0</div>
+          <div class="impact-label">Tons of CO₂<br>Emissions Prevented</div>
+        </div>
+        <div class="impact-item fade-in">
+          <span class="impact-icon"><i data-lucide="circle-check"></i></span>
+          <div class="impact-number" data-target="98">0</div>
+          <div class="impact-label">% Satisfaction<br>from Partners</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA SECTION ========== -->
+  <section class="cta-section" id="cta">
+    <div class="landing-container">
+      <div class="cta-box fade-in">
+        <h2>Ready to Rescue Food?</h2>
+        <p>Join hundreds of restaurants and NGOs already making a difference in their communities.</p>
+        <a th:href="@{/register}" class="btn-cta" id="cta-register-btn">
+          Register Now — It's Free →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="landing-footer">
+    <div class="landing-container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img th:src="@{/images/logo.png}" alt="FoodRescue Logo">
+          <p>Rescue Food. Reduce Waste. Feed Communities. FoodRescue connects restaurants with surplus food to NGOs and charities who need it most.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Twitter"><i data-lucide="message-circle"></i></a>
+            <a href="#" aria-label="LinkedIn"><i data-lucide="briefcase"></i></a>
+            <a href="#" aria-label="Instagram"><i data-lucide="camera"></i></a>
+            <a href="#" aria-label="Facebook"><i data-lucide="share-2"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#who">Community</a></li>
+            <li><a href="#impact">Impact</a></li>
+            <li><a th:href="@{/register}">Register</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">API Reference</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a th:href="@{/login}">Login</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 FoodRescue. All rights reserved. Built with <i data-lucide="heart" style="display:inline-block;width:14px;height:14px;vertical-align:middle;color:#4CAF50;"></i> to fight food waste.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    // --- Navbar scroll effect ---
+    const navbar = document.getElementById('landing-nav');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // --- Mobile menu toggle ---
+    const hamburger = document.getElementById('hamburger-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+
+    function closeMobileMenu() {
+      hamburger.classList.remove('active');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // --- Scroll animations (IntersectionObserver) ---
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -60px 0px',
+      threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(el => {
+      observer.observe(el);
+    });
+
+    // --- Counter animation ---
+    function animateCounter(el, target, suffix = '') {
+      const duration = 2000;
+      const startTime = performance.now();
+      const startVal = 0;
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(startVal + (target - startVal) * eased);
+
+        if (target >= 1000) {
+          el.textContent = current.toLocaleString() + '+' + suffix;
+        } else {
+          el.textContent = current + (target === 98 ? '%' : '+') + suffix;
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    // Trigger counters when visible
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.getAttribute('data-target'), 10);
+          animateCounter(el, target);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('[data-target]').forEach(el => {
+      counterObserver.observe(el);
+    });
+
+    // --- Smooth scroll for anchor links ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        e.preventDefault();
+        const target = document.querySelector(targetId);
+        if (target) {
+          const navHeight = navbar.offsetHeight;
+          const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+          window.scrollTo({ top: targetPos, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // --- Initialize Lucide Icons ---
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>
