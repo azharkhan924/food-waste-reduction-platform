@@ -154,8 +154,9 @@
                 <td>
                   <div style="display:flex; gap:6px; align-items:center;">
                     <a th:href="@{/admin/block/{id}(id=${u.id})}" onclick="return confirm('Toggle block status?')">
-                      <button class="btn btn-warn btn-sm" style="padding:5px 10px; font-size:12px;" th:html="${u.blocked ? '<i data-lucide=\'unlock\' style=\'width:13px;height:13px;\'></i> Unblock' : '<i data-lucide=\'lock\' style=\'width:13px;height:13px;\'></i> Block'}">
-                        <i data-lucide="lock" style="width:13px; height:13px;"></i> Block
+                      <button class="btn btn-warn btn-sm" style="padding:5px 10px; font-size:12px;">
+                        <span th:if="${u.blocked}"><i data-lucide="unlock" style="width:13px; height:13px;"></i> Unblock</span>
+                        <span th:unless="${u.blocked}"><i data-lucide="lock" style="width:13px; height:13px;"></i> Block</span>
                       </button>
                     </a>
                     <button class="btn btn-info btn-sm" style="padding:5px 10px; font-size:12px;" th:data-id="${u.id}" th:data-name="${u.name}" th:data-email="${u.email}" th:data-role="${u.role}" onclick="openEdit(this)">
