@@ -83,22 +83,22 @@
 
       <!-- Donations Table Card -->
       <div class="section-card">
-        <div class="filter-bar" style="border-bottom:1px solid #F5F5F9; background:#FFFFFF;">
+        <div class="filter-bar" style="border-bottom:1px solid #F5F5F9; background:#FFFFFF; padding:14px 20px;">
           <form th:action="@{/admin/donations}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
-            <select name="statusFilter" class="dash-select" style="width:150px; font-size:13px;">
+            <select name="statusFilter" class="dash-select" style="min-width:130px; font-size:13px; padding:7px 12px;">
               <option value="">All Status</option>
               <option value="Pending" th:selected="${statusFilter == 'Pending'}">Pending</option>
               <option value="Accepted" th:selected="${statusFilter == 'Accepted'}">Accepted</option>
               <option value="Picked Up" th:selected="${statusFilter == 'Picked Up'}">Picked Up</option>
             </select>
-            <select name="period" class="dash-select" style="width:150px; font-size:13px;">
+            <select name="period" class="dash-select" style="min-width:130px; font-size:13px; padding:7px 12px;">
               <option value="">All Time</option>
               <option value="today" th:selected="${period == 'today'}">Today</option>
               <option value="week" th:selected="${period == 'week'}">Last 7 Days</option>
               <option value="month" th:selected="${period == 'month'}">Last 30 Days</option>
             </select>
-            <button type="submit" class="sneat-btn-primary" style="padding:6px 14px; font-size:12px;">Apply Filter</button>
-            <a th:href="@{/admin/donations}" class="btn btn-outline btn-sm">Clear</a>
+            <button type="submit" class="sneat-btn-primary" style="padding:7px 14px; font-size:12px;"><i data-lucide="filter" style="width:13px; height:13px;"></i> Apply Filter</button>
+            <a th:href="@{/admin/donations}" class="btn btn-outline btn-sm" style="padding:6px 12px;">Clear</a>
             <span style="margin-left:auto; font-size:13px; color:#8592A3;">
               Showing <strong th:text="${totalShowing}" style="color:#059669;">0</strong> record(s)
             </span>
@@ -106,6 +106,7 @@
         </div>
 
         <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(donations)}">
+          <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
@@ -123,21 +124,22 @@
             <tbody>
               <tr th:each="d : ${donations}">
                 <td class="td-bold" th:text="'#' + ${d.id}">#1</td>
-                <td th:text="${d.foodName}">Food Item</td>
-                <td th:text="${d.qty} + ' servings'">40</td>
+                <td class="td-bold" th:text="${d.foodName}">Food Item</td>
+                <td><span style="background:#F1F5F9; color:#475569; font-weight:600; padding:2px 8px; border-radius:12px; font-size:12px;" th:text="${d.qty} + ' servings'">40 servings</span></td>
                 <td th:text="${d.expiry != null ? #temporals.format(d.expiry, 'dd MMM yyyy') : '-'}">Date</td>
-                <td th:text="${d.pickupAddress}">Address</td>
+                <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" th:text="${d.pickupAddress}" th:title="${d.pickupAddress}">Address</td>
                 <td th:text="${d.restaurantName}">Restaurant</td>
                 <td th:text="${d.ngoName != null ? d.ngoName : '-'}">-</td>
                 <td>
-                  <span class="sneat-badge-pending" th:if="${d.status == 'Pending'}">Pending</span>
-                  <span class="sneat-badge-accepted" th:if="${d.status == 'Accepted'}">Accepted</span>
-                  <span class="sneat-badge-active" th:if="${d.status == 'Picked Up'}">Completed</span>
+                  <span class="sneat-badge-pending" th:if="${d.status == 'Pending'}"><i data-lucide="clock" style="width:12px; height:12px;"></i> Pending</span>
+                  <span class="sneat-badge-accepted" th:if="${d.status == 'Accepted'}"><i data-lucide="heart-handshake" style="width:12px; height:12px;"></i> Accepted</span>
+                  <span class="sneat-badge-active" th:if="${d.status == 'Picked Up'}"><i data-lucide="check-check" style="width:12px; height:12px;"></i> Completed</span>
                 </td>
                 <td th:text="${d.createdAt != null ? #temporals.format(d.createdAt, 'dd MMM yyyy') : '-'}">Date</td>
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div class="section-card-body" th:if="${#lists.isEmpty(donations)}">

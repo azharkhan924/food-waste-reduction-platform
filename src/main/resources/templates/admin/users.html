@@ -103,63 +103,73 @@
 
       <!-- Users Table Card -->
       <div class="section-card">
-        <div class="section-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="section-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div class="section-card-title"><i data-lucide="users" style="color:#059669;"></i> All Registered Users</div>
           
           <!-- Filter Form -->
-          <form th:action="@{/admin/users}" method="get" style="display:flex; gap:8px; align-items:center;">
-            <select name="filterRole" class="dash-select" style="padding:6px 12px; font-size:13px;">
+          <form th:action="@{/admin/users}" method="get" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <select name="filterRole" class="dash-select" style="padding:7px 12px; font-size:13px;">
               <option value="">All Roles</option>
               <option value="Restaurant" th:selected="${filterRole == 'Restaurant'}">Restaurant</option>
               <option value="NGO" th:selected="${filterRole == 'NGO'}">NGO</option>
             </select>
-            <button type="submit" class="sneat-btn-primary" style="padding:6px 14px; font-size:12px;">Filter</button>
-            <a th:href="@{/admin/users}" class="btn btn-outline btn-sm">Clear</a>
+            <button type="submit" class="sneat-btn-primary" style="padding:7px 14px; font-size:12px;"><i data-lucide="filter" style="width:13px; height:13px;"></i> Filter</button>
+            <a th:href="@{/admin/users}" class="btn btn-outline btn-sm" style="padding:6px 12px;">Clear</a>
           </form>
         </div>
 
         <div class="section-card-body no-pad" th:if="${!#lists.isEmpty(users)}">
+          <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
+                <th>User Details</th>
                 <th>Role</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr th:each="u : ${users}" th:style="${u.blocked ? 'opacity:0.6' : ''}">
+              <tr th:each="u : ${users}" th:style="${u.blocked ? 'opacity:0.65' : ''}">
                 <td class="td-bold" th:text="'#' + ${u.id}">#1</td>
-                <td th:text="${u.name}">User Name</td>
-                <td th:text="${u.email}">user@example.com</td>
                 <td>
-                  <span class="sneat-badge-restaurant" th:if="${u.role == 'Restaurant'}">Restaurant</span>
-                  <span class="sneat-badge-ngo" th:if="${u.role == 'NGO'}">NGO</span>
-                  <span class="sneat-badge-admin" th:if="${u.role == 'Admin'}">Admin</span>
+                  <div class="user-avatar-cell">
+                    <div class="user-avatar-circle" th:text="${u.name != null ? u.name.substring(0,1).toUpperCase() : 'U'}">U</div>
+                    <div class="user-avatar-info">
+                      <span class="user-avatar-name" th:text="${u.name}">User Name</span>
+                      <span class="user-avatar-email" th:text="${u.email}">user@example.com</span>
+                    </div>
+                  </div>
                 </td>
                 <td>
-                  <span class="sneat-badge-active" th:if="${!u.blocked}">Active</span>
-                  <span class="sneat-badge-blocked" th:if="${u.blocked}">Blocked</span>
+                  <span class="sneat-badge-restaurant" th:if="${u.role == 'Restaurant'}"><i data-lucide="utensils" style="width:12px; height:12px;"></i> Restaurant</span>
+                  <span class="sneat-badge-ngo" th:if="${u.role == 'NGO'}"><i data-lucide="heart-handshake" style="width:12px; height:12px;"></i> NGO</span>
+                  <span class="sneat-badge-admin" th:if="${u.role == 'Admin'}"><i data-lucide="shield-check" style="width:12px; height:12px;"></i> Admin</span>
                 </td>
                 <td>
-                  <div style="display:flex; gap:6px;">
+                  <span class="sneat-badge-active" th:if="${!u.blocked}"><i data-lucide="check-circle-2" style="width:12px; height:12px;"></i> Active</span>
+                  <span class="sneat-badge-blocked" th:if="${u.blocked}"><i data-lucide="ban" style="width:12px; height:12px;"></i> Blocked</span>
+                </td>
+                <td>
+                  <div style="display:flex; gap:6px; align-items:center;">
                     <a th:href="@{/admin/block/{id}(id=${u.id})}" onclick="return confirm('Toggle block status?')">
-                      <button class="btn btn-warn btn-sm" th:text="${u.blocked ? 'Unblock' : 'Block'}">Block</button>
+                      <button class="btn btn-warn btn-sm" style="padding:5px 10px; font-size:12px;" th:html="${u.blocked ? '<i data-lucide=\'unlock\' style=\'width:13px;height:13px;\'></i> Unblock' : '<i data-lucide=\'lock\' style=\'width:13px;height:13px;\'></i> Block'}">
+                        <i data-lucide="lock" style="width:13px; height:13px;"></i> Block
+                      </button>
                     </a>
-                    <button class="btn btn-info btn-sm" th:data-id="${u.id}" th:data-name="${u.name}" th:data-email="${u.email}" th:data-role="${u.role}" onclick="openEdit(this)">
-                      <i data-lucide="pencil"></i> Edit
+                    <button class="btn btn-info btn-sm" style="padding:5px 10px; font-size:12px;" th:data-id="${u.id}" th:data-name="${u.name}" th:data-email="${u.email}" th:data-role="${u.role}" onclick="openEdit(this)">
+                      <i data-lucide="pencil" style="width:13px; height:13px;"></i> Edit
                     </button>
                     <a th:href="@{/admin/delete-user/{id}(id=${u.id})}" onclick="return confirm('Delete this user account?')">
-                      <button class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i></button>
+                      <button class="btn btn-danger btn-sm" style="padding:5px 8px;"><i data-lucide="trash-2" style="width:13px; height:13px;"></i></button>
                     </a>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div class="section-card-body" th:if="${#lists.isEmpty(users)}">

@@ -403,14 +403,62 @@ a:hover {
 	font-size: 14px;
 }
 
+/* ============================================
+   TABLE RESPONSIVE WRAPPER (Legacy)
+   ============================================ */
+.table-responsive {
+	width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.table-responsive .mytable {
+	min-width: 580px;
+}
+
+/* ============================================
+   RESPONSIVE — 1024px (Tablet Landscape)
+   ============================================ */
+@media (max-width: 1024px) {
+	.main-box {
+		max-width: 100%;
+		padding: 25px 20px 40px;
+	}
+
+	.info-card {
+		min-width: 140px;
+	}
+
+	.card {
+		width: 90%;
+		max-width: 420px;
+	}
+}
+
+/* ============================================
+   RESPONSIVE — 768px (Tablet Portrait)
+   ============================================ */
 @media (max-width: 768px) {
 	.main-box {
 		padding: 20px 15px 40px;
 	}
 
+	.main-box h1 {
+		font-size: 22px;
+		margin-bottom: 20px;
+	}
+
 	.info-row {
 		flex-direction: column;
 		gap: 12px;
+	}
+
+	.info-card {
+		min-width: 100%;
+	}
+
+	.info-card h3 {
+		font-size: 26px;
 	}
 
 	.mytable {
@@ -423,16 +471,176 @@ a:hover {
 	}
 
 	.card {
-		width: 90%;
+		width: 92%;
+		max-width: 420px;
 		padding: 25px 20px;
+	}
+
+	.card h1 {
+		font-size: 20px;
+	}
+
+	.card h2 {
+		font-size: 18px;
 	}
 
 	#mymenu {
 		padding: 0 10px;
 	}
 
+	#mymenu ul {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
 	#mymenu ul li {
-		padding: 14px 12px;
+		padding: 12px 10px;
 		font-size: 13px;
+	}
+
+	.accept-btn,
+	.del-btn,
+	.pickup-btn {
+		padding: 5px 12px;
+		font-size: 12px;
+	}
+
+	.block-btn,
+	.edit-btn {
+		padding: 4px 10px;
+		font-size: 11px;
+	}
+
+	.add-btn {
+		width: 100%;
+		text-align: center;
+		padding: 10px 20px;
+	}
+
+	.content-area h2 {
+		font-size: 17px;
+	}
+
+	.t1 th {
+		font-size: 13px;
+	}
+}
+
+/* ============================================
+   RESPONSIVE — 480px (Standard Phone)
+   ============================================ */
+@media (max-width: 480px) {
+	.main-box {
+		padding: 16px 12px 32px;
+	}
+
+	.main-box h1 {
+		font-size: 20px;
+		margin-bottom: 16px;
+	}
+
+	.card {
+		width: 96%;
+		padding: 20px 16px;
+		margin: 40px auto;
+	}
+
+	.card h1 {
+		font-size: 18px;
+	}
+
+	.card h2 {
+		font-size: 16px;
+		margin-bottom: 20px;
+	}
+
+	#mymenu ul li {
+		padding: 10px 8px;
+		font-size: 12px;
+	}
+
+	.info-card {
+		padding: 16px 20px;
+	}
+
+	.info-card h3 {
+		font-size: 22px;
+	}
+
+	.info-card p {
+		font-size: 11px;
+	}
+
+	.mytable {
+		font-size: 12px;
+	}
+
+	.mytable th,
+	.mytable td {
+		padding: 8px;
+	}
+
+	.b1 {
+		padding: 11px 20px;
+		font-size: 14px;
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="password"] {
+		padding: 10px 12px;
+		font-size: 13px;
+	}
+
+	select {
+		padding: 10px 12px;
+		font-size: 13px;
+	}
+
+	label {
+		font-size: 13px;
+		margin-top: 12px;
+	}
+
+	.accept-btn,
+	.del-btn,
+	.pickup-btn {
+		padding: 5px 10px;
+		font-size: 11px;
+		width: 100%;
+		text-align: center;
+		margin-bottom: 4px;
+	}
+
+	.content-area h2 {
+		font-size: 16px;
+	}
+}
+
+/* ============================================
+   RESPONSIVE — 360px (Small Phone)
+   ============================================ */
+@media (max-width: 360px) {
+	.card {
+		width: 98%;
+		padding: 18px 14px;
+		margin: 30px auto;
+	}
+
+	.card h1 {
+		font-size: 16px;
+	}
+
+	#mymenu ul li {
+		padding: 8px 6px;
+		font-size: 11px;
+	}
+
+	.main-box h1 {
+		font-size: 18px;
+	}
+
+	.info-card h3 {
+		font-size: 20px;
 	}
 }

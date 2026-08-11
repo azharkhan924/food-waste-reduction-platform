@@ -1064,6 +1064,30 @@ body.landing-body a {
     grid-template-columns: 1fr 1fr;
     gap: 36px;
   }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-social {
+    justify-content: center;
+  }
+
+  .cta-box {
+    padding: 56px 36px;
+  }
+
+  .cta-box h2 {
+    font-size: 30px;
+  }
+
+  .cta-box p {
+    font-size: 16px;
+  }
 }
 
 /* Tablet Small — 768px */
@@ -1263,6 +1287,41 @@ body.landing-body a {
   .nav-logo img {
     height: 30px;
     max-width: 140px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE — 600px (Intermediate)
+   ============================================ */
+@media (max-width: 600px) {
+  .hero-image img {
+    max-width: 260px;
+  }
+
+  .how-card {
+    padding: 28px 20px;
+  }
+
+  .who-card {
+    padding: 28px 20px;
+  }
+
+  .impact-item {
+    padding: 20px 12px;
+  }
+
+  .stat-item {
+    padding: 16px 10px;
+  }
+
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stat-icon svg {
+    width: 20px;
+    height: 20px;
   }
 }
 

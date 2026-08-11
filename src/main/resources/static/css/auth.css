@@ -625,39 +625,77 @@ body.auth-body img {
 }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE — 768px (Tablet)
    ============================================ */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .auth-card {
-    padding: 28px 20px;
-    border-radius: var(--radius-lg);
-    margin: 0 4px;
+    max-width: 400px;
+    padding: 36px 28px;
   }
 
-  .auth-card-header h1 {
-    font-size: 20px;
+  .auth-wrapper {
+    padding: 32px 20px;
   }
 
   .auth-nav {
     padding: 0 16px;
   }
 
-  .auth-nav-logo img {
-    height: 30px;
-    max-width: 140px;
+  .auth-nav-inner {
+    gap: 12px;
   }
 
   .auth-nav-links a {
     font-size: 13px;
+    padding: 7px 12px;
+  }
+
+  .auth-nav-links .nav-btn {
+    padding: 7px 16px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE — 480px (Phone)
+   ============================================ */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 28px 20px;
+    border-radius: var(--radius-lg);
+    margin: 0 4px;
+    max-width: 100%;
+  }
+
+  .auth-card-header h1 {
+    font-size: 20px;
+  }
+
+  .auth-card-header p {
+    font-size: 13px;
+  }
+
+  .auth-nav {
+    padding: 0 12px;
+    height: 56px;
+  }
+
+  .auth-nav-logo img {
+    height: 28px;
+    max-width: 130px;
+  }
+
+  .auth-nav-links a {
+    font-size: 12px;
     padding: 6px 10px;
   }
 
   .auth-nav-links .nav-btn {
     padding: 6px 14px;
+    font-size: 12px;
   }
 
   .auth-wrapper {
-    padding: 24px 16px;
+    padding: 20px 12px;
   }
 
   .auth-card-icon {
@@ -669,8 +707,102 @@ body.auth-body img {
     width: 22px;
     height: 22px;
   }
+
+  .auth-form {
+    gap: 16px;
+  }
+
+  .form-input {
+    padding: 11px 12px 11px 40px;
+    font-size: 13px;
+  }
+
+  .form-input.no-icon {
+    padding-left: 12px;
+  }
+
+  .form-select {
+    padding: 11px 12px 11px 40px;
+    font-size: 13px;
+  }
+
+  .form-label {
+    font-size: 12px;
+  }
+
+  .auth-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .role-selector {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .role-card {
+    padding: 16px 12px;
+    gap: 8px;
+  }
+
+  .role-card-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .role-card-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .role-card-title {
+    font-size: 13px;
+  }
+
+  .role-card-desc {
+    font-size: 10px;
+  }
+
+  .auth-card-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    font-size: 13px;
+  }
+
+  .auth-message {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .auth-page-footer {
+    padding: 16px 12px;
+    font-size: 11px;
+  }
 }
 
+/* ============================================
+   RESPONSIVE — 380px (Small Phone — role cards stack)
+   ============================================ */
+@media (max-width: 380px) {
+  .role-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .role-card {
+    flex-direction: row;
+    text-align: left;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .role-card-info {
+    align-items: flex-start;
+  }
+}
+
+/* ============================================
+   RESPONSIVE — 360px (Very Small Phone)
+   ============================================ */
 @media (max-width: 360px) {
   .auth-nav-links {
     gap: 4px;
@@ -679,4 +811,21 @@ body.auth-body img {
   .auth-nav-links a:first-child {
     display: none;
   }
+
+  .auth-card {
+    padding: 24px 16px;
+  }
+
+  .auth-card-header {
+    margin-bottom: 24px;
+  }
+
+  .auth-card-header h1 {
+    font-size: 18px;
+  }
+
+  .auth-form {
+    gap: 14px;
+  }
 }
+
