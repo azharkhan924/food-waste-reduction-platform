@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.foodwaste.entity.User;
 import com.foodwaste.repository.UserRepository;
+import com.foodwaste.util.PasswordUtil;
 
 @SpringBootApplication
 @EnableAsync
@@ -49,7 +50,7 @@ public class FoodwasteApplication {
 
 			try {
 				if (!userRepo.existsByEmail("admin@gmail.com")) {
-					User admin = new User("Admin", "admin@gmail.com", "admin123", "Admin");
+					User admin = new User("Admin", "admin@gmail.com", PasswordUtil.hashPassword("admin123"), "Admin");
 					userRepo.save(admin);
 				}
 			} catch (Exception e) {

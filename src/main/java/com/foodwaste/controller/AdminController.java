@@ -8,6 +8,7 @@ import com.foodwaste.entity.User;
 import com.foodwaste.entity.Donation;
 import com.foodwaste.repository.UserRepository;
 import com.foodwaste.repository.DonationRepository;
+import com.foodwaste.util.PasswordUtil;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -71,7 +72,7 @@ public String addUser(@RequestParam String name, @RequestParam String email,
 if(!"Admin".equals(session.getAttribute("userRole"))) return "redirect:/login";
 
 if(!userRepo.existsByEmail(email)){
-userRepo.save(new User(name, email, password, role));
+userRepo.save(new User(name, email, PasswordUtil.hashPassword(password), role));
 }
 return "redirect:/admin/users";
 }

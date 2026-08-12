@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.foodwaste.entity.User;
 import com.foodwaste.repository.UserRepository;
+import com.foodwaste.util.PasswordUtil;
 
 @Service
 public class UserService {
@@ -18,6 +19,7 @@ if(userRepository.existsByEmail(user.getEmail())) {
 return "Email already exists";
 }
 
+user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
 userRepository.save(user);
 
 return "Registration Successful";
@@ -35,7 +37,7 @@ public User loginUser(String email,String password) {
 
 User user=userRepository.findByEmail(email);
 
-if(user!=null && user.getPassword().equals(password)) {
+if(user!=null && PasswordUtil.checkPassword(password, user.getPassword())) {
 return user;
 }
 
@@ -49,7 +51,7 @@ public void updatePassword(String email, String newPassword){
 User user = userRepository.findByEmail(email);
 
 if(user != null){
-user.setPassword(newPassword);
+user.setPassword(PasswordUtil.hashPassword(newPassword));
 userRepository.save(user);
 }
 
