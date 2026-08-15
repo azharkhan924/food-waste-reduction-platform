@@ -1,7 +1,7 @@
 <!-- Sidebar Scripts Fragment -->
 <!-- Common sidebar toggle and fold scripts used across all dashboard pages -->
 <th:block th:fragment="scripts">
-  <script>
+  <script th:attr="nonce=${cspNonce}">
     lucide.createIcons();
 
     function toggleSidebar() {
