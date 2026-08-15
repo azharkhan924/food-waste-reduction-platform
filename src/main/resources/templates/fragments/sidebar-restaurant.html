@@ -1,0 +1,40 @@
+<!-- Restaurant Sidebar Fragment -->
+<th:block th:fragment="sidebar(activePage)">
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
+      <button class="sidebar-toggle-btn" onclick="toggleSidebarFold()" title="Fold Sidebar">
+        <i data-lucide="panel-left-close" id="foldIcon"></i>
+      </button>
+    </div>
+    <div class="sidebar-label">Main Menu</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/restaurant/dashboard}" class="sidebar-link" th:classappend="${activePage == 'dashboard'} ? 'active'" title="Active Donations">
+        <i data-lucide="bookmark"></i>
+        <span class="sidebar-link-text">Active Donations</span>
+      </a>
+      <a th:href="@{/restaurant/add-donation}" class="sidebar-link" th:classappend="${activePage == 'add-donation'} ? 'active'" title="Add Donation">
+        <i data-lucide="plus-circle"></i>
+        <span class="sidebar-link-text">Add Donation</span>
+      </a>
+      <a th:href="@{/restaurant/history}" class="sidebar-link" th:classappend="${activePage == 'history'} ? 'active'" title="History">
+        <i data-lucide="clock"></i>
+        <span class="sidebar-link-text">History</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a th:href="@{/logout}" class="sidebar-logout" title="Sign Out">
+        <i data-lucide="log-out"></i>
+        <span class="sidebar-link-text">Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+</th:block>

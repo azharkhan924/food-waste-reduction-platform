@@ -1,0 +1,21 @@
+<!-- Topbar Fragment -->
+<!-- Usage: th:replace="~{fragments/topbar :: topbar(searchPlaceholder='...', searchFunction='filterTable', name=${name}, defaultInitial='A')}" -->
+<header th:fragment="topbar(searchPlaceholder, searchFunction, name, defaultInitial)" class="dash-topbar">
+  <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+
+  <!-- Live Search Input -->
+  <div class="malinessa-search-wrap">
+    <i data-lucide="search" class="malinessa-search-icon"></i>
+    <input type="text" id="searchInput" th:attr="onkeyup=${searchFunction} + '()'" class="malinessa-search-input" th:placeholder="${searchPlaceholder}">
+  </div>
+
+  <!-- Right Profile Pill -->
+  <div class="malinessa-top-right">
+    <div class="malinessa-profile-pill">
+      <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : defaultInitial}">U</div>
+      <div class="malinessa-profile-name">
+        <span th:text="${name}">User</span>
+      </div>
+    </div>
+  </div>
+</header>

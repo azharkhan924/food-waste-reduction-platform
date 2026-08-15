@@ -13,41 +13,7 @@
 
 <body class="dash-body role-ngo">
 
-  <!-- Sidebar Overlay (mobile) -->
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-  <!-- Sidebar -->
-  <aside class="dash-sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo">
-        <img th:src="@{/images/logo.png}" alt="FoodRescue">
-      </a>
-      <button class="sidebar-toggle-btn" onclick="toggleSidebarFold()" title="Fold Sidebar">
-        <i data-lucide="panel-left-close"></i>
-      </button>
-    </div>
-    <div class="sidebar-label">NGO Portal</div>
-    <nav class="sidebar-nav">
-      <a th:href="@{/ngo/dashboard}" class="sidebar-link" title="Available Food">
-        <i data-lucide="layout-dashboard"></i>
-        <span class="sidebar-link-text">Available Food</span>
-      </a>
-      <a th:href="@{/ngo/map}" class="sidebar-link active" title="Map View">
-        <i data-lucide="map"></i>
-        <span class="sidebar-link-text">Map View</span>
-      </a>
-      <a th:href="@{/ngo/history}" class="sidebar-link" title="My Pickups">
-        <i data-lucide="clipboard-list"></i>
-        <span class="sidebar-link-text">My Pickups</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <a th:href="@{/logout}" class="sidebar-logout" title="Sign Out">
-        <i data-lucide="log-out"></i>
-        <span class="sidebar-link-text">Sign Out</span>
-      </a>
-    </div>
-  </aside>
+  <th:block th:replace="~{fragments/sidebar-ngo :: sidebar(activePage='map')}"></th:block>
 
   <!-- Main Content -->
   <main class="dash-main">
@@ -114,25 +80,8 @@
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <th:block th:replace="~{fragments/sidebar-scripts :: scripts}"></th:block>
   <script th:inline="javascript">
-    lucide.createIcons();
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('sidebarOverlay').classList.toggle('open');
-    }
-
-    function toggleSidebarFold() {
-      document.body.classList.toggle('sidebar-folded');
-      const isFolded = document.body.classList.contains('sidebar-folded');
-      localStorage.setItem('foodrescue_sidebar_folded', isFolded ? 'true' : 'false');
-    }
-
-    (function() {
-      if (localStorage.getItem('foodrescue_sidebar_folded') === 'true') {
-        document.body.classList.add('sidebar-folded');
-      }
-    })();
 
     var map = L.map('mapContainer').setView([20.5937, 78.9629], 5);
 

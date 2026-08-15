@@ -12,64 +12,11 @@
 
 <body class="dash-body role-ngo">
 
-  <!-- Sidebar Overlay (mobile) -->
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-  <!-- Sidebar -->
-  <aside class="dash-sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a th:href="@{/}" class="sidebar-logo">
-        <img th:src="@{/images/logo.png}" alt="FoodRescue">
-      </a>
-      <button class="sidebar-toggle-btn" onclick="toggleSidebarFold()" title="Fold Sidebar">
-        <i data-lucide="panel-left-close" id="foldIcon"></i>
-      </button>
-    </div>
-    <div class="sidebar-label">NGO Portal</div>
-    <nav class="sidebar-nav">
-      <a th:href="@{/ngo/dashboard}" class="sidebar-link active" title="Available Food">
-        <i data-lucide="layout-dashboard"></i>
-        <span class="sidebar-link-text">Available Food</span>
-      </a>
-      <a th:href="@{/ngo/map}" class="sidebar-link" title="Map View">
-        <i data-lucide="map"></i>
-        <span class="sidebar-link-text">Map View</span>
-      </a>
-      <a th:href="@{/ngo/history}" class="sidebar-link" title="My Pickups">
-        <i data-lucide="clipboard-list"></i>
-        <span class="sidebar-link-text">My Pickups</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <a th:href="@{/logout}" class="sidebar-logout" title="Sign Out">
-        <i data-lucide="log-out"></i>
-        <span class="sidebar-link-text">Sign Out</span>
-      </a>
-    </div>
-  </aside>
+  <th:block th:replace="~{fragments/sidebar-ngo :: sidebar(activePage='dashboard')}"></th:block>
 
   <!-- Main Content -->
   <main class="dash-main">
-    <!-- Top Bar -->
-    <header class="dash-topbar">
-      <button class="topbar-hamburger" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
-
-      <!-- Live Search Input -->
-      <div class="malinessa-search-wrap">
-        <i data-lucide="search" class="malinessa-search-icon"></i>
-        <input type="text" id="searchInput" onkeyup="filterDonations()" class="malinessa-search-input" placeholder="Search available food...">
-      </div>
-
-      <!-- Right Profile Pill -->
-      <div class="malinessa-top-right">
-        <div class="malinessa-profile-pill">
-          <div class="malinessa-avatar" style="background:#059669;" th:text="${name != null ? name.substring(0,1).toUpperCase() : 'N'}">N</div>
-          <div class="malinessa-profile-name">
-            <span th:text="${name}">NGO Partner</span>
-          </div>
-        </div>
-      </div>
-    </header>
+    <header th:replace="~{fragments/topbar :: topbar(searchPlaceholder='Search available food...', searchFunction='filterDonations', name=${name}, defaultInitial='N')}"></header>
 
     <div class="dash-content">
       <!-- Page Head -->
@@ -140,25 +87,8 @@
     </div>
   </main>
 
+  <th:block th:replace="~{fragments/sidebar-scripts :: scripts}"></th:block>
   <script>
-    lucide.createIcons();
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('sidebarOverlay').classList.toggle('open');
-    }
-
-    function toggleSidebarFold() {
-      document.body.classList.toggle('sidebar-folded');
-      const isFolded = document.body.classList.contains('sidebar-folded');
-      localStorage.setItem('foodrescue_sidebar_folded', isFolded ? 'true' : 'false');
-    }
-
-    (function() {
-      if (localStorage.getItem('foodrescue_sidebar_folded') === 'true') {
-        document.body.classList.add('sidebar-folded');
-      }
-    })();
 
     function filterDonations() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();

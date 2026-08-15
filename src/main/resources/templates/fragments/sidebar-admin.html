@@ -1,0 +1,46 @@
+<!-- Admin Sidebar Fragment -->
+<th:block th:fragment="sidebar(activePage)">
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- White Sidebar -->
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a th:href="@{/}" class="sidebar-logo">
+        <img th:src="@{/images/logo.png}" alt="FoodRescue">
+      </a>
+      <button class="sidebar-toggle-btn" onclick="toggleSidebarFold()" title="Fold Sidebar">
+        <i data-lucide="panel-left-close"></i>
+      </button>
+    </div>
+    <div class="sidebar-label">ANALYTICS</div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/admin/dashboard}" class="sidebar-link" th:classappend="${activePage == 'dashboard'} ? 'active'" title="Dashboard">
+        <i data-lucide="layout-dashboard"></i>
+        <span class="sidebar-link-text">Dashboard</span>
+      </a>
+      <div class="sidebar-label">MANAGEMENT</div>
+      <a th:href="@{/admin/users}" class="sidebar-link" th:classappend="${activePage == 'users'} ? 'active'" title="Users Directory">
+        <i data-lucide="users"></i>
+        <span class="sidebar-link-text">Users Directory</span>
+      </a>
+      <a th:href="@{/admin/donations}" class="sidebar-link" th:classappend="${activePage == 'donations'} ? 'active'" title="Food Donations">
+        <i data-lucide="package"></i>
+        <span class="sidebar-link-text">Food Donations</span>
+      </a>
+      <div class="sidebar-label">REPORTS</div>
+      <a th:href="@{/admin/reports}" class="sidebar-link" th:classappend="${activePage == 'reports'} ? 'active'" title="Reports &amp; Analytics">
+        <i data-lucide="chart-no-axes-combined"></i>
+        <span class="sidebar-link-text">Reports &amp; Analytics</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a th:href="@{/logout}" class="sidebar-logout" title="Sign Out">
+        <i data-lucide="log-out"></i>
+        <span class="sidebar-link-text">Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+</th:block>

@@ -1,0 +1,24 @@
+<!-- Sidebar Scripts Fragment -->
+<!-- Common sidebar toggle and fold scripts used across all dashboard pages -->
+<th:block th:fragment="scripts">
+  <script>
+    lucide.createIcons();
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+    function toggleSidebarFold() {
+      document.body.classList.toggle('sidebar-folded');
+      const isFolded = document.body.classList.contains('sidebar-folded');
+      localStorage.setItem('foodrescue_sidebar_folded', isFolded ? 'true' : 'false');
+    }
+
+    (function() {
+      if (localStorage.getItem('foodrescue_sidebar_folded') === 'true') {
+        document.body.classList.add('sidebar-folded');
+      }
+    })();
+  </script>
+</th:block>
