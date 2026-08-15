@@ -1,26 +1,24 @@
 package com.foodwaste.util;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class PasswordUtil {
 
     public static String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        if (password == null) {
+            return null;
         }
+        return BCrypt.hashpw(password, BCrypt.gensalt(10));
     }
 
     public static boolean checkPassword(String rawPassword, String hashedPassword) {
-        String hashed = hashPassword(rawPassword);
-        return hashed.equals(hashedPassword);
+        if (rawPassword == null || hashedPassword == null) {
+            return false;
+        }
+        try {
+            return BCrypt.checkpw(rawPassword, hashedPassword);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
