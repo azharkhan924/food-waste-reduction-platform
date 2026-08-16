@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DonationServiceTest {
+class DonationServiceTest {
 
     @Mock
     private DonationRepository donationRepo;
@@ -60,11 +59,11 @@ public class DonationServiceTest {
         assertNotNull(sampleDonation.getCreatedAt());
         verify(donationRepo, times(1)).save(sampleDonation);
         verify(emailService, times(1)).sendDonationAlert(
-                eq("ngo@hope.org"),
-                eq("Surplus Bread & Pastries"),
-                eq(25),
-                eq("123 Bakery St"),
-                eq("Downtown Bakery")
+                "ngo@hope.org",
+                "Surplus Bread & Pastries",
+                25,
+                "123 Bakery St",
+                "Downtown Bakery"
         );
     }
 
@@ -111,6 +110,64 @@ public class DonationServiceTest {
 
         assertEquals(1, result.size());
         assertEquals("Pending", result.get(0).getStatus());
+    }
+
+    @Test
+    void testAddDonation_WhenEmailFails_ContinuesExecution() {
+        User ngoUser = new User("Hope NGO", "ngo@hope.org", "pass", "NGO");
+        when(userRepo.findByRole("NGO")).thenReturn(List.of(ngoUser));
+        when(donationRepo.save(any(Donation.class))).thenReturn(sampleDonation);
+        doThrow(new RuntimeException("SMTP down")).when(emailService).sendDonationAlert(anyString(), anyString(), anyInt(), anyString(), anyString());
+
+        assertDoesNotThrow(() -> donationService.addDonation(sampleDonation));
+        verify(donationRepo, times(1)).save(sampleDonation);
+    }
+
+    @Test
+    void testGetDonationsByRestaurant() {
+        when(donationRepo.findByRestaurantId(10L)).thenReturn(List.of(sampleDonation));
+
+        List<Donation> result = donationService.getDonationsByRestaurant(10L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetDonationsByNgo() {
+        when(donationRepo.findByNgoId(20L)).thenReturn(List.of(sampleDonation));
+
+        List<Donation> result = donationService.getDonationsByNgo(20L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testCountByRestaurant() {
+        when(donationRepo.findByRestaurantId(10L)).thenReturn(List.of(sampleDonation));
+
+        long count = donationService.countByRestaurant(10L);
+
+        assertEquals(1L, count);
+    }
+
+    @Test
+    void testAcceptDonation_WhenNotFound() {
+        when(donationRepo.findById(999L)).thenReturn(Optional.empty());
+
+        assertDoesNotThrow(() -> donationService.acceptDonation(999L, 20L, "NGO"));
+        verify(donationRepo, never()).save(any(Donation.class));
+    }
+
+    @Test
+    void testMarkPickedUp_WhenNotFoundOrPending() {
+        when(donationRepo.findById(999L)).thenReturn(Optional.empty());
+        donationService.markPickedUp(999L);
+
+        sampleDonation.setStatus("Pending");
+        when(donationRepo.findById(1L)).thenReturn(Optional.of(sampleDonation));
+        donationService.markPickedUp(1L);
+
+        verify(donationRepo, never()).save(sampleDonation);
     }
 
     @Test

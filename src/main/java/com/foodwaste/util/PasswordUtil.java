@@ -4,6 +4,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class PasswordUtil {
 
+    private PasswordUtil() {
+        // Utility class
+    }
+
     public static String hashPassword(String password) {
         if (password == null) {
             return null;

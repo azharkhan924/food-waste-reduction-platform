@@ -31,6 +31,7 @@ public class Donation {
     private Double longitude;
 
     public Donation() {
+        // Default constructor for JPA
     }
 
     public Long getId() {

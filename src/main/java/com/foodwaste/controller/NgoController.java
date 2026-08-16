@@ -1,6 +1,5 @@
 package com.foodwaste.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,102 +13,105 @@ import java.util.List;
 @Controller
 public class NgoController {
 
-@Autowired
-DonationService donationService;
+    private static final String ATTR_USER_ID = "userId";
+    private static final String ATTR_USER_NAME = "userName";
+    private static final String ATTR_DONATIONS = "donations";
+    private static final String REDIRECT_LOGIN = "redirect:/login";
 
+    private final DonationService donationService;
 
-@GetMapping("/ngo/dashboard")
-public String dashboard(HttpSession session, Model model){
-
-Long userId = (Long) session.getAttribute("userId");
-
-if(userId == null){
-return "redirect:/login";
-}
-
-String name = (String) session.getAttribute("userName");
-model.addAttribute("name", name);
-
-List<Donation> pendingDonations = donationService.getPendingDonations();
-model.addAttribute("donations", pendingDonations);
-
-return "ngo/dashboard";
-}
-
-
-@GetMapping("/ngo/map")
-public String mapView(HttpSession session, Model model){
-
-    Long userId = (Long) session.getAttribute("userId");
-    if(userId == null){
-        return "redirect:/login";
+    public NgoController(DonationService donationService) {
+        this.donationService = donationService;
     }
 
-    String name = (String) session.getAttribute("userName");
-    model.addAttribute("name", name);
+    @GetMapping("/ngo/dashboard")
+    public String dashboard(HttpSession session, Model model){
 
-    List<Donation> pendingDonations = donationService.getPendingDonations();
-    model.addAttribute("donations", pendingDonations);
+        Long userId = (Long) session.getAttribute(ATTR_USER_ID);
 
-    return "ngo/map";
-}
+        if(userId == null){
+            return REDIRECT_LOGIN;
+        }
 
+        String name = (String) session.getAttribute(ATTR_USER_NAME);
+        model.addAttribute("name", name);
 
-@GetMapping("/ngo/accept/{id}")
-public String acceptDonation(@PathVariable Long id, HttpSession session){
+        List<Donation> pendingDonations = donationService.getPendingDonations();
+        model.addAttribute(ATTR_DONATIONS, pendingDonations);
 
-Long userId = (Long) session.getAttribute("userId");
-String userName = (String) session.getAttribute("userName");
+        return "ngo/dashboard";
+    }
 
-if(userId == null){
-return "redirect:/login";
-}
+    @GetMapping("/ngo/map")
+    public String mapView(HttpSession session, Model model){
 
-donationService.acceptDonation(id, userId, userName);
+        Long userId = (Long) session.getAttribute(ATTR_USER_ID);
+        if(userId == null){
+            return REDIRECT_LOGIN;
+        }
 
-return "redirect:/ngo/dashboard";
-}
+        String name = (String) session.getAttribute(ATTR_USER_NAME);
+        model.addAttribute("name", name);
 
+        List<Donation> pendingDonations = donationService.getPendingDonations();
+        model.addAttribute(ATTR_DONATIONS, pendingDonations);
 
-@GetMapping("/ngo/pickup/{id}")
-public String markPickedUp(@PathVariable Long id, HttpSession session){
+        return "ngo/map";
+    }
 
-Long userId = (Long) session.getAttribute("userId");
+    @GetMapping("/ngo/accept/{id}")
+    public String acceptDonation(@PathVariable Long id, HttpSession session){
 
-if(userId == null){
-return "redirect:/login";
-}
+        Long userId = (Long) session.getAttribute(ATTR_USER_ID);
+        String userName = (String) session.getAttribute(ATTR_USER_NAME);
 
-donationService.markPickedUp(id);
+        if(userId == null){
+            return REDIRECT_LOGIN;
+        }
 
-return "redirect:/ngo/history";
-}
+        donationService.acceptDonation(id, userId, userName);
 
+        return "redirect:/ngo/dashboard";
+    }
 
-@GetMapping("/ngo/history")
-public String history(HttpSession session, Model model){
+    @GetMapping("/ngo/pickup/{id}")
+    public String markPickedUp(@PathVariable Long id, HttpSession session){
 
-Long userId = (Long) session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute(ATTR_USER_ID);
 
-if(userId == null){
-return "redirect:/login";
-}
+        if(userId == null){
+            return REDIRECT_LOGIN;
+        }
 
-String name = (String) session.getAttribute("userName");
-model.addAttribute("name", name);
+        donationService.markPickedUp(id);
 
-List<Donation> myDonations = donationService.getDonationsByNgo(userId);
-model.addAttribute("donations", myDonations);
+        return "redirect:/ngo/history";
+    }
 
-long totalAccepted = myDonations.size();
-int totalMeals = 0;
-for(Donation d : myDonations){
-totalMeals += d.getQty();
-}
-model.addAttribute("totalAccepted", totalAccepted);
-model.addAttribute("totalMeals", totalMeals);
+    @GetMapping("/ngo/history")
+    public String history(HttpSession session, Model model){
 
-return "ngo/history";
-}
+        Long userId = (Long) session.getAttribute(ATTR_USER_ID);
+
+        if(userId == null){
+            return REDIRECT_LOGIN;
+        }
+
+        String name = (String) session.getAttribute(ATTR_USER_NAME);
+        model.addAttribute("name", name);
+
+        List<Donation> myDonations = donationService.getDonationsByNgo(userId);
+        model.addAttribute(ATTR_DONATIONS, myDonations);
+
+        long totalAccepted = myDonations.size();
+        int totalMeals = 0;
+        for(Donation d : myDonations){
+            totalMeals += d.getQty();
+        }
+        model.addAttribute("totalAccepted", totalAccepted);
+        model.addAttribute("totalMeals", totalMeals);
+
+        return "ngo/history";
+    }
 
 }

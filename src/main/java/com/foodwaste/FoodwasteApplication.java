@@ -10,9 +10,15 @@ import com.foodwaste.entity.User;
 import com.foodwaste.repository.UserRepository;
 import com.foodwaste.util.PasswordUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
 @SpringBootApplication
 @EnableAsync
 public class FoodwasteApplication {
+
+	private static final Logger log = LoggerFactory.getLogger(FoodwasteApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(FoodwasteApplication.class, args);
@@ -46,6 +52,7 @@ public class FoodwasteApplication {
 						+ "longitude DOUBLE"
 						+ ")");
 			} catch (Exception e) {
+				log.warn("Notice during table verification: {}", e.getMessage());
 			}
 
 			try {
@@ -54,17 +61,22 @@ public class FoodwasteApplication {
 					userRepo.save(admin);
 				}
 			} catch (Exception e) {
+				log.warn("Notice during admin user initialization: {}", e.getMessage());
 			}
 		};
 	}
 
 	@Bean
-	public org.springframework.mail.javamail.JavaMailSender javaMailSender() {
+	public org.springframework.mail.javamail.JavaMailSender javaMailSender(
+			@Value("${spring.mail.host:smtp.gmail.com}") String host,
+			@Value("${spring.mail.port:587}") int port,
+			@Value("${spring.mail.username:}") String username,
+			@Value("${spring.mail.password:}") String password) {
 		org.springframework.mail.javamail.JavaMailSenderImpl mailSender = new org.springframework.mail.javamail.JavaMailSenderImpl();
-		mailSender.setHost("smtp.gmail.com");
-		mailSender.setPort(587);
-		mailSender.setUsername("khanazhar618190@gmail.com");
-		mailSender.setPassword("ntjs eoqx qyqy jhbz");
+		mailSender.setHost(host);
+		mailSender.setPort(port);
+		mailSender.setUsername(username);
+		mailSender.setPassword(password);
 
 		java.util.Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");

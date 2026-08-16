@@ -3,10 +3,10 @@ package com.foodwaste.util;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PasswordUtilTest {
+class PasswordUtilTest {
 
     @Test
-    public void testBCryptHashingAndMatching() {
+    void testBCryptHashingAndMatching() {
         String rawPassword = "MySecretPassword123!";
         String hash = PasswordUtil.hashPassword(rawPassword);
 

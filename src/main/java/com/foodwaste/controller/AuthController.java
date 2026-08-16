@@ -1,6 +1,5 @@
 package com.foodwaste.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,37 +11,32 @@ import com.foodwaste.service.UserService;
 
 public class AuthController {
 
-	@Autowired
-	UserService service;
+	private final UserService service;
 
-@GetMapping("/login")
-public String login() {
-return "login";
-}
+	public AuthController(UserService service) {
+		this.service = service;
+	}
 
+	@GetMapping("/login")
+	public String login() {
+		return "login";
+	}
 
+	@PostMapping("/login")
+	public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
 
+		User user = service.loginUser(email, password);
 
+		if (user == null) {
+			model.addAttribute("error", "Invalid Email or Password");
+			return "login";
+		} else if ("Restaurant".equals(user.getRole())) {
+			return "redirect:/restaurant/dashboard";
+		} else {
+			return "redirect:/ngo/dashboard";
+		}
 
-@PostMapping("/login")
-public String loginUser(@RequestParam String email,@RequestParam String password,Model model){
-	
-User user=service.loginUser(email,password);
-
-if(user==null){
-model.addAttribute("error","Invalid Email or Password");
-return "login";
-}
-
-else if(user.getRole().equals("Restaurant")){
-return "redirect:/restaurant/dashboard";
-}
-
-
-else
-return "redirect:/ngo/dashboard";
-
-}
+	}
 
 
 

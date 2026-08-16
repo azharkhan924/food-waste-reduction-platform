@@ -1,6 +1,5 @@
 package com.foodwaste.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.foodwaste.entity.User;
@@ -10,8 +9,11 @@ import com.foodwaste.util.PasswordUtil;
 @Service
 public class UserService {
 
-@Autowired
-private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 public String registerUser(User user) {
 

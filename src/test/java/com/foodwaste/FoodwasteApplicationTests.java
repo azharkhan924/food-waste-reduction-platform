@@ -8,6 +8,7 @@ class FoodwasteApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Context load verification test
 	}
 
 }

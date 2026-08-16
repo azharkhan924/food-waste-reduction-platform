@@ -1,6 +1,5 @@
 package com.foodwaste.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.foodwaste.entity.Donation;
 import com.foodwaste.service.DonationService;
@@ -9,8 +8,11 @@ import java.util.*;
 @RestController
 public class MapController {
 
-@Autowired
-DonationService donationService;
+    private final DonationService donationService;
+
+    public MapController(DonationService donationService) {
+        this.donationService = donationService;
+    }
 
 @GetMapping("/api/donations/pending")
 public List<Map<String, Object>> getPendingForMap(){
