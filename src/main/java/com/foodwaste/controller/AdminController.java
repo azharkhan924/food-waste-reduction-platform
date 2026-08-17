@@ -2,15 +2,22 @@ package com.foodwaste.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import com.foodwaste.entity.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.foodwaste.entity.Donation;
-import com.foodwaste.repository.UserRepository;
+import com.foodwaste.entity.User;
 import com.foodwaste.repository.DonationRepository;
+import com.foodwaste.repository.UserRepository;
+import com.foodwaste.security.IpAbuseGuard;
+import com.foodwaste.security.LoginAttemptService;
 import com.foodwaste.util.PasswordUtil;
+
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class AdminController {
@@ -19,13 +26,21 @@ public class AdminController {
     private static final String ATTR_USER_ROLE = "userRole";
     private static final String REDIRECT_LOGIN = "redirect:/login";
     private static final String REDIRECT_ADMIN_USERS = "redirect:/admin/users";
+    private static final String REDIRECT_ADMIN_SECURITY = "redirect:/admin/security";
 
     private final UserRepository userRepo;
     private final DonationRepository donationRepo;
+    private final LoginAttemptService loginAttemptService;
+    private final IpAbuseGuard ipAbuseGuard;
 
-    public AdminController(UserRepository userRepo, DonationRepository donationRepo) {
+    public AdminController(UserRepository userRepo,
+                           DonationRepository donationRepo,
+                           LoginAttemptService loginAttemptService,
+                           IpAbuseGuard ipAbuseGuard) {
         this.userRepo = userRepo;
         this.donationRepo = donationRepo;
+        this.loginAttemptService = loginAttemptService;
+        this.ipAbuseGuard = ipAbuseGuard;
     }
 
     @GetMapping("/admin/dashboard")
@@ -42,6 +57,8 @@ public class AdminController {
         model.addAttribute("totalRestaurants", userRepo.countByRole("Restaurant"));
         model.addAttribute("totalNgos", userRepo.countByRole("NGO"));
         model.addAttribute("blockedUsers", userRepo.countByBlocked(true));
+        model.addAttribute("lockedUsers", loginAttemptService.getLockedUsers().size());
+        model.addAttribute("blockedIpsCount", ipAbuseGuard.getBlockedIps().size());
 
         model.addAttribute("totalDonations", donationRepo.count());
         model.addAttribute("pendingCount", donationRepo.countByStatus("Pending"));
@@ -165,6 +182,39 @@ public class AdminController {
         model.addAttribute("period", period);
         model.addAttribute("totalShowing", list.size());
         return "admin/donations";
+    }
+
+    @GetMapping("/admin/security")
+    public String security(HttpSession session, Model model){
+        String role = (String) session.getAttribute(ATTR_USER_ROLE);
+        if(role == null || !ROLE_ADMIN.equals(role)) {
+            return REDIRECT_LOGIN;
+        }
+
+        model.addAttribute("lockedUsers", loginAttemptService.getLockedUsers());
+        model.addAttribute("blockedIps", ipAbuseGuard.getBlockedIps());
+
+        return "admin/security";
+    }
+
+    @PostMapping("/admin/security/unlock-user/{id}")
+    public String unlockUser(@PathVariable Long id, HttpSession session){
+        if(!ROLE_ADMIN.equals(session.getAttribute(ATTR_USER_ROLE))) {
+            return REDIRECT_LOGIN;
+        }
+
+        loginAttemptService.unlockUser(id);
+        return REDIRECT_ADMIN_SECURITY;
+    }
+
+    @PostMapping("/admin/security/unblock-ip")
+    public String unblockIp(@RequestParam String ip, HttpSession session){
+        if(!ROLE_ADMIN.equals(session.getAttribute(ATTR_USER_ROLE))) {
+            return REDIRECT_LOGIN;
+        }
+
+        ipAbuseGuard.unblockIp(ip);
+        return REDIRECT_ADMIN_SECURITY;
     }
 
 }

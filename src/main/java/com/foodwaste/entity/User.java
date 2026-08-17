@@ -1,6 +1,13 @@
 package com.foodwaste.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="users")
@@ -22,8 +29,14 @@ public class User {
 
     private boolean blocked = false;
 
+    private int failedLoginAttempts = 0;
+    private int lockoutLevel = 0;
+    private LocalDateTime lockedUntil;
+
     public User() {
+        // Default constructor for JPA
     }
+
     public User(String name, String email, String password, String role) {
         this.name = name;
         this.email = email;
@@ -77,5 +90,33 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public int getLockoutLevel() {
+        return lockoutLevel;
+    }
+
+    public void setLockoutLevel(int lockoutLevel) {
+        this.lockoutLevel = lockoutLevel;
+    }
+
+    public LocalDateTime getLockedUntil() {
+        return lockedUntil;
+    }
+
+    public void setLockedUntil(LocalDateTime lockedUntil) {
+        this.lockedUntil = lockedUntil;
+    }
+
+    public boolean isCurrentlyLocked() {
+        return lockedUntil != null && lockedUntil.isAfter(LocalDateTime.now());
     }
 }

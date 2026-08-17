@@ -2,14 +2,20 @@ package com.foodwaste.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.foodwaste.entity.User;
+import com.foodwaste.security.LoginAttemptService;
+import com.foodwaste.security.LoginAttemptService.LoginResult;
 import com.foodwaste.service.EmailService;
 import com.foodwaste.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 import java.security.SecureRandom;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,14 +31,17 @@ public class HomeController {
     private static final String ATTR_SUCCESS = "success";
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
 
     private final UserService service;
     private final EmailService emailService;
+    private final LoginAttemptService loginAttemptService;
     private final Map<String, String> otpStorage = new ConcurrentHashMap<>();
 
-    public HomeController(UserService service, EmailService emailService) {
+    public HomeController(UserService service, EmailService emailService, LoginAttemptService loginAttemptService) {
         this.service = service;
         this.emailService = emailService;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @GetMapping("/")
@@ -48,15 +57,31 @@ public class HomeController {
     @PostMapping("/login")
     public String loginUser(@RequestParam String email, @RequestParam String password, Model model, HttpSession session){
 
-        User user = service.loginUser(email, password);
+        LoginResult result = loginAttemptService.attemptLogin(email, password);
 
-        if(user == null){
-            model.addAttribute(ATTR_ERROR, "Invalid Email or Password");
+        if (result.getStatus() == LoginResult.Status.LOCKED) {
+            String time = result.getLockedUntil() != null ? result.getLockedUntil().format(TIME_FORMATTER) : "later";
+            model.addAttribute(ATTR_ERROR, "Account temporarily locked until " + time + " due to repeated failed attempts. You can reset your password below or contact admin.");
             return VIEW_LOGIN;
         }
 
-        if(user.isBlocked()){
+        if (result.getStatus() == LoginResult.Status.BLOCKED) {
             model.addAttribute(ATTR_ERROR, "Your account has been blocked. Contact admin.");
+            return VIEW_LOGIN;
+        }
+
+        if (result.getStatus() == LoginResult.Status.INVALID_CREDENTIALS) {
+            int remaining = result.getRemainingAttempts();
+            String msg = remaining > 0
+                    ? "Invalid Email or Password. " + remaining + " attempt(s) remaining before temporary lockout."
+                    : "Invalid Email or Password";
+            model.addAttribute(ATTR_ERROR, msg);
+            return VIEW_LOGIN;
+        }
+
+        User user = result.getUser();
+        if (user == null) {
+            model.addAttribute(ATTR_ERROR, "Invalid Email or Password");
             return VIEW_LOGIN;
         }
 
@@ -65,14 +90,13 @@ public class HomeController {
         session.setAttribute("userEmail", user.getEmail());
         session.setAttribute("userRole", user.getRole());
 
-        if("Restaurant".equals(user.getRole())){
+        if ("Restaurant".equals(user.getRole())) {
             return "redirect:/restaurant/dashboard";
-        } else if("Admin".equals(user.getRole())){
+        } else if ("Admin".equals(user.getRole())) {
             return "redirect:/admin/dashboard";
         } else {
             return "redirect:/ngo/dashboard";
         }
-
     }
 
     @GetMapping("/register")
@@ -86,7 +110,7 @@ public class HomeController {
 
         String msg = service.registerUser(user);
 
-        if("Email already exists".equals(msg)){
+        if ("Email already exists".equals(msg)) {
             model.addAttribute(ATTR_ERROR, msg);
             model.addAttribute("user", user);
             return VIEW_REGISTER;
@@ -110,7 +134,7 @@ public class HomeController {
 
         User user = service.findByEmail(email);
 
-        if(user == null) {
+        if (user == null) {
             model.addAttribute(ATTR_ERROR, "Email not found");
             return "forgot-password";
         }
@@ -125,15 +149,14 @@ public class HomeController {
         model.addAttribute(ATTR_SUCCESS, "OTP sent to your email");
 
         return VIEW_VERIFY_OTP;
-
-    } 
+    }
 
     @PostMapping("/verify-otp")
     public String verifyOtp(@RequestParam String email, @RequestParam String otp, Model model){
 
         String storedOtp = otpStorage.get(email);
 
-        if(storedOtp == null || !storedOtp.equals(otp)){
+        if (storedOtp == null || !storedOtp.equals(otp)) {
             model.addAttribute(ATTR_ERROR, "Invalid OTP");
             model.addAttribute(ATTR_EMAIL, email);
             return VIEW_VERIFY_OTP;
@@ -143,13 +166,12 @@ public class HomeController {
 
         model.addAttribute(ATTR_EMAIL, email);
         return VIEW_RESET_PASSWORD;
-
     }
 
     @PostMapping("/reset-password")
     public String updatePassword(@RequestParam String email, @RequestParam String password, @RequestParam String confirmPassword, Model model){
 
-        if(!password.equals(confirmPassword)){
+        if (!password.equals(confirmPassword)) {
             model.addAttribute(ATTR_ERROR, "Passwords do not match");
             model.addAttribute(ATTR_EMAIL, email);
             return VIEW_RESET_PASSWORD;
@@ -157,9 +179,7 @@ public class HomeController {
 
         service.updatePassword(email, password);
 
-        model.addAttribute(ATTR_SUCCESS, "Password updated successfully");
+        model.addAttribute(ATTR_SUCCESS, "Password updated successfully! You can now log in.");
         return VIEW_LOGIN;
-
     }
-
 }

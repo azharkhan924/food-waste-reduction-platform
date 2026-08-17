@@ -48,15 +48,15 @@ return null;
 }
 
 
-public void updatePassword(String email, String newPassword){
-
-User user = userRepository.findByEmail(email);
-
-if(user != null){
-user.setPassword(PasswordUtil.hashPassword(newPassword));
-userRepository.save(user);
-}
-
-}
+    public void updatePassword(String email, String newPassword){
+        User user = userRepository.findByEmail(email);
+        if(user != null){
+            user.setPassword(PasswordUtil.hashPassword(newPassword));
+            user.setFailedLoginAttempts(0);
+            user.setLockoutLevel(0);
+            user.setLockedUntil(null);
+            userRepository.save(user);
+        }
+    }
 
 }

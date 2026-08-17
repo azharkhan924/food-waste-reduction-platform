@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security & Abuse Protection — FoodRescue</title>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="dash-body role-admin">
+  <th:block th:replace="~{fragments/sidebar-admin :: sidebar(activePage='security')}"></th:block>
+
+  <main class="dash-main">
+    <header th:replace="~{fragments/topbar :: topbar(searchPlaceholder='Search security logs...', searchFunction='filterTable', name='Admin', defaultInitial='A')}"></header>
+
+    <div class="dash-content">
+      <div class="sneat-welcome-card" style="background: linear-gradient(135deg, #FEF2F2 0%, #FFFFFF 60%, #FFF1F2 100%); border: 1px solid #FECDD3; box-shadow: 0 4px 20px rgba(225,29,72,0.08); position:relative; overflow:hidden;">
+        <div style="z-index:2; position:relative;">
+          <div class="sneat-welcome-title" style="color:#9F1239; font-size:24px; font-weight:800;">Security & Login Abuse Protection 🛡️</div>
+          <div class="sneat-welcome-desc" style="color:#BE123C; max-width:540px; font-size:14px; margin-top:4px;">
+            Monitor database-backed escalating account lockouts, active IP hard-blocks, and unlock credentials on-demand.
+          </div>
+        </div>
+        <div class="sneat-badge-badge" style="background:linear-gradient(135deg, #E11D48 0%, #BE123C 100%); color:#FFF; width:88px; height:88px; box-shadow: 0 8px 20px rgba(225,29,72,0.3);">
+          <i data-lucide="shield-alert" style="width:44px; height:44px;"></i>
+        </div>
+      </div>
+
+      <!-- Section 1: Locked Accounts -->
+      <div class="card shadow-sm p-4 mb-4" style="background:#fff; border-radius:12px; border:1px solid #E2E8F0; margin-top:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h4 style="font-weight:700; color:#1E293B; margin:0; display:flex; align-items:center; gap:8px;">
+            <i data-lucide="user-x" style="color:#EF4444; width:22px; height:22px;"></i> Locked Accounts (Escalating Timed Lock)
+          </h4>
+          <span class="badge" style="background:#FEE2E2; color:#991B1B; padding:6px 12px; border-radius:20px; font-weight:700; font-size:12px;" th:text="${#lists.size(lockedUsers)} + ' Locked'">0 Locked</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table" style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:2px solid #E2E8F0; color:#64748B; font-size:13px; text-transform:uppercase; text-align:left;">
+                <th style="padding:12px;">User</th>
+                <th style="padding:12px;">Email</th>
+                <th style="padding:12px;">Role</th>
+                <th style="padding:12px;">Lockout Level</th>
+                <th style="padding:12px;">Locked Until</th>
+                <th style="padding:12px; text-align:right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(lockedUsers)}">
+                <td colspan="6" style="text-align:center; padding:32px; color:#64748B; font-size:14px;">
+                  <i data-lucide="shield-check" style="width:32px; height:32px; color:#10B981; display:block; margin:0 auto 8px;"></i>
+                  No accounts are currently locked. System security is healthy.
+                </td>
+              </tr>
+              <tr th:each="u : ${lockedUsers}" style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:12px; font-weight:600; color:#1E293B;" th:text="${u.name}">John Doe</td>
+                <td style="padding:12px; color:#475569;" th:text="${u.email}">john@example.com</td>
+                <td style="padding:12px;"><span class="badge" style="background:#EFF6FF; color:#1D4ED8; padding:4px 8px; border-radius:6px; font-size:12px;" th:text="${u.role}">NGO</span></td>
+                <td style="padding:12px;">
+                  <span class="badge" style="background:#FEF3C7; color:#92400E; padding:4px 8px; border-radius:6px; font-weight:700; font-size:12px;" th:text="'Level ' + ${u.lockoutLevel}">Level 1</span>
+                </td>
+                <td style="padding:12px; color:#DC2626; font-weight:600;" th:text="${#temporals.format(u.lockedUntil, 'dd MMM yyyy, hh:mm a')}">16 Aug 2026, 10:30 AM</td>
+                <td style="padding:12px; text-align:right;">
+                  <form th:action="@{'/admin/security/unlock-user/' + ${u.id}}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm" style="background:#10B981; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:600; cursor:pointer;">
+                      <i data-lucide="unlock" style="width:14px; height:14px; vertical-align:middle;"></i> Unlock
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 2: Blocked IPs -->
+      <div class="card shadow-sm p-4" style="background:#fff; border-radius:12px; border:1px solid #E2E8F0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h4 style="font-weight:700; color:#1E293B; margin:0; display:flex; align-items:center; gap:8px;">
+            <i data-lucide="globe" style="color:#F59E0B; width:22px; height:22px;"></i> IP Hard-Blocks (50+ Req/Min Abuse Guard)
+          </h4>
+          <span class="badge" style="background:#FEF3C7; color:#92400E; padding:6px 12px; border-radius:20px; font-weight:700; font-size:12px;" th:text="${#maps.size(blockedIps)} + ' Blocked'">0 Blocked</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table" style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:2px solid #E2E8F0; color:#64748B; font-size:13px; text-transform:uppercase; text-align:left;">
+                <th style="padding:12px;">IP Address</th>
+                <th style="padding:12px;">Hard-Block Expiration</th>
+                <th style="padding:12px; text-align:right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#maps.isEmpty(blockedIps)}">
+                <td colspan="3" style="text-align:center; padding:32px; color:#64748B; font-size:14px;">
+                  <i data-lucide="check-circle" style="width:32px; height:32px; color:#10B981; display:block; margin:0 auto 8px;"></i>
+                  No IP addresses are currently hard-blocked.
+                </td>
+              </tr>
+              <tr th:each="entry : ${blockedIps}" style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:12px; font-family:monospace; font-weight:700; color:#1E293B;" th:text="${entry.key}">192.168.1.1</td>
+                <td style="padding:12px; color:#D97706; font-weight:600;" th:text="${entry.value}">Instant</td>
+                <td style="padding:12px; text-align:right;">
+                  <form th:action="@{/admin/security/unblock-ip}" method="post" style="display:inline;">
+                    <input type="hidden" name="ip" th:value="${entry.key}"/>
+                    <button type="submit" class="btn btn-sm" style="background:#3B82F6; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:600; cursor:pointer;">
+                      <i data-lucide="shield-off" style="width:14px; height:14px; vertical-align:middle;"></i> Unblock IP
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <th:block th:replace="~{fragments/sidebar-scripts :: scripts}"></th:block>
+</body>
+</html>

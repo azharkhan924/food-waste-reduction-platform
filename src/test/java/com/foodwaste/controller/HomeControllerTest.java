@@ -1,6 +1,8 @@
 package com.foodwaste.controller;
 
 import com.foodwaste.entity.User;
+import com.foodwaste.security.LoginAttemptService;
+import com.foodwaste.security.LoginAttemptService.LoginResult;
 import com.foodwaste.service.EmailService;
 import com.foodwaste.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,6 +29,9 @@ class HomeControllerTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private LoginAttemptService loginAttemptService;
 
     @InjectMocks
     private HomeController homeController;
@@ -49,20 +56,31 @@ class HomeControllerTest {
     }
 
     @Test
-    void testLoginUser_NullUser() {
-        when(userService.loginUser("bad@test.com", "wrong")).thenReturn(null);
+    void testLoginUser_InvalidCredentials() {
+        when(loginAttemptService.attemptLogin("bad@test.com", "wrong"))
+                .thenReturn(LoginResult.invalidCredentials(2));
 
         String view = homeController.loginUser("bad@test.com", "wrong", model, session);
 
         assertEquals("login", view);
-        assertEquals("Invalid Email or Password", model.getAttribute("error"));
+        assertTrue(((String) model.getAttribute("error")).contains("2 attempt(s) remaining"));
+    }
+
+    @Test
+    void testLoginUser_LockedAccount() {
+        when(loginAttemptService.attemptLogin("locked@test.com", "wrong"))
+                .thenReturn(LoginResult.locked(LocalDateTime.now().plusMinutes(30), 1));
+
+        String view = homeController.loginUser("locked@test.com", "wrong", model, session);
+
+        assertEquals("login", view);
+        assertTrue(((String) model.getAttribute("error")).contains("Account temporarily locked"));
     }
 
     @Test
     void testLoginUser_BlockedUser() {
-        User blocked = new User("Blocked", "blocked@test.com", "pass", "Restaurant");
-        blocked.setBlocked(true);
-        when(userService.loginUser("blocked@test.com", "pass")).thenReturn(blocked);
+        when(loginAttemptService.attemptLogin("blocked@test.com", "pass"))
+                .thenReturn(LoginResult.blocked());
 
         String view = homeController.loginUser("blocked@test.com", "pass", model, session);
 
@@ -74,7 +92,8 @@ class HomeControllerTest {
     void testLoginUser_RestaurantSuccess() {
         User user = new User("Rest", "rest@test.com", "pass", "Restaurant");
         user.setId(10L);
-        when(userService.loginUser("rest@test.com", "pass")).thenReturn(user);
+        when(loginAttemptService.attemptLogin("rest@test.com", "pass"))
+                .thenReturn(LoginResult.success(user));
 
         String view = homeController.loginUser("rest@test.com", "pass", model, session);
 
@@ -87,7 +106,8 @@ class HomeControllerTest {
     void testLoginUser_AdminSuccess() {
         User user = new User("Admin", "admin@test.com", "pass", "Admin");
         user.setId(1L);
-        when(userService.loginUser("admin@test.com", "pass")).thenReturn(user);
+        when(loginAttemptService.attemptLogin("admin@test.com", "pass"))
+                .thenReturn(LoginResult.success(user));
 
         String view = homeController.loginUser("admin@test.com", "pass", model, session);
 
@@ -98,7 +118,8 @@ class HomeControllerTest {
     void testLoginUser_NgoSuccess() {
         User user = new User("NGO", "ngo@test.com", "pass", "NGO");
         user.setId(20L);
-        when(userService.loginUser("ngo@test.com", "pass")).thenReturn(user);
+        when(loginAttemptService.attemptLogin("ngo@test.com", "pass"))
+                .thenReturn(LoginResult.success(user));
 
         String view = homeController.loginUser("ngo@test.com", "pass", model, session);
 
@@ -193,7 +214,7 @@ class HomeControllerTest {
         String view = homeController.updatePassword("user@test.com", "newPass", "newPass", model);
 
         assertEquals("login", view);
-        assertEquals("Password updated successfully", model.getAttribute("success"));
+        assertTrue(((String) model.getAttribute("success")).contains("Password updated successfully"));
         verify(userService, times(1)).updatePassword("user@test.com", "newPass");
     }
 }

@@ -25,3 +25,6 @@ src/main/resources/application.properties
 
 # Compiled files
 *.class
+
+# SonarQube guide
+SONARQUBE_GUIDE.md

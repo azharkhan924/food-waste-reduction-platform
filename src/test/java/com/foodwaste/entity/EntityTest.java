@@ -60,10 +60,19 @@ class EntityTest {
         assertTrue(u1.isBlocked());
 
         User u2 = new User("Bob", "bob@test.com", "pass", "Restaurant");
+        u2.setFailedLoginAttempts(2);
+        u2.setLockoutLevel(1);
+        LocalDateTime future = LocalDateTime.now().plusHours(1);
+        u2.setLockedUntil(future);
+
         assertEquals("Bob", u2.getName());
         assertEquals("bob@test.com", u2.getEmail());
         assertEquals("pass", u2.getPassword());
         assertEquals("Restaurant", u2.getRole());
         assertFalse(u2.isBlocked());
+        assertEquals(2, u2.getFailedLoginAttempts());
+        assertEquals(1, u2.getLockoutLevel());
+        assertEquals(future, u2.getLockedUntil());
+        assertTrue(u2.isCurrentlyLocked());
     }
 }

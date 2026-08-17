@@ -34,7 +34,10 @@ public class FoodwasteApplication {
 						+ "email VARCHAR(255) NOT NULL UNIQUE, "
 						+ "password VARCHAR(255) NOT NULL, "
 						+ "role VARCHAR(255) NOT NULL, "
-						+ "blocked BOOLEAN DEFAULT FALSE"
+						+ "blocked BOOLEAN DEFAULT FALSE, "
+						+ "failed_login_attempts INT DEFAULT 0, "
+						+ "lockout_level INT DEFAULT 0, "
+						+ "locked_until DATETIME DEFAULT NULL"
 						+ ")");
 				jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS donations ("
 						+ "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
@@ -51,13 +54,25 @@ public class FoodwasteApplication {
 						+ "latitude DOUBLE, "
 						+ "longitude DOUBLE"
 						+ ")");
+
+				// Safely ensure columns exist if users table was created previously
+				tryAddColumn(jdbcTemplate, "ALTER TABLE users ADD COLUMN failed_login_attempts INT DEFAULT 0");
+				tryAddColumn(jdbcTemplate, "ALTER TABLE users ADD COLUMN lockout_level INT DEFAULT 0");
+				tryAddColumn(jdbcTemplate, "ALTER TABLE users ADD COLUMN locked_until DATETIME DEFAULT NULL");
 			} catch (Exception e) {
 				log.warn("Notice during table verification: {}", e.getMessage());
 			}
 
 			try {
-				if (!userRepo.existsByEmail("admin@gmail.com")) {
-					User admin = new User("Admin", "admin@gmail.com", PasswordUtil.hashPassword("admin123"), "Admin");
+				User admin = userRepo.findByEmail("admin@gmail.com");
+				if (admin == null) {
+					admin = new User("Admin", "admin@gmail.com", PasswordUtil.hashPassword("admin123"), "Admin");
+					userRepo.save(admin);
+				} else if (admin.getPassword() == null || (!admin.getPassword().startsWith("$2a$") && !admin.getPassword().startsWith("$2b$"))) {
+					admin.setPassword(PasswordUtil.hashPassword("admin123"));
+					admin.setFailedLoginAttempts(0);
+					admin.setLockoutLevel(0);
+					admin.setLockedUntil(null);
 					userRepo.save(admin);
 				}
 			} catch (Exception e) {
@@ -85,6 +100,14 @@ public class FoodwasteApplication {
 		props.put("mail.debug", "false");
 
 		return mailSender;
+	}
+
+	private void tryAddColumn(org.springframework.jdbc.core.JdbcTemplate jdbcTemplate, String sql) {
+		try {
+			jdbcTemplate.execute(sql);
+		} catch (Exception ignored) {
+			// Column already exists or table structure matches
+		}
 	}
 
 }

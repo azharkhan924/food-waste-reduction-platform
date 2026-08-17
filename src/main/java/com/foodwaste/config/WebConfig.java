@@ -36,11 +36,11 @@ public class WebConfig implements WebMvcConfigurer {
                 request.setAttribute("cspNonce", nonce);
 
                 String csp = "default-src 'self'; "
-                        + "script-src 'self' 'nonce-" + nonce + "' 'strict-dynamic' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; "
-                        + "style-src 'self' 'nonce-" + nonce + "' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; "
-                        + "img-src 'self' data: https://*.tile.openstreetmap.org https://raw.githubusercontent.com https://cdnjs.cloudflare.com; "
+                        + "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+                        + "style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+                        + "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://raw.githubusercontent.com https://cdnjs.cloudflare.com; "
                         + "connect-src 'self' https://router.project-osrm.org https://nominatim.openstreetmap.org; "
-                        + "font-src 'self' https://unpkg.com https://cdn.jsdelivr.net; "
+                        + "font-src 'self' data: https://fonts.gstatic.com https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
                         + "base-uri 'self'; "
                         + "form-action 'self'; "
                         + "frame-ancestors 'none'; "

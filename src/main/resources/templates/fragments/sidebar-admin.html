@@ -29,6 +29,10 @@
         <i data-lucide="package"></i>
         <span class="sidebar-link-text">Food Donations</span>
       </a>
+      <a th:href="@{/admin/security}" class="sidebar-link" th:classappend="${activePage == 'security'} ? 'active'" title="Security & Abuse">
+        <i data-lucide="shield-alert"></i>
+        <span class="sidebar-link-text">Security & Abuse</span>
+      </a>
       <div class="sidebar-label">REPORTS</div>
       <a th:href="@{/admin/reports}" class="sidebar-link" th:classappend="${activePage == 'reports'} ? 'active'" title="Reports &amp; Analytics">
         <i data-lucide="chart-no-axes-combined"></i>

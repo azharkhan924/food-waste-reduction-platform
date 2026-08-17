@@ -3,6 +3,8 @@ package com.foodwaste.controller;
 import com.foodwaste.entity.User;
 import com.foodwaste.repository.DonationRepository;
 import com.foodwaste.repository.UserRepository;
+import com.foodwaste.security.IpAbuseGuard;
+import com.foodwaste.security.LoginAttemptService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +15,9 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +32,12 @@ class AdminControllerTest {
 
     @Mock
     private DonationRepository donationRepo;
+
+    @Mock
+    private LoginAttemptService loginAttemptService;
+
+    @Mock
+    private IpAbuseGuard ipAbuseGuard;
 
     @InjectMocks
     private AdminController adminController;
@@ -55,6 +65,8 @@ class AdminControllerTest {
         when(userRepo.countByRole("Restaurant")).thenReturn(6L);
         when(userRepo.countByRole("NGO")).thenReturn(3L);
         when(userRepo.countByBlocked(true)).thenReturn(1L);
+        when(loginAttemptService.getLockedUsers()).thenReturn(List.of());
+        when(ipAbuseGuard.getBlockedIps()).thenReturn(Map.of());
 
         when(donationRepo.count()).thenReturn(20L);
         when(donationRepo.countByStatus("Pending")).thenReturn(5L);
@@ -204,5 +216,55 @@ class AdminControllerTest {
         String view = adminController.donations(null, null, session, model);
 
         assertEquals("admin/donations", view);
+    }
+
+    @Test
+    void testSecurity_NotAdmin() {
+        assertEquals("redirect:/login", adminController.security(session, model));
+    }
+
+    @Test
+    void testSecurity_AdminSuccess() {
+        session.setAttribute("userRole", "Admin");
+        when(loginAttemptService.getLockedUsers()).thenReturn(List.of());
+        when(ipAbuseGuard.getBlockedIps()).thenReturn(Map.of("192.168.1.1", Instant.now()));
+
+        String view = adminController.security(session, model);
+
+        assertEquals("admin/security", view);
+        assertNotNull(model.getAttribute("lockedUsers"));
+        assertNotNull(model.getAttribute("blockedIps"));
+    }
+
+    @Test
+    void testUnlockUser_NotAdmin() {
+        assertEquals("redirect:/login", adminController.unlockUser(1L, session));
+    }
+
+    @Test
+    void testUnlockUser_AdminSuccess() {
+        session.setAttribute("userRole", "Admin");
+        when(loginAttemptService.unlockUser(1L)).thenReturn(true);
+
+        String view = adminController.unlockUser(1L, session);
+
+        assertEquals("redirect:/admin/security", view);
+        verify(loginAttemptService, times(1)).unlockUser(1L);
+    }
+
+    @Test
+    void testUnblockIp_NotAdmin() {
+        assertEquals("redirect:/login", adminController.unblockIp("192.168.1.1", session));
+    }
+
+    @Test
+    void testUnblockIp_AdminSuccess() {
+        session.setAttribute("userRole", "Admin");
+        doNothing().when(ipAbuseGuard).unblockIp("192.168.1.1");
+
+        String view = adminController.unblockIp("192.168.1.1", session);
+
+        assertEquals("redirect:/admin/security", view);
+        verify(ipAbuseGuard, times(1)).unblockIp("192.168.1.1");
     }
 }
