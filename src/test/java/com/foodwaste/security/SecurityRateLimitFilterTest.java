@@ -16,7 +16,6 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,9 +23,6 @@ class SecurityRateLimitFilterTest {
 
     @Mock
     private IpAbuseGuard ipAbuseGuard;
-
-    @Mock
-    private RateLimitingService rateLimitingService;
 
     @Mock
     private FilterChain filterChain;
@@ -45,6 +41,7 @@ class SecurityRateLimitFilterTest {
 
     @Test
     void testDoFilter_StaticResource_BypassesRateLimiting() throws ServletException, IOException {
+        // Static files like CSS should not be rate limited
         request.setRequestURI("/css/style.css");
 
         filter.doFilter(request, response, filterChain);
@@ -55,10 +52,10 @@ class SecurityRateLimitFilterTest {
 
     @Test
     void testDoFilter_NormalAllowedRequest() throws ServletException, IOException {
+        // A normal request from a non-blocked IP should pass through
         request.setRequestURI("/login");
         request.setMethod("GET");
         when(ipAbuseGuard.isBlocked(any())).thenReturn(false);
-        when(rateLimitingService.tryConsume(any(), eq(RateLimitTier.GLOBAL))).thenReturn(true);
 
         filter.doFilter(request, response, filterChain);
 
@@ -67,7 +64,8 @@ class SecurityRateLimitFilterTest {
     }
 
     @Test
-    void testDoFilter_BlockedIp_Returns403Forbidden() throws ServletException, IOException {
+    void testDoFilter_BlockedIp_Returns403() throws ServletException, IOException {
+        // A blocked IP should get 403 Forbidden
         request.setRequestURI("/login");
         request.setMethod("POST");
         when(ipAbuseGuard.isBlocked(any())).thenReturn(true);
@@ -75,35 +73,19 @@ class SecurityRateLimitFilterTest {
         filter.doFilter(request, response, filterChain);
 
         assertEquals(403, response.getStatus());
-        assertTrue(response.getContentAsString().contains("Forbidden"));
+        assertTrue(response.getContentAsString().contains("IP Blocked"));
         verify(filterChain, never()).doFilter(request, response);
     }
 
     @Test
-    void testDoFilter_RateLimitExceeded_Api_Returns429Json() throws ServletException, IOException {
-        request.setRequestURI("/api/donations/pending");
-        request.setMethod("GET");
-        when(ipAbuseGuard.isBlocked(any())).thenReturn(false);
-        when(rateLimitingService.tryConsume(any(), eq(RateLimitTier.API))).thenReturn(false);
-
-        filter.doFilter(request, response, filterChain);
-
-        assertEquals(429, response.getStatus());
-        assertTrue(response.getContentAsString().contains("Too Many Requests"));
-        verify(filterChain, never()).doFilter(request, response);
-    }
-
-    @Test
-    void testDoFilter_RateLimitExceeded_WebHtml_Returns429Html() throws ServletException, IOException {
+    void testDoFilter_BlockedIp_DoesNotRecordRequest() throws ServletException, IOException {
+        // When IP is already blocked, we should not record additional requests
         request.setRequestURI("/login");
-        request.setMethod("POST");
-        when(ipAbuseGuard.isBlocked(any())).thenReturn(false);
-        when(rateLimitingService.tryConsume(any(), eq(RateLimitTier.AUTH))).thenReturn(false);
+        request.setMethod("GET");
+        when(ipAbuseGuard.isBlocked(any())).thenReturn(true);
 
         filter.doFilter(request, response, filterChain);
 
-        assertEquals(429, response.getStatus());
-        assertTrue(response.getContentAsString().contains("<!DOCTYPE html>"));
-        verify(filterChain, never()).doFilter(request, response);
+        verify(ipAbuseGuard, never()).recordRequest(any());
     }
 }

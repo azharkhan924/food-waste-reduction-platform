@@ -1,71 +1,43 @@
 package com.foodwaste.security;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.Expiry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.security.SecureRandom;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class IpAbuseGuard {
 
     private static final Logger log = LoggerFactory.getLogger(IpAbuseGuard.class);
     private static final int MAX_REQUESTS_PER_MINUTE = 50;
-    private static final SecureRandom RANDOM = new SecureRandom();
+    private static final long ONE_MINUTE_SECONDS = 60;
+    private static final long BLOCK_DURATION_SECONDS = 3 * 60 * 60;
 
-    private final Cache<String, AtomicInteger> requestCounts;
-    private final Cache<String, Instant> blockedIps;
-
-    public IpAbuseGuard() {
-        this.requestCounts = Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMinutes(1))
-                .maximumSize(50_000)
-                .build();
-
-        this.blockedIps = Caffeine.newBuilder()
-                .expireAfter(new Expiry<String, Instant>() {
-                    @Override
-                    public long expireAfterCreate(String key, Instant expiryInstant, long currentTime) {
-                        long nanos = Duration.between(Instant.now(), expiryInstant).toNanos();
-                        return Math.max(nanos, 0);
-                    }
-
-                    @Override
-                    public long expireAfterUpdate(String key, Instant expiryInstant, long currentTime, long currentDuration) {
-                        long nanos = Duration.between(Instant.now(), expiryInstant).toNanos();
-                        return Math.max(nanos, 0);
-                    }
-
-                    @Override
-                    public long expireAfterRead(String key, Instant expiryInstant, long currentTime, long currentDuration) {
-                        return currentDuration;
-                    }
-                })
-                .maximumSize(10_000)
-                .build();
-    }
+    private final ConcurrentHashMap<String, Integer> requestCounts = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Instant> windowStart = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Instant> blockedIps = new ConcurrentHashMap<>();
 
     public boolean isBlocked(String ip) {
         if (ip == null || ip.isBlank()) {
             return false;
         }
-        Instant unblockTime = blockedIps.getIfPresent(ip);
+
+        Instant unblockTime = blockedIps.get(ip);
+
         if (unblockTime == null) {
             return false;
         }
+
         if (Instant.now().isAfter(unblockTime)) {
-            blockedIps.invalidate(ip);
+            blockedIps.remove(ip);
             return false;
         }
+
         return true;
     }
 
@@ -73,23 +45,33 @@ public class IpAbuseGuard {
         if (ip == null || ip.isBlank()) {
             return;
         }
-        AtomicInteger counter = requestCounts.get(ip, k -> new AtomicInteger(0));
-        if (counter != null) {
-            int currentCount = counter.incrementAndGet();
-            if (currentCount >= MAX_REQUESTS_PER_MINUTE && !isBlocked(ip)) {
-                int jitterMinutes = RANDOM.nextInt(61); // 0 to 60 minutes
-                Duration blockDuration = Duration.ofHours(3).plus(Duration.ofMinutes(jitterMinutes));
-                Instant unblockTime = Instant.now().plus(blockDuration);
-                blockedIps.put(ip, unblockTime);
-                log.warn("IP {} hard-blocked for {} until {}", ip, blockDuration, unblockTime);
-            }
+
+        Instant now = Instant.now();
+        Instant start = windowStart.get(ip);
+
+        if (start == null || now.getEpochSecond() - start.getEpochSecond() > ONE_MINUTE_SECONDS) {
+            windowStart.put(ip, now);
+            requestCounts.put(ip, 1);
+            return;
+        }
+
+        int count = requestCounts.getOrDefault(ip, 0) + 1;
+        requestCounts.put(ip, count);
+
+        if (count >= MAX_REQUESTS_PER_MINUTE && !isBlocked(ip)) {
+            Instant unblockTime = now.plusSeconds(BLOCK_DURATION_SECONDS);
+            blockedIps.put(ip, unblockTime);
+            log.warn("IP {} blocked for 3 hours (sent {} requests in 1 minute). Unblock at: {}", ip, count, unblockTime);
+            requestCounts.remove(ip);
+            windowStart.remove(ip);
         }
     }
 
     public void unblockIp(String ip) {
         if (ip != null) {
-            blockedIps.invalidate(ip);
-            requestCounts.invalidate(ip);
+            blockedIps.remove(ip);
+            requestCounts.remove(ip);
+            windowStart.remove(ip);
             log.info("IP {} manually unblocked by administrator", ip);
         }
     }
@@ -97,11 +79,13 @@ public class IpAbuseGuard {
     public Map<String, Instant> getBlockedIps() {
         Map<String, Instant> active = new HashMap<>();
         Instant now = Instant.now();
-        for (Map.Entry<String, Instant> entry : blockedIps.asMap().entrySet()) {
+
+        for (Map.Entry<String, Instant> entry : blockedIps.entrySet()) {
             if (entry.getValue().isAfter(now)) {
                 active.put(entry.getKey(), entry.getValue());
             }
         }
+
         return Collections.unmodifiableMap(active);
     }
 }

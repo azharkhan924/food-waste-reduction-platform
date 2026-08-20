@@ -48,13 +48,11 @@ public class LoginAttemptService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        // Check if currently locked
         if (user.getLockedUntil() != null) {
             if (user.getLockedUntil().isAfter(now)) {
                 log.warn("Login attempt on locked account {} (locked until {})", email, user.getLockedUntil());
                 return LoginResult.locked(user.getLockedUntil(), user.getLockoutLevel());
             } else {
-                // Lock expired naturally -> clear lockedUntil but preserve lockoutLevel for escalation
                 user.setLockedUntil(null);
                 userRepository.save(user);
             }
@@ -63,7 +61,6 @@ public class LoginAttemptService {
         boolean passwordMatches = PasswordUtil.checkPassword(rawPassword, user.getPassword());
 
         if (passwordMatches) {
-            // Successful login -> full reset of attempts and lockout level
             user.setFailedLoginAttempts(0);
             user.setLockoutLevel(0);
             user.setLockedUntil(null);
@@ -71,7 +68,6 @@ public class LoginAttemptService {
             log.info("Successful login for user {}", email);
             return LoginResult.success(user);
         } else {
-            // Failed attempt
             int attempts = user.getFailedLoginAttempts() + 1;
             user.setFailedLoginAttempts(attempts);
 
