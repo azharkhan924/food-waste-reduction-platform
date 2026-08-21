@@ -1,0 +1,15 @@
+# ============================================
+# Grafana Datasource Provisioning
+# ============================================
+# This file auto-configures Grafana to connect to Loki
+# on startup, so you don't need to add it manually.
+
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://localhost:3100
+    isDefault: true
+    editable: true

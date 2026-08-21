@@ -1,0 +1,31 @@
+# ============================================
+# Promtail Configuration (Beginner-Friendly)
+# ============================================
+# Promtail is the agent that reads your log files
+# and sends (pushes) them to Loki.
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+# Where Promtail stores its position in the log file
+# (so it doesn't re-read logs after restart)
+positions:
+  filename: /tmp/promtail-positions.yaml
+
+# Where to send logs — points to Loki
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+
+# What log files to watch
+scrape_configs:
+  - job_name: foodwaste
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: foodwaste
+          app: food-waste-platform
+          # Path to your Spring Boot log file
+          # UPDATE THIS if your project is in a different location
+          __path__: /Users/azharkhan/Downloads/food-waste-reduction-platform/logs/foodwaste.log
